@@ -1,0 +1,93 @@
+use chrono::{Duration, NaiveDate};
+use reqwest::blocking::get;
+use serde::Deserialize;
+
+#[derive(Deserialize)]
+pub struct IcalEvent {
+	pub summary: Option<String>,
+	pub start: Option<NaiveDate>,
+	pub end: Option<NaiveDate>,
+}
+impl IcalEvent {
+	pub fn get(url: &String) -> Vec<IcalEvent> {
+		// let url = format!(
+		// 	"http://{}/v1/json?url={}",
+		// 	env::var("ICAL_FILTER_SOCKETADDR").unwrap_or("ical-filter:8000".to_string()),
+		// 	encode(url)
+		// );
+		let data = get(url).unwrap().text().unwrap();
+		// serde_json::from_str(&data).unwrap()
+		data.split("BEGIN:VEVENT")
+			.map(|v| v.trim())
+			.map(|vevent| {
+				let mut result = IcalEvent {
+					summary: None,
+					start: None,
+					end: None,
+				};
+				for line in vevent.lines() {
+					let mut split = line.split(":");
+					let kind = split.next();
+					match kind {
+						Some("DTSTART") => {
+							let string = split.next().unwrap().chars();
+							let year: i32 =
+								string.clone().take(4).collect::<String>().parse().unwrap();
+							let month: u32 = string
+								.clone()
+								.skip(4)
+								.take(2)
+								.collect::<String>()
+								.parse()
+								.unwrap();
+							let day: u32 = string
+								.clone()
+								.skip(6)
+								.take(2)
+								.collect::<String>()
+								.parse()
+								.unwrap();
+							result.start = Some(NaiveDate::from_ymd(year, month, day));
+						}
+						Some("DTEND") => {
+							let string = split.next().unwrap().chars();
+							let year: i32 =
+								string.clone().take(4).collect::<String>().parse().unwrap();
+							let month: u32 = string
+								.clone()
+								.skip(4)
+								.take(2)
+								.collect::<String>()
+								.parse()
+								.unwrap();
+							let day: u32 = string
+								.clone()
+								.skip(6)
+								.take(2)
+								.collect::<String>()
+								.parse()
+								.unwrap();
+							result.end = Some(NaiveDate::from_ymd(year, month, day));
+						}
+						Some("DURATION") => {
+							let days = split
+								.next()
+								.unwrap()
+								.chars()
+								.filter(|v| v.is_digit(10))
+								.collect::<String>()
+								.parse()
+								.unwrap();
+							result.end = Some(result.start.unwrap() + Duration::days(days));
+						}
+						Some("SUMMARY") => result.summary = Some(split.next().unwrap().to_string()),
+						Some(_) => {}
+						None => {}
+					}
+				}
+				result
+			})
+			.filter(|v| v.summary != None && v.start != None)
+			.collect()
+	}
+}
