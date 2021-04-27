@@ -1,6 +1,6 @@
 use std::{collections::HashMap, convert::TryInto};
 
-use chrono::{Datelike, Duration, NaiveDate, NaiveDateTime, NaiveTime, Utc};
+use chrono::{Date, DateTime, Datelike, Duration, Local, NaiveDate, NaiveDateTime, NaiveTime, Utc};
 use regex::Regex;
 use serde::{Deserialize, Serialize};
 
@@ -93,6 +93,19 @@ impl ScheduleType {
 			}
 		}
 	}
+	pub fn at_offset(&self, period: &Period, offset: isize) -> Option<Period> {
+		let found = self.periods.iter().enumerate().find(|v| period == v.1);
+		match found {
+			None => None,
+			Some((index, _))
+				if index as isize + offset < 0
+					|| index as isize + offset >= self.periods.len() as isize =>
+			{
+				None
+			}
+			Some((index, _)) => Some(self.periods[(index as isize + offset) as usize].clone()),
+		}
+	}
 }
 
 /// The definition for a period.
@@ -171,11 +184,11 @@ impl Schedule {
 		// Apply the override calendar
 		ical_to_ours(self, &override_calendar_data);
 		// Update the last-updated value
-		self.last_updated = NaiveDateTime::from_timestamp(Utc::now().timestamp(), 0);
+		self.last_updated = Local::now().naive_local();
 	}
 	pub fn update_if_needed(&mut self) {
-		let now = NaiveDateTime::from_timestamp(Utc::now().timestamp(), 0);
-		let elapsed = now - self.last_updated;
+		let now = Local::now();
+		let elapsed = now.naive_local() - self.last_updated;
 		if elapsed > Duration::hours(2) {
 			self.update()
 		}
