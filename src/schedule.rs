@@ -216,7 +216,7 @@ impl Schedule {
 	}
 }
 /// Types of calendar events.
-#[derive(Serialize, Clone)]
+#[derive(Serialize, Clone, PartialEq)]
 pub enum Event {
 	/// This variant causes an override of the current schedule to the schedule named in the variant.
 	ScheduleOverride(String),
@@ -281,7 +281,10 @@ fn ical_to_ours(schedule: &mut Schedule, data: &Vec<IcalEvent>) {
 			}
 			if !is_schedule_event {
 				// If this event didn't match any special schedules, add it as a non-schedule Special Event.
-				date.push(Event::SpecialEvent(event.summary.as_ref().unwrap().clone()))
+				let new_event = Event::SpecialEvent(event.summary.as_ref().unwrap().clone());
+				if !date.contains(&new_event) {
+					date.push(new_event)
+				}
 			}
 			// Move to the next day in the event.
 			day += Duration::days(1)
