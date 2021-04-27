@@ -1,6 +1,6 @@
 use std::{collections::HashMap, convert::TryInto};
 
-use chrono::{Date, DateTime, Datelike, Duration, Local, NaiveDate, NaiveDateTime, NaiveTime, Utc};
+use chrono::{Datelike, Duration, Local, NaiveDate, NaiveDateTime, NaiveTime};
 use regex::Regex;
 use serde::{Deserialize, Serialize};
 

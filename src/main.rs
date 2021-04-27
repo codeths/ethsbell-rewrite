@@ -14,7 +14,7 @@ pub mod schedule;
 
 #[macro_use]
 extern crate rocket;
-
+#[allow(dead_code)]
 fn main() {
 	// Build the schedule definition and do our first update.
 	let schedule = {

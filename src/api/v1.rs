@@ -3,7 +3,7 @@ use std::{
 	sync::{Arc, RwLock},
 };
 
-use chrono::{Date, DateTime, Datelike, Local, NaiveDate, NaiveTime, Timelike};
+use chrono::{Local, NaiveDate, NaiveTime};
 use rocket::{Route, State};
 use rocket_contrib::json::Json;
 
@@ -74,7 +74,7 @@ fn today_at(schedule: State<Arc<RwLock<Schedule>>>, time_string: String) -> Opti
 	schedule.write().unwrap().update_if_needed();
 	let now = Local::now();
 	let now_date = now.date();
-	let then_time = now.time();
+	let then_time = NaiveTime::from_str(&time_string).unwrap();
 	let schedule = schedule.read().unwrap().on_date(now_date.naive_local());
 	match schedule.at_time(then_time) {
 		Some(period) => Some(Json(period)),

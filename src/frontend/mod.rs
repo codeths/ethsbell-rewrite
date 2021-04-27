@@ -1,7 +1,4 @@
-use rocket::{
-	fairing::{Fairing, Info, Kind},
-	Route,
-};
+use rocket::fairing::{Fairing, Info, Kind};
 use rocket_contrib::serve::StaticFiles;
 
 pub struct FrontendFairing;
