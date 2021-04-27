@@ -17,7 +17,7 @@ use crate::ical::IcalEvent;
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct ScheduleDefinition {
 	/// The URL of the ical calendar we fetch the schedule's data from.
-	pub calendar_url: String,
+	pub calendar_url: Option<String>,
 	/// The URL of the ical calendar we fetch any overrides from.
 	pub override_calendar_url: Option<String>,
 	/// All of the types of schedule there are.
@@ -166,7 +166,10 @@ impl From<ScheduleDefinition> for Schedule {
 impl Schedule {
 	pub fn update(&mut self) {
 		// Fetch the primary calendar
-		let calendar_data = IcalEvent::get(&self.definition.calendar_url);
+		let calendar_data = match &self.definition.calendar_url {
+			Some(url) => IcalEvent::get(&url),
+			None => vec![],
+		};
 		// Fetch the override calendar
 		let override_calendar_data = match &self.definition.override_calendar_url {
 			Some(url) => IcalEvent::get(&url),
