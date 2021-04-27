@@ -1,0 +1,9 @@
+/.vscode
+/.git
+/target
+/dockerignore
+/.gitignore
+/Dockerfile
+/LICENSE
+/README.md
+/rustfmt.toml
