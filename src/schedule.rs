@@ -45,9 +45,9 @@ pub struct ScheduleType {
 	pub regex: Option<Regex>,
 }
 impl ScheduleType {
-	pub fn at_time(&self, time: NaiveTime) -> Option<Period> {
+	pub fn at_time(&self, time: NaiveTime) -> [Option<Period>; 3] {
 		if self.periods.len() == 0 {
-			None
+			[None, None, None]
 		} else {
 			let mut before: Option<Period> = None;
 			let mut current: Option<Period> = None;
@@ -70,40 +70,33 @@ impl ScheduleType {
 				}
 			});
 			match (&before, &current, &next) {
-				(_, Some(current), _) => Some(current.clone()),
-				(Some(before), None, Some(next)) => Some(Period {
-					friendly_name: "Passing".to_string(),
-					start: before.end,
-					end: next.start,
-					kind: PeriodType::Passing,
-				}),
-				(None, None, Some(next)) => Some(Period {
-					friendly_name: "Before school".to_string(),
-					start: NaiveTime::from_hms(0, 0, 0),
-					end: next.start,
-					kind: PeriodType::BeforeSchool,
-				}),
-				(Some(before), None, None) => Some(Period {
-					friendly_name: "After School".to_string(),
-					start: before.end,
-					end: NaiveTime::from_hms(24, 0, 0),
-					kind: PeriodType::AfterSchool,
-				}),
-				_ => None,
+				(Some(before), None, Some(next)) => {
+					current = Some(Period {
+						friendly_name: "Passing".to_string(),
+						start: before.end,
+						end: next.start,
+						kind: PeriodType::Passing,
+					})
+				}
+				(None, None, Some(next)) => {
+					current = Some(Period {
+						friendly_name: "Before school".to_string(),
+						start: NaiveTime::from_hms(0, 0, 0),
+						end: next.start,
+						kind: PeriodType::BeforeSchool,
+					})
+				}
+				(Some(before), None, None) => {
+					current = Some(Period {
+						friendly_name: "After School".to_string(),
+						start: before.end,
+						end: NaiveTime::from_hms(24, 0, 0),
+						kind: PeriodType::AfterSchool,
+					})
+				}
+				_ => {}
 			}
-		}
-	}
-	pub fn at_offset(&self, period: &Period, offset: isize) -> Option<Period> {
-		let found = self.periods.iter().enumerate().find(|v| period == v.1);
-		match found {
-			None => None,
-			Some((index, _))
-				if index as isize + offset < 0
-					|| index as isize + offset >= self.periods.len() as isize =>
-			{
-				None
-			}
-			Some((index, _)) => Some(self.periods[(index as isize + offset) as usize].clone()),
+			[before, current, next]
 		}
 	}
 }

@@ -5,7 +5,7 @@ async function update() {
 		put(data[i], sets[i])
 	}
 	if (data[1].end) {
-		let elapsed = (new Date(Date.now())).getTime() - data[1].end.getTime()
+		let elapsed = data[1].end.getTime() - (new Date(Date.now())).getTime()
 		setTimeout(update, elapsed)
 	}
 }

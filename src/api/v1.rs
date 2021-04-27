@@ -46,7 +46,7 @@ fn today_now(schedule: State<Arc<RwLock<Schedule>>>) -> Option<Json<Period>> {
 	let now_date = now.date();
 	let now_time = now.time();
 	let schedule = schedule.read().unwrap().on_date(now_date.naive_local());
-	match schedule.at_time(now_time) {
+	match schedule.at_time(now_time)[1].clone() {
 		Some(period) => Some(Json(period)),
 		None => None,
 	}
@@ -59,14 +59,7 @@ fn today_around_now(schedule: State<Arc<RwLock<Schedule>>>) -> Json<[Option<Peri
 	let now_date = now.date();
 	let now_time = now.time();
 	let schedule = schedule.read().unwrap().on_date(now_date.naive_local());
-	match schedule.at_time(now_time) {
-		Some(period) => Json([
-			schedule.at_offset(&period, -1),
-			Some(period.clone()),
-			schedule.at_offset(&period, 1),
-		]),
-		None => Json([None, None, None]),
-	}
+	Json(schedule.at_time(now_time))
 }
 
 #[get("/today/at/<time_string>")]
@@ -76,7 +69,7 @@ fn today_at(schedule: State<Arc<RwLock<Schedule>>>, time_string: String) -> Opti
 	let now_date = now.date();
 	let then_time = NaiveTime::from_str(&time_string).unwrap();
 	let schedule = schedule.read().unwrap().on_date(now_date.naive_local());
-	match schedule.at_time(then_time) {
+	match schedule.at_time(then_time)[1].clone() {
 		Some(period) => Some(Json(period)),
 		None => None,
 	}
@@ -99,7 +92,7 @@ fn date_at(
 	let then_date = NaiveDate::from_str(&date_string).unwrap();
 	let then_time = NaiveTime::from_str(&time_string).unwrap();
 	let schedule = schedule.read().unwrap().on_date(then_date);
-	match schedule.at_time(then_time) {
+	match schedule.at_time(then_time)[1].clone() {
 		Some(period) => Some(Json(period)),
 		None => None,
 	}
