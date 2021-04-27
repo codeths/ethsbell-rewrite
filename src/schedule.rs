@@ -275,7 +275,8 @@ fn ical_to_ours(schedule: &mut Schedule, data: &Vec<IcalEvent>) {
 					}
 					if !found {
 						// Otherwise, create a new event entry.
-						date.push(Event::ScheduleOverride(i.0.clone()))
+						date.push(Event::ScheduleOverride(i.0.clone()));
+						is_schedule_event = true;
 					}
 				}
 			}
