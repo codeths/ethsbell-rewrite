@@ -1,6 +1,6 @@
 use std::{collections::HashMap, convert::TryInto};
 
-use chrono::{Datelike, Duration, Local, NaiveDate, NaiveDateTime, NaiveTime};
+use chrono::{DateTime, Datelike, Duration, Local, NaiveDate, NaiveDateTime, NaiveTime, Timelike};
 use regex::Regex;
 use serde::{Deserialize, Serialize};
 
@@ -75,6 +75,8 @@ impl ScheduleType {
 						friendly_name: "Passing".to_string(),
 						start: before.end,
 						end: next.start,
+						start_timestamp: 0,
+						end_timestamp: 0,
 						kind: PeriodType::Passing,
 					})
 				}
@@ -83,6 +85,8 @@ impl ScheduleType {
 						friendly_name: "Before school".to_string(),
 						start: NaiveTime::from_hms(0, 0, 0),
 						end: next.start,
+						start_timestamp: 0,
+						end_timestamp: 0,
 						kind: PeriodType::BeforeSchool,
 					})
 				}
@@ -91,6 +95,8 @@ impl ScheduleType {
 						friendly_name: "After School".to_string(),
 						start: before.end,
 						end: NaiveTime::from_hms(24, 0, 0),
+						start_timestamp: 0,
+						end_timestamp: 0,
 						kind: PeriodType::AfterSchool,
 					})
 				}
@@ -120,10 +126,36 @@ pub struct Period {
 	pub friendly_name: String,
 	/// The start of this period.
 	pub start: NaiveTime,
+	#[serde(skip_deserializing)]
+	pub start_timestamp: u64,
 	/// The end of this period.
 	pub end: NaiveTime,
+	#[serde(skip_deserializing)]
+	pub end_timestamp: u64,
 	/// The type of this period.
 	pub kind: PeriodType,
+}
+impl Period {
+	pub fn populate(&mut self, date: DateTime<Local>) {
+		let start_date = date.clone();
+		let end_date = date.clone();
+		self.start_timestamp = start_date
+			.with_hour(self.start.hour())
+			.unwrap()
+			.with_minute(self.start.minute())
+			.unwrap()
+			.with_second(self.start.second())
+			.unwrap()
+			.timestamp() as u64;
+		self.end_timestamp = end_date
+			.with_hour(self.end.hour())
+			.unwrap()
+			.with_minute(self.end.minute())
+			.unwrap()
+			.with_second(self.end.second())
+			.unwrap()
+			.timestamp() as u64;
+	}
 }
 
 /// The types a period can be.
