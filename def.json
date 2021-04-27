@@ -10,7 +10,7 @@
 		"monday": {
 			"friendly_name": "Async Monday",
 			"periods": [],
-			"regex": null
+			"regex": "FORCE MONDAY"
 		},
 		"orange_day": {
 			"friendly_name": "Orange Day",
@@ -68,7 +68,7 @@
 					}
 				}
 			],
-			"regex": null
+			"regex": "FORCE ORANGE DAY"
 		},
 		"blue_day": {
 			"friendly_name": "Blue Day",
@@ -118,7 +118,7 @@
 					}
 				}
 			],
-			"regex": null
+			"regex": "FORCE BLUE DAY"
 		}
 	},
 	"typical_schedule": [
