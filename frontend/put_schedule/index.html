@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Schedule Uploader</title>
+	<link rel="stylesheet" href="../index.css">
+	<script defer src="./schedule.js"></script>
+</head>
+
+<body>
+	<div class="background">
+		<h1>Upload your schedule</h1>
+		<p>A schedule file should look like this.</p>
+		<pre>[
+	{
+		"name": "1st Period",
+		"url": "https://meet.google.com/whatever"
+	},
+	{
+		"name": "2nd Period",
+		"url": undefined
+	}
+	...
+]</pre>
+		<input type="file" id="cfg"><br>
+		<button id="upload">Upload!</button><br>
+		<span id="status"></span>
+	</div>
+</body>
+
+</html>

@@ -8,6 +8,7 @@ use std::{
 use schedule::{Schedule, ScheduleDefinition};
 
 pub mod api;
+mod frontend;
 pub mod ical;
 pub mod schedule;
 
@@ -35,6 +36,7 @@ fn main() {
 	};
 	rocket::ignite()
 		.attach(api::ApiFairing {})
+		.attach(frontend::FrontendFairing {})
 		.manage(schedule.clone())
 		.launch();
 }

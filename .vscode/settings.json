@@ -7,6 +7,7 @@
 		"dtstart",
 		"eths",
 		"ethsbell",
+		"getel",
 		"ical",
 		"reqwest",
 		"socketaddr",
