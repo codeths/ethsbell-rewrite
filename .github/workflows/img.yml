@@ -4,8 +4,6 @@ on:
   push:
     branches:
       - main
-    tags:
-      - v*
 
 env:
   # TODO: Change variable to your image's name.
