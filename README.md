@@ -4,6 +4,7 @@ This is a rewrite of ETHSBell in Rust. It features...
 * Restored support for arbitrary dates and times.
 * A strongly typed API with stability guarantees.
   * Behavior under `/api` won't have any breaking changes, ever.
+    * \*Unless we're still in development, in which case all bets are off...
   * The two most recent API versions will be present.
 * Many endpoints for different purposes.
   * `GET /api/v1/schedule` returns the whole runtime schedule struct for local use.
