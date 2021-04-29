@@ -11,6 +11,8 @@ async function update() {
 		} else {
 			if (parent) {
 				parent.style.display = "none";
+			} else {
+				put({friendly_name: "No School"}, sets[i])
 			}
 		}
 	}
@@ -42,9 +44,6 @@ async function get() {
 }
 
 function put(period, element_set) {
-	if (!period) {
-		return
-	}
 	let schedule = false;
 	try {
 		schedule = JSON.parse(localStorage.getItem('schedule'));
@@ -59,10 +58,16 @@ function put(period, element_set) {
 	let start = getel(`${element_set}_start`);
 	let end = getel(`${element_set}_end`);
 	let name = getel(`${element_set}_name`);
-	if (start) {
+	let time_parent = getel(`${element_set}_time_parent`);
+	if (period.start && period.end) {
+		time_parent.style.display = "block"
+	} else {
+		time_parent.style.display = "none"
+	}
+	if (start && period.start) {
 		start.innerHTML = ` at ${period.start.toLocaleTimeString()}`
 	}
-	if (end) {
+	if (end && period.end) {
 		end.innerHTML = ` until ${period.end.toLocaleTimeString()}`
 	}
 	if (name) {
