@@ -2,7 +2,17 @@ async function update() {
 	let data = await get()
 	let sets = ['prev', 'curr', 'next']
 	for (let i = 0; i < data.length; ++i) {
-		put(data[i], sets[i])
+		let parent = getel(`${sets[i]}_parent`);
+		if (data[i]) {
+			put(data[i], sets[i])
+			if (parent) {
+				parent.style.display = "block";
+			}
+		} else {
+			if (parent) {
+				parent.style.display = "none";
+			}
+		}
 	}
 	if (data[1].end) {
 		let elapsed = data[1].end.getTime() - (new Date(Date.now())).getTime()
