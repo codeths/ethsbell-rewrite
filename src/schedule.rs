@@ -94,7 +94,7 @@ impl ScheduleType {
 					current = Some(Period {
 						friendly_name: "After School".to_string(),
 						start: before.end,
-						end: NaiveTime::from_hms(24, 0, 0),
+						end: NaiveTime::from_hms(23, 59, 59),
 						start_timestamp: 0,
 						end_timestamp: 0,
 						kind: PeriodType::AfterSchool,
