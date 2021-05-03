@@ -3,11 +3,13 @@ use std::{
 	sync::{Arc, RwLock},
 };
 
-use chrono::{Datelike, Local, NaiveDate, NaiveTime, Timelike};
+use chrono::{Datelike, Local, NaiveDate, NaiveTime};
 use rocket::{Route, State};
 use rocket_contrib::json::Json;
 
 use crate::schedule::{Period, Schedule, ScheduleType};
+
+use super::OurError;
 
 pub fn routes() -> Vec<Route> {
 	routes![
@@ -74,26 +76,32 @@ fn today_around_now(schedule: State<Arc<RwLock<Schedule>>>) -> Json<[Option<Peri
 }
 
 #[get("/today/at/<time_string>")]
-fn today_at(schedule: State<Arc<RwLock<Schedule>>>, time_string: String) -> Option<Json<Period>> {
+fn today_at(
+	schedule: State<Arc<RwLock<Schedule>>>,
+	time_string: String,
+) -> Result<Option<Json<Period>>, OurError> {
 	schedule.write().unwrap().update_if_needed();
 	let now = Local::now();
 	let now_date = now.date();
-	let then_time = NaiveTime::from_str(&time_string).unwrap();
+	let then_time = NaiveTime::from_str(&time_string)?;
 	let schedule = schedule.read().unwrap().on_date(now_date.naive_local());
 	match schedule.at_time(then_time)[1].clone() {
 		Some(period) => {
 			let mut period = period.clone();
 			period.populate(now);
-			Some(Json(period))
+			Ok(Some(Json(period)))
 		}
-		None => None,
+		None => Ok(None),
 	}
 }
 
 #[get("/on/<date_string>")]
-fn date(schedule: State<Arc<RwLock<Schedule>>>, date_string: String) -> Json<ScheduleType> {
+fn date(
+	schedule: State<Arc<RwLock<Schedule>>>,
+	date_string: String,
+) -> Result<Json<ScheduleType>, OurError> {
 	schedule.write().unwrap().update_if_needed();
-	let then = NaiveDate::from_str(&date_string).unwrap();
+	let then = NaiveDate::from_str(&date_string)?;
 	let then_ = Local::now()
 		.with_day(then.day())
 		.unwrap()
@@ -103,7 +111,7 @@ fn date(schedule: State<Arc<RwLock<Schedule>>>, date_string: String) -> Json<Sch
 		.unwrap();
 	let mut schedule = schedule.read().unwrap().on_date(then);
 	schedule.periods.iter_mut().for_each(|v| v.populate(then_));
-	Json(schedule)
+	Ok(Json(schedule))
 }
 
 #[get("/on/<date_string>/at/<time_string>")]
@@ -111,30 +119,24 @@ fn date_at(
 	schedule: State<Arc<RwLock<Schedule>>>,
 	date_string: String,
 	time_string: String,
-) -> Option<Json<Period>> {
+) -> Result<Option<Json<Period>>, OurError> {
 	schedule.write().unwrap().update_if_needed();
-	let then_date = NaiveDate::from_str(&date_string).unwrap();
-	let then_time = NaiveTime::from_str(&time_string).unwrap();
+	let then_date = NaiveDate::from_str(&date_string)?;
+	let then_time = NaiveTime::from_str(&time_string)?;
 	let then_ = Local::now()
 		.with_day(then_date.day())
 		.unwrap()
 		.with_month(then_date.month())
 		.unwrap()
 		.with_year(then_date.year())
-		.unwrap()
-		.with_hour(then_time.hour())
-		.unwrap()
-		.with_minute(then_time.minute())
-		.unwrap()
-		.with_second(then_time.second())
 		.unwrap();
 	let schedule = schedule.read().unwrap().on_date(then_date);
 	match schedule.at_time(then_time)[1].clone() {
 		Some(period) => {
 			let mut period = period.clone();
 			period.populate(then_);
-			Some(Json(period))
+			Ok(Some(Json(period)))
 		}
-		None => None,
+		None => Ok(None),
 	}
 }

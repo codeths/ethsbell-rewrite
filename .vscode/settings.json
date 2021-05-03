@@ -12,6 +12,7 @@
 		"reqwest",
 		"socketaddr",
 		"struct",
+		"thiserror",
 		"timelike",
 		"wasi",
 		"wasm"
