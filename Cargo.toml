@@ -16,6 +16,7 @@ reqwest = {version = "0.11.3", features = ["blocking"]}
 serde_regex = "1.1.0"
 regex = "1.4.6"
 urlencoding = "1.1.1"
+thiserror = "1.0.24"
 
 [dependencies.ical]
 version = "0.7.0"
