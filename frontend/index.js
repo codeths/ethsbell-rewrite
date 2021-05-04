@@ -1,10 +1,12 @@
+let notification
+
 async function update() {
 	let data = await get()
 	let sets = ['prev', 'curr', 'next']
 	for (let i = 0; i < data.length; ++i) {
 		let parent = getel(`${sets[i]}_parent`);
 		if (data[i]) {
-			put(data[i], sets[i])
+			put(data[i], sets[i], i === 1)
 			if (parent) {
 				parent.style.display = "block";
 			}
@@ -43,7 +45,7 @@ async function get() {
 	return data
 }
 
-function put(period, element_set) {
+function put(period, element_set, notify) {
 	let schedule = false;
 	try {
 		schedule = JSON.parse(localStorage.getItem('schedule'));
@@ -73,11 +75,25 @@ function put(period, element_set) {
 	if (name) {
 		name.innerHTML = `${url ? `<a href=${url}>` : ''}${friendly_name}${url ? `</a>` : ''}`
 	}
+	if (notify) {
+		if (notification !== undefined) {
+			if (notification.close) {
+				notification.close()
+			}
+			notification = new Notification(`New period ${friendly_name}`);
+		} else {
+			notification = true
+		}
+	}
 }
 
 function getel(id) {
 	let selector = `#${id}`
 	return document.querySelector(selector)
 }
+
+getel("enable_notifications").addEventListener('click', async () => {
+  await Notification.requestPermission();
+})
 
 update()
