@@ -1,0 +1,17 @@
+{
+	"build": {
+		"dockerfile": "Dockerfile"
+	},
+	"extensions": [
+		"samverschueren.linter-xo",
+		"matklad.rust-analyzer",
+		"streetsidesoftware.code-spell-checker",
+		"vadimcn.vscode-lldb",
+		"serayuzgur.crates",
+		"mhutchie.git-graph",
+		"ms-azuretools.vscode-docker"
+	],
+	"forwardPorts": [
+		8000
+	]
+}
