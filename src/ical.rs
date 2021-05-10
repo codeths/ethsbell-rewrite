@@ -10,13 +10,7 @@ pub struct IcalEvent {
 }
 impl IcalEvent {
 	pub fn get(url: &String) -> Vec<IcalEvent> {
-		// let url = format!(
-		// 	"http://{}/v1/json?url={}",
-		// 	env::var("ICAL_FILTER_SOCKETADDR").unwrap_or("ical-filter:8000".to_string()),
-		// 	encode(url)
-		// );
 		let data = get(url).unwrap().text().unwrap();
-		// serde_json::from_str(&data).unwrap()
 		data.split("BEGIN:VEVENT")
 			.map(|v| v.trim())
 			.map(|vevent| {

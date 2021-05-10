@@ -35,8 +35,8 @@ fn main() {
 		Arc::new(RwLock::new(schedule))
 	};
 	rocket::ignite()
-		.attach(api::ApiFairing {})
-		.attach(frontend::FrontendFairing {})
+		.attach(api::ApiFairing)
+		.attach(frontend::FrontendFairing)
 		.manage(schedule.clone())
 		.launch();
 }

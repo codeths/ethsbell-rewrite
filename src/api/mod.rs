@@ -7,7 +7,7 @@ use rocket::{
 
 pub mod v1;
 
-pub struct ApiFairing {}
+pub struct ApiFairing;
 
 impl Fairing for ApiFairing {
 	fn info(&self) -> rocket::fairing::Info {
