@@ -9,7 +9,8 @@
 		"vadimcn.vscode-lldb",
 		"serayuzgur.crates",
 		"mhutchie.git-graph",
-		"ms-azuretools.vscode-docker"
+		"ms-azuretools.vscode-docker",
+		"ms-vsliveshare.vsliveshare"
 	],
 	"forwardPorts": [
 		8000
