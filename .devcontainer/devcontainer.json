@@ -14,5 +14,6 @@
 	],
 	"forwardPorts": [
 		8000
-	]
+	],
+	"initializeCommand": "cp /etc/localtime ./.devcontainer/localtime"
 }

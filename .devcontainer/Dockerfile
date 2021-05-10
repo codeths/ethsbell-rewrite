@@ -25,3 +25,5 @@ RUN set -eux; \
 RUN apt-get update && apt-get install npm -y && rm -rf /var/lib/apt/lists
 # Install xo
 RUN npm i -g xo
+# Copy time zone
+COPY ./localtime /etc/localtime
