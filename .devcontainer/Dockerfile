@@ -5,7 +5,7 @@ ENV RUSTUP_HOME=/usr/local/rustup \
 	PATH=/usr/local/cargo/bin:$PATH
 
 # Install packages
-RUN apt-get update && apt-get install -y ca-certificates build-essential fish zsh libssl-dev pkg-config && rm -rf /var/lib/apt/lists
+RUN apt-get update && apt-get install -y ca-certificates build-essential fish zsh libssl-dev pkg-config faketime && rm -rf /var/lib/apt/lists
 
 # Install Rust
 RUN set -eux; \
