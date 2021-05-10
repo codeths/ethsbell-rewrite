@@ -3,7 +3,10 @@ use std::{
 	sync::{Arc, RwLock},
 };
 
-use chrono::{Datelike, Local, NaiveDate, NaiveTime};
+use chrono::{
+	Datelike, Local, NaiveDate, NaiveDateTime, NaiveTime,
+	TimeZone,
+};
 use rocket::{Route, State};
 use rocket_contrib::json::Json;
 
@@ -19,8 +22,20 @@ pub fn routes() -> Vec<Route> {
 		today_now,
 		today_at,
 		date_at,
-		today_around_now
+		today_around_now,
+		what_time
 	]
+}
+
+#[get("/what-time-is-it?<timestamp>")]
+fn what_time(timestamp: Option<i64>) -> String {
+	let now = match timestamp {
+		None => Local::now(),
+		Some(timestamp) => Local
+			.from_utc_datetime(&NaiveDateTime::from_timestamp(timestamp, 0))
+			.with_timezone(&Local),
+	};
+	now.to_rfc2822()
 }
 
 #[get("/schedule")]
@@ -30,11 +45,16 @@ fn get_schedule(schedule: State<Arc<RwLock<Schedule>>>) -> Json<Schedule> {
 	Json(schedule.clone())
 }
 
-#[get("/today")]
-fn today(schedule: State<Arc<RwLock<Schedule>>>) -> Json<ScheduleType> {
+#[get("/today?<timestamp>")]
+fn today(schedule: State<Arc<RwLock<Schedule>>>, timestamp: Option<i64>) -> Json<ScheduleType> {
 	schedule.write().unwrap().update_if_needed();
 	// Get the current date as a NaiveDate
-	let now = Local::now();
+	let now = match timestamp {
+		None => Local::now(),
+		Some(timestamp) => Local
+			.from_utc_datetime(&NaiveDateTime::from_timestamp(timestamp, 0))
+			.with_timezone(&Local),
+	};
 	println!("{}", now);
 	let now_date = now.date();
 	let schedule = schedule.read().unwrap();
@@ -43,10 +63,18 @@ fn today(schedule: State<Arc<RwLock<Schedule>>>) -> Json<ScheduleType> {
 	Json(schedule)
 }
 
-#[get("/today/now")]
-fn today_now(schedule: State<Arc<RwLock<Schedule>>>) -> Option<Json<Period>> {
+#[get("/today/now?<timestamp>")]
+fn today_now(
+	schedule: State<Arc<RwLock<Schedule>>>,
+	timestamp: Option<i64>,
+) -> Result<Json<Period>, String> {
 	schedule.write().unwrap().update_if_needed();
-	let now = Local::now();
+	let now = match timestamp {
+		None => Local::now(),
+		Some(timestamp) => Local
+			.from_utc_datetime(&NaiveDateTime::from_timestamp(timestamp, 0))
+			.with_timezone(&Local),
+	};
 	let now_date = now.date();
 	let now_time = now.time();
 	let schedule = schedule.read().unwrap().on_date(now_date.naive_local());
@@ -54,16 +82,24 @@ fn today_now(schedule: State<Arc<RwLock<Schedule>>>) -> Option<Json<Period>> {
 		Some(period) => {
 			let mut period = period.clone();
 			period.populate(now);
-			Some(Json(period))
+			Ok(Json(period))
 		}
-		None => None,
+		None => Err(String::from("There's no schedule right now, sorry.")),
 	}
 }
 
-#[get("/today/now/near")]
-fn today_around_now(schedule: State<Arc<RwLock<Schedule>>>) -> Json<[Option<Period>; 3]> {
+#[get("/today/now/near?<timestamp>")]
+fn today_around_now(
+	schedule: State<Arc<RwLock<Schedule>>>,
+	timestamp: Option<i64>,
+) -> Json<[Option<Period>; 3]> {
 	schedule.write().unwrap().update_if_needed();
-	let now = Local::now();
+	let now = match timestamp {
+		None => Local::now(),
+		Some(timestamp) => Local
+			.from_utc_datetime(&NaiveDateTime::from_timestamp(timestamp, 0))
+			.with_timezone(&Local),
+	};
 	let now_date = now.date();
 	let now_time = now.time();
 	let schedule = schedule.read().unwrap().on_date(now_date.naive_local());
@@ -75,13 +111,19 @@ fn today_around_now(schedule: State<Arc<RwLock<Schedule>>>) -> Json<[Option<Peri
 	Json(schedule)
 }
 
-#[get("/today/at/<time_string>")]
+#[get("/today/at/<time_string>?<timestamp>")]
 fn today_at(
 	schedule: State<Arc<RwLock<Schedule>>>,
 	time_string: String,
+	timestamp: Option<i64>,
 ) -> Result<Option<Json<Period>>, OurError> {
 	schedule.write().unwrap().update_if_needed();
-	let now = Local::now();
+	let now = match timestamp {
+		None => Local::now(),
+		Some(timestamp) => Local
+			.from_utc_datetime(&NaiveDateTime::from_timestamp(timestamp, 0))
+			.with_timezone(&Local),
+	};
 	let now_date = now.date();
 	let then_time = NaiveTime::from_str(&time_string)?;
 	let schedule = schedule.read().unwrap().on_date(now_date.naive_local());
