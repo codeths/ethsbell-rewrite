@@ -1,7 +1,12 @@
 let notification
 
 async function update() {
-	let data = await get()
+	let messageTimer = setTimeout(() => {
+		getel("message").innerHTML = "(We refresh our copy of the calendars every 2 hours, so the request might take a while if no one has used the service in a while. Sorry for any inconvenience.)"
+	}, 1000);
+	let data = await get();
+	clearTimeout(messageTimer);
+	getel("message").innerHTML = "";
 	let sets = ['prev', 'curr', 'next']
 	for (let i = 0; i < data.length; ++i) {
 		let parent = getel(`${sets[i]}_parent`);

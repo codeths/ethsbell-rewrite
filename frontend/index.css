@@ -1,7 +1,8 @@
 body {
 	text-align: center;
 	font-family: sans-serif;
-	padding: 10vw;
+	padding-left: 10vw;
+	padding-right: 10vw;
 	font-size: 2vw;
 }
 
@@ -33,4 +34,8 @@ pre {
 	border-left-style: solid;
 	border-right-style: solid;
 	border-color: black;
+}
+
+#message {
+	font-size: small;
 }
