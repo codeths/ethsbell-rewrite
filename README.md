@@ -1,5 +1,12 @@
 # ETHSBell Rewrite
 
+- [ETHSBell Rewrite](#ethsbell-rewrite)
+  - [About](#about)
+  - [Deployment](#deployment)
+    - [x86 with Docker](#x86-with-docker)
+    - [Non-x86 or without Docker](#non-x86-or-without-docker)
+  - [Development](#development)
+
 ## About
 
 This is a rewrite of ETHSBell in Rust. It features...
@@ -56,3 +63,7 @@ cd ethsbell-rewrite
 cargo build
 # The resulting binary will be placed at ./target/release/ethsbell-rewrite
 ```
+
+## Development
+
+See [CONSTRIBUTING](CONTRIBUTING.md)
