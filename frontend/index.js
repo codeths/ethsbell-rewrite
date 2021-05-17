@@ -2,7 +2,7 @@ let notification
 
 async function update() {
 	let messageTimer = setTimeout(() => {
-		getel("message").innerHTML = "(We refresh our copy of the calendars every 2 hours, so the request might take a while if no one has used the service in a while. Sorry for any inconvenience.)"
+		getel("message").innerHTML = "(We refresh our copy of the calendars during the first request of the day, so your request might be delayed if you're the first client of the day. Sorry for any inconvenience.)"
 	}, 1000);
 	let data = await get();
 	clearTimeout(messageTimer);

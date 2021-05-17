@@ -218,8 +218,7 @@ impl Schedule {
 	}
 	pub fn update_if_needed(&mut self) {
 		let now = Local::now();
-		let elapsed = now.naive_local() - self.last_updated;
-		if elapsed > Duration::hours(2) {
+		if self.last_updated.date() != now.date().naive_local() {
 			self.update()
 		}
 	}
