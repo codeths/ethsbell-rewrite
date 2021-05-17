@@ -1,5 +1,7 @@
 # ETHSBell Rewrite
 
+## About
+
 This is a rewrite of ETHSBell in Rust. It features...
 * Restored support for arbitrary dates and times.
 * A strongly typed API with stability guarantees.
@@ -22,3 +24,35 @@ This is a rewrite of ETHSBell in Rust. It features...
   * Client-side processing in WASI is blocked by [Rocket async](https://github.com/SergioBenitez/Rocket/projects/1), so it's not possible to do just yet.
 
 *Psst! If you're feeling really crafty, you could even self-host this and use it to structure your free time! For example, you could add an extra "class period" and designate it as homework time.*
+
+## Deployment
+
+### x86 with Docker
+
+You can deploy the software with a Compose file like this.
+
+```yml
+version: "3.7"
+
+services:
+ web:
+  image: docker.pkg.github.com/chromezoneeths/ethsbell-rewrite/ethsbell-rewrite:latest
+  restart: unless-stopped
+  init: true
+  ports:
+    - 8000:8000
+  volumes:
+   - "/etc/localtime:/etc/localtime:ro"
+   - "./def.json:/app/def.json:ro"
+```
+
+### Non-x86 or without Docker
+
+You can deploy the software by building it from source like this.
+
+```sh
+git clone https://github.com/chromezoneeths/ethsbell-rewrite.git
+cd ethsbell-rewrite
+cargo build
+# The resulting binary will be placed at ./target/release/ethsbell-rewrite
+```
