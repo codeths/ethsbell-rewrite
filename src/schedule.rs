@@ -298,10 +298,6 @@ fn ical_to_ours(schedule: &mut Schedule, data: &Vec<IcalEvent>) {
 			let date = schedule.calendar.get_mut(&day).unwrap();
 			// Check if the summary is a literal schedule
 			let literal_header = "LITERAL SCHEDULE ";
-			match event.description.clone() {
-				Some(s) => println!("{}", s),
-				_ => {}
-			}
 			if event
 				.description
 				.as_ref()
