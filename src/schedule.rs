@@ -198,11 +198,13 @@ impl From<ScheduleDefinition> for Schedule {
 impl Schedule {
 	pub fn update(&mut self) {
 		// Fetch the primary calendar
+		println!("Fetching main calendar...");
 		let calendar_data = match &self.definition.calendar_url {
 			Some(url) => IcalEvent::get(&url),
 			None => vec![],
 		};
 		// Fetch the override calendar
+		println!("Fetching override calendar...");
 		let override_calendar_data = match &self.definition.override_calendar_url {
 			Some(url) => IcalEvent::get(&url),
 			None => vec![],
@@ -222,6 +224,7 @@ impl Schedule {
 		}
 	}
 	pub fn on_date(&self, date: NaiveDate) -> ScheduleType {
+		let mut literal: Option<ScheduleType> = None;
 		let special: Option<String> = self
 			.calendar
 			.iter()
@@ -232,7 +235,11 @@ impl Schedule {
 						Event::ScheduleOverride(s) => {
 							return Some(s);
 						}
-						Event::SpecialEvent(_) => {}
+						Event::ScheduleLiteral(s) => {
+							literal = Some(serde_json::from_str(&s).unwrap());
+							return None;
+						}
+						_ => {}
 					}
 				}
 				None
@@ -242,11 +249,14 @@ impl Schedule {
 			.next();
 		match special {
 			Some(name) => self.definition.schedule_types.get(&name).unwrap().clone(),
-			None => {
-				let weekday: usize = date.weekday().num_days_from_sunday().try_into().unwrap();
-				let name = self.definition.typical_schedule[weekday].clone();
-				self.definition.schedule_types.get(&name).unwrap().clone()
-			}
+			None => match literal {
+				Some(schedule) => schedule,
+				None => {
+					let weekday: usize = date.weekday().num_days_from_sunday().try_into().unwrap();
+					let name = self.definition.typical_schedule[weekday].clone();
+					self.definition.schedule_types.get(&name).unwrap().clone()
+				}
+			},
 		}
 	}
 }
@@ -255,6 +265,8 @@ impl Schedule {
 pub enum Event {
 	/// This variant causes an override of the current schedule to the schedule named in the variant.
 	ScheduleOverride(String),
+	/// This variant causes the schedule contained within to be used
+	ScheduleLiteral(String),
 	/// This variant causes a special event message to be included in the API response.
 	SpecialEvent(String),
 }
@@ -284,6 +296,34 @@ fn ical_to_ours(schedule: &mut Schedule, data: &Vec<IcalEvent>) {
 			}
 			// Unwrap the calendar's entry, now that we know it exists.
 			let date = schedule.calendar.get_mut(&day).unwrap();
+			// Check if the summary is a literal schedule
+			let literal_header = "LITERAL SCHEDULE ";
+			match event.description.clone() {
+				Some(s) => println!("{}", s),
+				_ => {}
+			}
+			if event
+				.description
+				.as_ref()
+				.unwrap_or(&"".to_string())
+				.starts_with(literal_header)
+			{
+				let json = event
+					.description
+					.as_ref()
+					.unwrap()
+					.to_string()
+					.chars()
+					.skip(literal_header.len())
+					.collect::<String>();
+				let result = serde_json::from_str::<ScheduleType>(&json);
+				if result.is_ok() {
+					date.push(Event::ScheduleLiteral(json));
+					return;
+				} else {
+					println!("Error parsing schedule literal: {:?}", result.unwrap_err())
+				}
+			}
 			// Check against every schedule
 			let mut is_schedule_event = false;
 			for i in &schedule.definition.schedule_types {
@@ -305,7 +345,7 @@ fn ical_to_ours(schedule: &mut Schedule, data: &Vec<IcalEvent>) {
 								found = true;
 								is_schedule_event = true
 							}
-							Event::SpecialEvent(_) => {}
+							_ => {}
 						}
 					}
 					if !found {

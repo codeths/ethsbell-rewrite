@@ -5,6 +5,7 @@ use serde::Deserialize;
 #[derive(Deserialize)]
 pub struct IcalEvent {
 	pub summary: Option<String>,
+	pub description: Option<String>,
 	pub start: Option<NaiveDate>,
 	pub end: Option<NaiveDate>,
 }
@@ -16,10 +17,11 @@ impl IcalEvent {
 			.map(|vevent| {
 				let mut result = IcalEvent {
 					summary: None,
+					description: None,
 					start: None,
 					end: None,
 				};
-				for line in vevent.lines() {
+				for (number, line) in vevent.lines().enumerate() {
 					let mut split = line.split(":");
 					let kind = split.next();
 					match kind {
@@ -75,13 +77,25 @@ impl IcalEvent {
 							result.end = Some(result.start.unwrap() + Duration::days(days));
 						}
 						Some("SUMMARY") => result.summary = Some(split.next().unwrap().to_string()),
+						Some("DESCRIPTION") => {
+							let other_lines = vevent
+								.lines()
+								.skip(number + 1)
+								.take_while(|v| v.starts_with(" "))
+								.map(|v| v.trim_start())
+								.collect::<String>();
+							let text = (split.collect::<Vec<&str>>().join(":") + &other_lines)
+								.to_string()
+								.replace("\\,", ",");
+							result.description = Some(text)
+						}
 						Some(_) => {}
 						None => {}
 					}
 				}
 				result
 			})
-			.filter(|v| v.summary != None && v.start != None)
+			.filter(|v| (v.description != None || v.summary != None) && v.start != None)
 			.collect()
 	}
 }
