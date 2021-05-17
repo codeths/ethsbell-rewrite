@@ -3,7 +3,9 @@ WORKDIR /app
 COPY Cargo.toml Cargo.lock ./
 RUN mkdir src && echo "fn main(){println!(\"dummy\");}" > ./src/main.rs
 RUN cargo build --release --bin ethsbell-rewrite
+RUN rm ./src/main.rs
 COPY . .
+RUN touch src/main.rs
 RUN cargo build --release --bin ethsbell-rewrite
 
 FROM ubuntu
