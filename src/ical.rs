@@ -23,7 +23,7 @@ impl IcalEvent {
 					let mut split = line.split(":");
 					let kind = split.next();
 					match kind {
-						Some("DTSTART") => {
+						Some(kind) if kind.starts_with("DTSTART") => {
 							let string = split.next().unwrap().chars();
 							let year: i32 =
 								string.clone().take(4).collect::<String>().parse().unwrap();
@@ -43,7 +43,7 @@ impl IcalEvent {
 								.unwrap();
 							result.start = Some(NaiveDate::from_ymd(year, month, day));
 						}
-						Some("DTEND") => {
+						Some(kind) if kind.starts_with("DTEND") => {
 							let string = split.next().unwrap().chars();
 							let year: i32 =
 								string.clone().take(4).collect::<String>().parse().unwrap();
