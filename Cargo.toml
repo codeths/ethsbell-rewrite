@@ -1,6 +1,6 @@
 [package]
 name = "ethsbell-rewrite"
-version = "0.2.2"
+version = "0.2.3"
 authors = ["Willow <willow.ch@protonmail.com>"]
 edition = "2018"
 
@@ -18,10 +18,12 @@ regex = "1.4.6"
 urlencoding = "1.1.1"
 thiserror = "1.0.24"
 
-[dependencies.ical]
-version = "0.7.0"
-default-features = false
-features = ["ical"]
-
 [lib]
 path = "src/main.rs"
+
+[profile.release]
+lto = "fat"
+codegen-units = 1
+
+[profile.release.package."*"]
+codegen-units = 1
