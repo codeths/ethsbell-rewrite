@@ -216,11 +216,8 @@ impl Schedule {
 		// Update the last-updated value
 		self.last_updated = Local::now().naive_local();
 	}
-	pub fn update_if_needed(&mut self) {
-		let now = Local::now();
-		if self.last_updated.date() != now.date().naive_local() {
-			self.update()
-		}
+	pub fn is_update_needed(&self) -> bool {
+		self.last_updated.date() != Local::now().date().naive_local()
 	}
 	pub fn on_date(&self, date: NaiveDate) -> ScheduleType {
 		let mut literal: Option<ScheduleType> = None;

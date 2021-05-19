@@ -293,7 +293,7 @@ dependencies = [
 
 [[package]]
 name = "ethsbell-rewrite"
-version = "0.2.6"
+version = "0.2.7"
 dependencies = [
  "chrono",
  "regex",
