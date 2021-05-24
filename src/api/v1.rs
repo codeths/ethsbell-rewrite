@@ -5,7 +5,7 @@ use crate::{
 	SpecLock,
 };
 use chrono::{DateTime, Datelike, Local, NaiveDate, NaiveDateTime, NaiveTime, TimeZone};
-use rocket::{Route, State};
+use rocket::{Data, Route, State};
 use rocket_contrib::json::Json;
 use std::{
 	fs::{read_to_string, OpenOptions},
@@ -37,14 +37,14 @@ fn get_spec(_auth: Authenticated) -> Result<String, std::io::Error> {
 }
 
 #[post("/spec", data = "<body>")]
-fn post_spec(body: String, _auth: Authenticated) -> Result<(), std::io::Error> {
+fn post_spec(body: Data, _auth: Authenticated) -> Result<(), std::io::Error> {
 	let mut file = OpenOptions::new()
 		.read(true)
 		.write(true)
 		.create(true)
 		.truncate(true)
 		.open("./def.json")?;
-	file.write_all(&body.as_bytes())?;
+	body.stream_to(&mut file)?;
 	file.flush()?;
 	Ok(())
 }
