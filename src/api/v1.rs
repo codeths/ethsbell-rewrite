@@ -32,7 +32,7 @@ pub fn routes() -> Vec<Route> {
 }
 
 #[get("/spec")]
-fn get_spec(_auth: Authenticated) -> Result<String, std::io::Error> {
+fn get_spec() -> Result<String, std::io::Error> {
 	Ok(read_to_string("./def.json")?)
 }
 
