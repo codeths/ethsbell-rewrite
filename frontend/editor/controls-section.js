@@ -12,20 +12,24 @@ $("unlock").addEventListener("click", async () => {
 
 let data
 
+function check_data(error_span) {
+	if (!data) {
+		$(error_span).innerHTML = "No data"
+		throw new Error("No data")
+	}
+}
+
 $("pull").addEventListener("click", async () => {
 	data = await (await req("../api/v1/spec", {}, "controls_error")).json();
 	update_view()
 })
 
 $("push").addEventListener("click", async () => {
-	if (data) {
-		await req("../api/v1/spec", {
-			method: "POST",
-			body: JSON.stringify(data)
-		}, "controls_error")
-	} else {
-		$("controls_error").innerHTML = "Local copy is empty, aborting push."
-	}
+	check_data("controls_error");
+	await req("../api/v1/spec", {
+		method: "POST",
+		body: JSON.stringify(data)
+	}, "controls_error")
 })
 
 $("select_period").addEventListener("change", update_view)
@@ -77,6 +81,7 @@ function update_view() {
 
 // Schedule add, copy, and remove
 $('add_schedule').addEventListener("click", () => {
+	check_data("controls_error");
 	let new_name = prompt("Set the internal name for the new schedule type (like no_school or orange_day)")
 	if (new_name.length > 0) {
 		data.schedule_types[new_name] = {
@@ -90,6 +95,7 @@ $('add_schedule').addEventListener("click", () => {
 	update_view()
 })
 $('copy_schedule').addEventListener("click", () => {
+	check_data("controls_error");
 	let new_name = prompt("Set the internal name for the newly copied schedule (like no_school or orange_day)")
 	if (new_name.length > 0) {
 		data.schedule_types[new_name] = JSON.parse(JSON.stringify(data.schedule_types[schedule_name]))
@@ -100,6 +106,7 @@ $('copy_schedule').addEventListener("click", () => {
 	update_view()
 })
 $('remove_schedule').addEventListener("click", () => {
+	check_data("controls_error");
 	let response = confirm(`Do you really want to delete ${schedule_name}?`)
 	if (response) {
 		delete data.schedule_types[schedule_name]
@@ -110,6 +117,7 @@ $('remove_schedule').addEventListener("click", () => {
 
 // Period add, copy, and remove
 $('add_period').addEventListener("click", () => {
+	check_data("controls_error");
 	let new_name = prompt("Set the name for the new period (like First Period or Lunch)")
 	if (new_name.length > 0) {
 		data.schedule_types[schedule_name].periods.push({
@@ -124,6 +132,7 @@ $('add_period').addEventListener("click", () => {
 	update_view()
 })
 $('remove_period').addEventListener("click", () => {
+	check_data("controls_error");
 	let response = confirm(`Do you really want to delete ${period_index}?`)
 	if (response) {
 		data.schedule_types[schedule_name].periods.remove(period_index)
@@ -134,21 +143,27 @@ $('remove_period').addEventListener("click", () => {
 
 // Handle form changes
 $('schedule_friendly_name').addEventListener("change", event => {
+	check_data("controls_error");
 	data.schedule_types[schedule_name].friendly_name = event.target.value
 })
 $('schedule_regex').addEventListener('change', event => {
+	check_data("controls_error");
 	data.schedule_types[schedule_name].regex = event.target.value
 })
 $('period_friendly_name').addEventListener("change", event => {
+	check_data("controls_error");
 	data.schedule_types[schedule_name].periods[period_index].friendly_name = event.target.value
 })
 $('period_start').addEventListener("change", event => {
+	check_data("controls_error");
 	data.schedule_types[schedule_name].periods[period_index].start = event.target.value
 })
 $('period_end').addEventListener("change", event => {
+	check_data("controls_error");
 	data.schedule_types[schedule_name].periods[period_index].end = event.target.value
 })
 $('period_kind').addEventListener("change", event => {
+	check_data("controls_error");
 	if (event.target.value === "Class") {
 		data.schedule_types[schedule_name].periods[period_index].kind = {
 			Class: $('period_class_index').value
@@ -160,5 +175,6 @@ $('period_kind').addEventListener("change", event => {
 	}
 })
 $('period_class_index').addEventListener("change", event => {
+	check_data("controls_error");
 	data.schedule_types[schedule_name].periods[period_index].kind.Class = event.target.value
 })
