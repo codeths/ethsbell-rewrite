@@ -5,6 +5,8 @@ use rocket::{
 	Response,
 };
 
+use crate::login::WantsBasicAuth;
+
 pub mod v1;
 
 pub struct ApiFairing;
@@ -18,8 +20,15 @@ impl Fairing for ApiFairing {
 	}
 
 	fn on_attach(&self, rocket: rocket::Rocket) -> Result<rocket::Rocket, rocket::Rocket> {
-		Ok(rocket.mount("/api/v1", v1::routes()).register(catchers![]))
+		Ok(rocket
+			.mount("/api/v1", v1::routes())
+			.register(catchers![wants_auth]))
 	}
+}
+
+#[catch(401)]
+fn wants_auth() -> WantsBasicAuth {
+	WantsBasicAuth
 }
 
 #[derive(thiserror::Error, Debug)]

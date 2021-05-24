@@ -295,6 +295,7 @@ dependencies = [
 name = "ethsbell-rewrite"
 version = "0.2.7"
 dependencies = [
+ "base64 0.13.0",
  "chrono",
  "regex",
  "reqwest",

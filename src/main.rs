@@ -11,6 +11,7 @@ use schedule::{Schedule, ScheduleDefinition};
 pub mod api;
 mod frontend;
 pub mod ical;
+mod login;
 pub mod schedule;
 
 struct SpecLock(Option<DateTime<Local>>);

@@ -1,5 +1,6 @@
 use super::OurError;
 use crate::{
+	login::Authenticated,
 	schedule::{Period, Schedule, ScheduleType},
 	SpecLock,
 };
@@ -27,7 +28,10 @@ pub fn routes() -> Vec<Route> {
 }
 
 #[get("/lock")]
-fn get_lock(lock: State<Arc<Mutex<SpecLock>>>) -> Result<&'static str, Json<DateTime<Local>>> {
+fn get_lock(
+	lock: State<Arc<Mutex<SpecLock>>>,
+	_auth: Authenticated,
+) -> Result<&'static str, Json<DateTime<Local>>> {
 	let mut lock = lock.lock().unwrap();
 	match lock.0 {
 		Some(dt) => Err(Json(dt)),
@@ -39,7 +43,7 @@ fn get_lock(lock: State<Arc<Mutex<SpecLock>>>) -> Result<&'static str, Json<Date
 }
 
 #[get("/force-unlock")]
-fn force_unlock(lock: State<Arc<Mutex<SpecLock>>>) {
+fn force_unlock(lock: State<Arc<Mutex<SpecLock>>>, _auth: Authenticated) {
 	let mut lock = lock.lock().unwrap();
 	lock.0 = None
 }
