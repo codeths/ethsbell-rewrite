@@ -8,6 +8,8 @@ use chrono::{DateTime, Datelike, Local, NaiveDate, NaiveDateTime, NaiveTime, Tim
 use rocket::{Route, State};
 use rocket_contrib::json::Json;
 use std::{
+	fs::{read_to_string, File},
+	io::Write,
 	str::FromStr,
 	sync::{Arc, Mutex, RwLock},
 };
@@ -24,7 +26,21 @@ pub fn routes() -> Vec<Route> {
 		what_time,
 		get_lock,
 		force_unlock,
+		get_spec,
+		post_spec,
 	]
+}
+
+#[get("/spec")]
+fn get_spec(_auth: Authenticated) -> Result<String, std::io::Error> {
+	Ok(read_to_string("./def.json")?)
+}
+
+#[post("/spec", data = "<body>")]
+fn post_spec(body: String, _auth: Authenticated) -> Result<(), std::io::Error> {
+	let mut file = File::open("./def.json")?;
+	file.write(&body.as_bytes())?;
+	Ok(())
 }
 
 #[get("/lock")]

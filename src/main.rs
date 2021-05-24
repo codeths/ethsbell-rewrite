@@ -14,6 +14,7 @@ pub mod ical;
 mod login;
 pub mod schedule;
 
+#[derive(Clone)]
 struct SpecLock(Option<DateTime<Local>>);
 
 #[macro_use]
