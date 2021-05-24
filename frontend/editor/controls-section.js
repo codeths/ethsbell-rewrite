@@ -60,16 +60,18 @@ function update_view() {
 	// Fill form fields
 	$('schedule_friendly_name').value = schedule.friendly_name
 	$('schedule_regex').value = schedule.regex
-	$('period_friendly_name').value = period.friendly_name
-	$('period_start').value = period.start
-	$('period_end').value = period.end
-	if (typeof period.kind === 'string') {
-		$('period_kind').value = period.kind
-		$('period_class_index').disabled = true
-	} else {
-		$('period_kind').value = "Class"
-		$('period_class_index').disabled = false
-		$('period_class_index').value = period.kind.Class
+	if (period) {
+		$('period_friendly_name').value = period.friendly_name
+		$('period_start').value = period.start
+		$('period_end').value = period.end
+		if (typeof period.kind === 'string') {
+			$('period_kind').value = period.kind
+			$('period_class_index').disabled = true
+		} else {
+			$('period_kind').value = "Class"
+			$('period_class_index').disabled = false
+			$('period_class_index').value = period.kind.Class
+		}
 	}
 }
 
