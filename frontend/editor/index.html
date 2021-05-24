@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Schedule Editor</title>
+	<script src="./editor/helpers.js"></script>
+	<link rel="stylesheet" href="./editor/index.css">
+</head>
+
+<body>
+	<h1>ETHSBell Rewrite Schedule Editor</h1>
+	<hr>
+	<div id="authenticate">
+		<h2>Authenticate</h2>
+		<p>
+			To use the schedule editor, you need to input the administrator's secret.
+			<br>
+		<form id="auth_form">
+			<label for="auth_username">Username: </label>
+			<input id="auth_username"><br>
+			<label for="auth_password">Password: </label>
+			<input type="password" id="auth_password"><br>
+			<button id="auth_check">Check</button><br>
+			<span id="auth_error" class="error"></span>
+			<script src="./editor/auth_section.js"></script>
+		</form>
+		</p>
+	</div>
+	<hr>
+	<button id="lock">Lock</button>
+	<button id="unlock">Unlock</button>
+	<button id="pull">Pull</button>
+	<button id="push">Push</button>
+	<span id="controls_error" class="error"></span>
+	<hr>
+	<h2>Schedule Type information</h2>
+	<select id="select_schedule">
+	</select>
+	<button id="add_schedule">+</button>
+	<button id="copy_schedule">copy</button>
+	<button id="remove_schedule">-</button>
+	<br>
+	<label for="schedule_friendly_name">Friendly Name</label>
+	<input id="schedule_friendly_name">
+	<br>
+	<label for="schedule_regex">Schedule Regex</label>
+	<input id="schedule_regex">
+	<hr>
+	<h2>Period Information</h2>
+	<select id="select_period">
+	</select>
+	<button id="add_period">+</button>
+	<button id="remove_period">-</button>
+	<br>
+	<label for="period_friendly_name">Friendly Name</label>
+	<input id="period_friendly_name">
+	<br>
+	<label for="period_start">Start Time</label>
+	<input id="period_start">
+	<br>
+	<label for="period_end">End Time</label>
+	<input id="period_end">
+	<br>
+	<label for="period_kind">Period Kind</label>
+	<select id="period_kind">
+		<option value="Class">Class</option>
+		<option value="Lunch">Lunch</option>
+		<option value="Break">Break</option>
+		<option value="AMSupport">AM Support</option>
+		<option value="Passing">Passing (implicit)</option>
+		<option value="BeforeSchool">BeforeSchool (implicit)</option>
+		<option value="AfterSchool">AfterSchool (implicit)</option>
+	</select>
+	<br>
+	<label for="period_class_index">Class Index</label>
+	<input id="period_class_index" type="number">
+	<script src="./editor/controls-section.js"></script>
+</body>
+
+</html>

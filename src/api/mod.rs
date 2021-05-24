@@ -35,6 +35,8 @@ fn wants_auth() -> WantsBasicAuth {
 pub enum OurError {
 	#[error("Error trying to interpret date/time string; try YYYY-MM-DD or HH:MM:SS")]
 	BadString(#[from] chrono::ParseError),
+	#[error("Error trying to access a file")]
+	IOError(#[from] std::io::Error),
 }
 
 impl<'r> Responder<'r> for OurError {
@@ -42,6 +44,7 @@ impl<'r> Responder<'r> for OurError {
 		Response::build_from(self.to_string().respond_to(request).unwrap())
 			.status(match self {
 				OurError::BadString(_) => Status::BadRequest,
+				OurError::IOError(_) => Status::InternalServerError,
 			})
 			.ok()
 	}

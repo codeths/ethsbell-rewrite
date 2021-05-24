@@ -8,7 +8,7 @@ use chrono::{DateTime, Datelike, Local, NaiveDate, NaiveDateTime, NaiveTime, Tim
 use rocket::{Route, State};
 use rocket_contrib::json::Json;
 use std::{
-	fs::{read_to_string, File},
+	fs::{read_to_string, OpenOptions},
 	io::Write,
 	str::FromStr,
 	sync::{Arc, Mutex, RwLock},
@@ -38,8 +38,14 @@ fn get_spec(_auth: Authenticated) -> Result<String, std::io::Error> {
 
 #[post("/spec", data = "<body>")]
 fn post_spec(body: String, _auth: Authenticated) -> Result<(), std::io::Error> {
-	let mut file = File::open("./def.json")?;
-	file.write(&body.as_bytes())?;
+	let mut file = OpenOptions::new()
+		.read(true)
+		.write(true)
+		.create(true)
+		.truncate(true)
+		.open("./def.json")?;
+	file.write_all(&body.as_bytes())?;
+	file.flush()?;
 	Ok(())
 }
 
@@ -47,13 +53,13 @@ fn post_spec(body: String, _auth: Authenticated) -> Result<(), std::io::Error> {
 fn get_lock(
 	lock: State<Arc<Mutex<SpecLock>>>,
 	_auth: Authenticated,
-) -> Result<&'static str, Json<DateTime<Local>>> {
+) -> Result<Json<String>, Json<DateTime<Local>>> {
 	let mut lock = lock.lock().unwrap();
 	match lock.0 {
 		Some(dt) => Err(Json(dt)),
 		None => {
 			lock.0 = Some(Local::now());
-			Ok("OK")
+			Ok(Json("OK".to_string()))
 		}
 	}
 }
