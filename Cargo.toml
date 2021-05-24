@@ -22,9 +22,3 @@ base64 = "0.13.0"
 [lib]
 path = "src/main.rs"
 
-[profile.release]
-lto = "fat"
-codegen-units = 1
-
-[profile.release.package."*"]
-codegen-units = 1
