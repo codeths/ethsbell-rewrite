@@ -2,15 +2,18 @@
 
 use std::{
 	env, fs,
-	sync::{Arc, RwLock},
+	sync::{Arc, Mutex, RwLock},
 };
 
+use chrono::{DateTime, Local};
 use schedule::{Schedule, ScheduleDefinition};
 
 pub mod api;
 mod frontend;
 pub mod ical;
 pub mod schedule;
+
+struct SpecLock(Option<DateTime<Local>>);
 
 #[macro_use]
 extern crate rocket;
@@ -34,9 +37,11 @@ fn main() {
 		// Wrap the runtime schedule struct in a thread-safe container.
 		Arc::new(RwLock::new(schedule))
 	};
+	let spec_lock = Arc::new(Mutex::new(SpecLock(None)));
 	rocket::ignite()
 		.attach(api::ApiFairing)
 		.attach(frontend::FrontendFairing)
 		.manage(schedule.clone())
+		.manage(spec_lock)
 		.launch();
 }

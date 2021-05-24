@@ -1,15 +1,15 @@
-use std::{
-	str::FromStr,
-	sync::{Arc, RwLock},
+use super::OurError;
+use crate::{
+	schedule::{Period, Schedule, ScheduleType},
+	SpecLock,
 };
-
-use chrono::{Datelike, Local, NaiveDate, NaiveDateTime, NaiveTime, TimeZone};
+use chrono::{DateTime, Datelike, Local, NaiveDate, NaiveDateTime, NaiveTime, TimeZone};
 use rocket::{Route, State};
 use rocket_contrib::json::Json;
-
-use crate::schedule::{Period, Schedule, ScheduleType};
-
-use super::OurError;
+use std::{
+	str::FromStr,
+	sync::{Arc, Mutex, RwLock},
+};
 
 pub fn routes() -> Vec<Route> {
 	routes![
@@ -20,8 +20,28 @@ pub fn routes() -> Vec<Route> {
 		today_at,
 		date_at,
 		today_around_now,
-		what_time
+		what_time,
+		get_lock,
+		force_unlock,
 	]
+}
+
+#[get("/lock")]
+fn get_lock(lock: State<Arc<Mutex<SpecLock>>>) -> Result<&'static str, Json<DateTime<Local>>> {
+	let mut lock = lock.lock().unwrap();
+	match lock.0 {
+		Some(dt) => Err(Json(dt)),
+		None => {
+			lock.0 = Some(Local::now());
+			Ok("OK")
+		}
+	}
+}
+
+#[get("/force-unlock")]
+fn force_unlock(lock: State<Arc<Mutex<SpecLock>>>) {
+	let mut lock = lock.lock().unwrap();
+	lock.0 = None
 }
 
 #[get("/what-time-is-it?<timestamp>")]
