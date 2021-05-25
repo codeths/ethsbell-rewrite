@@ -166,7 +166,7 @@ $('period_kind').addEventListener("change", event => {
 	check_data("controls_error");
 	if (event.target.value === "Class") {
 		data.schedule_types[schedule_name].periods[period_index].kind = {
-			Class: $('period_class_index').value
+			Class: Number.parseInt($('period_class_index').value, 10)
 		}
 		$('period_class_index').disabled = false
 	} else {
@@ -176,5 +176,5 @@ $('period_kind').addEventListener("change", event => {
 })
 $('period_class_index').addEventListener("change", event => {
 	check_data("controls_error");
-	data.schedule_types[schedule_name].periods[period_index].kind.Class = Number.parse(event.target.value, 10)
+	data.schedule_types[schedule_name].periods[period_index].kind.Class = Number.parseInt(event.target.value, 10)
 })

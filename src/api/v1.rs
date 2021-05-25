@@ -1,14 +1,14 @@
 use super::OurError;
 use crate::{
 	login::Authenticated,
-	schedule::{Period, Schedule, ScheduleType},
+	schedule::{Period, Schedule, ScheduleDefinition, ScheduleType},
 	SpecLock,
 };
 use chrono::{DateTime, Datelike, Local, NaiveDate, NaiveDateTime, NaiveTime, TimeZone};
 use rocket::{Data, Route, State};
 use rocket_contrib::json::Json;
 use std::{
-	fs::{read_to_string, OpenOptions},
+	fs::{read_to_string, File, OpenOptions},
 	io::Write,
 	str::FromStr,
 	sync::{Arc, Mutex, RwLock},
@@ -54,15 +54,18 @@ fn get_spec() -> Result<String, std::io::Error> {
 }
 
 #[post("/spec", data = "<body>")]
-fn post_spec(body: Data, _auth: Authenticated) -> Result<(), std::io::Error> {
+fn post_spec(body: Data, _auth: Authenticated) -> Result<(), OurError> {
 	let mut file = OpenOptions::new()
 		.read(true)
 		.write(true)
 		.create(true)
 		.truncate(true)
-		.open("./def.json")?;
+		.open("./def-test.json")?;
 	body.stream_to(&mut file)?;
 	file.flush()?;
+	let file = File::open("./def-test.json")?;
+	let _: ScheduleDefinition = serde_json::from_reader(file)?;
+	std::fs::copy("./def-test.json", "./def.json")?;
 	Ok(())
 }
 

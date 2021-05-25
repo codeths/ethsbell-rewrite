@@ -31,12 +31,15 @@ fn wants_auth() -> WantsBasicAuth {
 	WantsBasicAuth
 }
 
+// This shows an error in rust-analyzer but it doesn't actually fail to compile?
 #[derive(thiserror::Error, Debug)]
 pub enum OurError {
 	#[error("Error trying to interpret date/time string; try YYYY-MM-DD or HH:MM:SS")]
 	BadString(#[from] chrono::ParseError),
 	#[error("Error trying to access a file")]
 	IOError(#[from] std::io::Error),
+	#[error("Error trying to transform some data")]
+	SerdeError(#[from] serde_json::Error),
 }
 
 impl<'r> Responder<'r> for OurError {
@@ -45,6 +48,7 @@ impl<'r> Responder<'r> for OurError {
 			.status(match self {
 				OurError::BadString(_) => Status::BadRequest,
 				OurError::IOError(_) => Status::InternalServerError,
+				OurError::SerdeError(_) => Status::BadRequest,
 			})
 			.ok()
 	}
