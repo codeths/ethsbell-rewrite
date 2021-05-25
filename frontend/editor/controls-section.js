@@ -176,5 +176,5 @@ $('period_kind').addEventListener("change", event => {
 })
 $('period_class_index').addEventListener("change", event => {
 	check_data("controls_error");
-	data.schedule_types[schedule_name].periods[period_index].kind.Class = event.target.value
+	data.schedule_types[schedule_name].periods[period_index].kind.Class = Number.parse(event.target.value, 10)
 })
