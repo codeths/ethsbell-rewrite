@@ -135,7 +135,7 @@ $('remove_period').addEventListener("click", () => {
 	check_data("controls_error");
 	let response = confirm(`Do you really want to delete ${period_index}?`)
 	if (response) {
-		data.schedule_types[schedule_name].periods.remove(period_index)
+		data.schedule_types[schedule_name].periods.splice(period_index)
 		$('select_period').value = 0
 		update_view()
 	}
