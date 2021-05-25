@@ -29,6 +29,7 @@ pub fn routes() -> Vec<Route> {
 		get_spec,
 		post_spec,
 		check_auth,
+		check_version,
 	]
 }
 
