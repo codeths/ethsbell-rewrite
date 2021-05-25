@@ -7,6 +7,6 @@ $("auth_check").addEventListener('click', async () => {
 	let password = $("auth_password").value
 	let auth_b64 = btoa(`${username}:${password}`)
 	Authorization = `Basic ${auth_b64}`
-	await req('../api/v1/spec', {}, "auth_error")
+	await req('../api/v1/check-auth', {}, "auth_error")
 	$("authenticate").innerHTML = "Auth OK"
 })

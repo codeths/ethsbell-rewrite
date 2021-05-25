@@ -28,7 +28,13 @@ pub fn routes() -> Vec<Route> {
 		force_unlock,
 		get_spec,
 		post_spec,
+		check_auth,
 	]
+}
+
+#[get("/check-auth")]
+fn check_auth(_auth: Authenticated) -> &'static str {
+	"ok"
 }
 
 #[get("/spec")]
