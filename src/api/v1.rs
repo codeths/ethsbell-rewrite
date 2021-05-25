@@ -32,6 +32,16 @@ pub fn routes() -> Vec<Route> {
 	]
 }
 
+/// Returns a tuple of the crate version, the CI commit hash, and the CI repository.
+#[get("/check-version")]
+fn check_version() -> Json<(String, Option<String>, Option<String>)> {
+	Json((
+		env!("CARGO_PKG_VERSION").to_string(),
+		option_env!("GITHUB_SHA").map(|f| f.to_string()),
+		option_env!("GITHUB_REPOSITORY").map(|f| f.to_string()),
+	))
+}
+
 #[get("/check-auth")]
 fn check_auth(_auth: Authenticated) -> &'static str {
 	"ok"
