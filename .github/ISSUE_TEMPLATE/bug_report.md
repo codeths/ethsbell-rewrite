@@ -24,7 +24,7 @@ A clear and concise description of what you expected to happen.
 If applicable, add screenshots to help explain your problem.
 
 **OS/Browser Info**
-Please visit [whatsmybrowser.org](https://www.whatsmybrowser.org/), copy the unique link, and paste it below:
+Please visit https://www.whatsmybrowser.org/, copy the unique link, and paste it below:
 
 **Additional context**
 Add any other context about the problem here.
