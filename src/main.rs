@@ -20,6 +20,8 @@ struct SpecLock(Option<DateTime<Local>>);
 
 #[macro_use]
 extern crate rocket;
+#[macro_use]
+extern crate schemars;
 #[allow(dead_code)]
 fn main() {
 	// Build the schedule definition and do our first update.

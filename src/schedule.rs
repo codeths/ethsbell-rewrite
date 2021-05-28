@@ -15,7 +15,7 @@ use crate::ical::IcalEvent;
 /// let schedule_text = "{\"calendar_url\":\"http://example.com/cal.ical\", \"override_calendar_url\":\"http://example.com/cal.ical\", \"schedule_types\": {}, \"typical_schedule\": []}";
 /// let schedule: ScheduleDefinition = serde_json::from_str(&schedule_text).unwrap();
 /// ```
-#[derive(Serialize, Deserialize, Debug, Clone)]
+#[derive(Serialize, Deserialize, Debug, Clone, JsonSchema)]
 pub struct ScheduleDefinition {
 	/// The URL of the ical calendar we fetch the schedule's data from.
 	pub calendar_url: Option<String>,
@@ -35,7 +35,7 @@ pub struct ScheduleDefinition {
 /// let schedule_text = "{\"friendly_name\":\"Test Schedule\", \"periods\": []}";
 /// let schedule: ScheduleType = serde_json::from_str(&schedule_text).unwrap();
 /// ```
-#[derive(Serialize, Deserialize, Debug, Clone)]
+#[derive(JsonSchema, Serialize, Deserialize, Debug, Clone)]
 pub struct ScheduleType {
 	/// A human-friendly name for the schedule, like "No School" or "E-Learning: Blue Day"
 	pub friendly_name: String,
@@ -43,6 +43,7 @@ pub struct ScheduleType {
 	pub periods: Vec<Period>,
 	/// The regular expression which calendar entries for this schedule match
 	#[serde(with = "serde_regex")]
+	#[schemars(skip)]
 	pub regex: Option<Regex>,
 }
 impl ScheduleType {
@@ -121,7 +122,7 @@ impl ScheduleType {
 ///		kind: PeriodType::Class(0)
 /// })
 /// ```
-#[derive(Serialize, Deserialize, PartialEq, Debug, Clone)]
+#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema)]
 pub struct Period {
 	/// A human-friendly name for this period, like "First Period".
 	pub friendly_name: String,
@@ -160,7 +161,7 @@ impl Period {
 }
 
 /// The types a period can be.
-#[derive(Serialize, Deserialize, PartialEq, Debug, Clone)]
+#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema)]
 pub enum PeriodType {
 	/// This period has a class in it, and it is this index in a student's schedule.
 	Class(usize),
@@ -179,7 +180,7 @@ pub enum PeriodType {
 	AfterSchool,
 }
 
-#[derive(Serialize, Clone)]
+#[derive(Serialize, Clone, JsonSchema)]
 pub struct Schedule {
 	pub last_updated: NaiveDateTime,
 	pub calendar: HashMap<NaiveDate, Vec<Event>>,
@@ -259,8 +260,9 @@ impl Schedule {
 		}
 	}
 }
+
 /// Types of calendar events.
-#[derive(Serialize, Clone, PartialEq)]
+#[derive(Serialize, Clone, PartialEq, JsonSchema)]
 pub enum Event {
 	/// This variant causes an override of the current schedule to the schedule named in the variant.
 	ScheduleOverride(String),

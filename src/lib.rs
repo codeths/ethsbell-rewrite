@@ -1,3 +1,7 @@
+#[cfg(feature = "ws")]
+#[macro_use]
+extern crate rocket_okapi;
+
 pub mod ical;
 pub mod schedule;
 

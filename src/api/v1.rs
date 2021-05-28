@@ -7,6 +7,7 @@ use crate::{
 use chrono::{DateTime, Datelike, Local, NaiveDate, NaiveDateTime, NaiveTime, TimeZone};
 use rocket::{Data, Route, State};
 use rocket_contrib::json::Json;
+use rocket_okapi::{openapi, routes_with_openapi};
 use std::{
 	fs::{read_to_string, File, OpenOptions},
 	io::Write,
@@ -15,7 +16,7 @@ use std::{
 };
 
 pub fn routes() -> Vec<Route> {
-	routes![
+	routes_with_openapi![
 		get_schedule,
 		today,
 		date,
@@ -34,6 +35,7 @@ pub fn routes() -> Vec<Route> {
 }
 
 /// Returns a tuple of the crate version, the CI commit hash, and the CI repository.
+#[openapi]
 #[get("/check-version")]
 fn check_version() -> Json<(String, Option<String>, Option<String>)> {
 	Json((
@@ -43,16 +45,19 @@ fn check_version() -> Json<(String, Option<String>, Option<String>)> {
 	))
 }
 
+#[openapi]
 #[get("/check-auth")]
 fn check_auth(_auth: Authenticated) -> &'static str {
 	"ok"
 }
 
+#[openapi]
 #[get("/spec")]
 fn get_spec() -> Result<String, std::io::Error> {
 	Ok(read_to_string("./def.json")?)
 }
 
+#[openapi(skip)]
 #[post("/spec", data = "<body>")]
 fn post_spec(body: Data, _auth: Authenticated) -> Result<(), OurError> {
 	let mut file = OpenOptions::new()
@@ -69,6 +74,7 @@ fn post_spec(body: Data, _auth: Authenticated) -> Result<(), OurError> {
 	Ok(())
 }
 
+#[openapi]
 #[get("/lock")]
 fn get_lock(
 	lock: State<Arc<Mutex<SpecLock>>>,
@@ -84,12 +90,14 @@ fn get_lock(
 	}
 }
 
+#[openapi]
 #[get("/force-unlock")]
 fn force_unlock(lock: State<Arc<Mutex<SpecLock>>>, _auth: Authenticated) {
 	let mut lock = lock.lock().unwrap();
 	lock.0 = None
 }
 
+#[openapi]
 #[get("/what-time-is-it?<timestamp>")]
 fn what_time(timestamp: Option<i64>) -> String {
 	let now = match timestamp {
@@ -101,6 +109,7 @@ fn what_time(timestamp: Option<i64>) -> String {
 	now.to_rfc2822()
 }
 
+#[openapi]
 #[get("/schedule")]
 fn get_schedule(schedule: State<Arc<RwLock<Schedule>>>) -> Json<Schedule> {
 	if schedule.read().unwrap().is_update_needed() {
@@ -110,6 +119,7 @@ fn get_schedule(schedule: State<Arc<RwLock<Schedule>>>) -> Json<Schedule> {
 	Json(schedule.clone())
 }
 
+#[openapi]
 #[get("/today?<timestamp>")]
 fn today(schedule: State<Arc<RwLock<Schedule>>>, timestamp: Option<i64>) -> Json<ScheduleType> {
 	if schedule.read().unwrap().is_update_needed() {
@@ -129,6 +139,7 @@ fn today(schedule: State<Arc<RwLock<Schedule>>>, timestamp: Option<i64>) -> Json
 	Json(schedule)
 }
 
+#[openapi]
 #[get("/today/now?<timestamp>")]
 fn today_now(
 	schedule: State<Arc<RwLock<Schedule>>>,
@@ -156,6 +167,7 @@ fn today_now(
 	}
 }
 
+#[openapi]
 #[get("/today/now/near?<timestamp>")]
 fn today_around_now(
 	schedule: State<Arc<RwLock<Schedule>>>,
@@ -181,6 +193,7 @@ fn today_around_now(
 	Json(schedule)
 }
 
+#[openapi]
 #[get("/today/at/<time_string>?<timestamp>")]
 fn today_at(
 	schedule: State<Arc<RwLock<Schedule>>>,
@@ -209,6 +222,7 @@ fn today_at(
 	}
 }
 
+#[openapi]
 #[get("/on/<date_string>")]
 fn date(
 	schedule: State<Arc<RwLock<Schedule>>>,
@@ -230,6 +244,7 @@ fn date(
 	Ok(Json(schedule))
 }
 
+#[openapi]
 #[get("/on/<date_string>/at/<time_string>")]
 fn date_at(
 	schedule: State<Arc<RwLock<Schedule>>>,
