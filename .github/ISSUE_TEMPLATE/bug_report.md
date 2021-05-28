@@ -23,6 +23,13 @@ A clear and concise description of what you expected to happen.
 **Screenshots**
 If applicable, add screenshots to help explain your problem.
 
+**Server Version**
+Please visit `/api/v1/check-version` and paste its contents here, so we know exactly which version you were using at the time of the problem.
+
+```json
+["1.2.3","12512345234","https://github.com/whatever"]
+```
+
 **OS/Browser Info**
 Please visit https://www.whatsmybrowser.org/, copy the unique link, and paste it below:
 
