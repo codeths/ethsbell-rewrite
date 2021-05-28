@@ -18,10 +18,8 @@ use crate::ical::IcalEvent;
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct ScheduleDefinition {
 	/// The URL of the ical calendar we fetch the schedule's data from.
-	#[cfg(feature = "pull")]
 	pub calendar_url: Option<String>,
 	/// The URL of the ical calendar we fetch any overrides from.
-	#[cfg(feature = "pull")]
 	pub override_calendar_url: Option<String>,
 	/// All of the types of schedule there are.
 	pub schedule_types: HashMap<String, ScheduleType>,
