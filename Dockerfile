@@ -5,11 +5,11 @@ ARG GITHUB_REPOSITORY
 ENV GITHUB_REPOSITORY=$GITHUB_REPOSITORY
 WORKDIR /app
 COPY Cargo.toml Cargo.lock ./
-RUN mkdir src && echo "fn main(){println!(\"dummy\");}" > ./src/main.rs
+RUN mkdir src && echo "fn main(){println!(\"dummy\");}" > ./src/main.rs && touch src/lib.rs
 RUN cargo build --release --bin ethsbell-rewrite --features=ws
-RUN rm ./src/main.rs
+RUN rm ./src/main.rs && rm ./src/lib.rs
 COPY . .
-RUN touch src/main.rs
+RUN touch src/main.rs && touch src/lib.rs
 RUN cargo build --release --bin ethsbell-rewrite --features=ws
 
 FROM ubuntu
