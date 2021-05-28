@@ -28,7 +28,7 @@ This is a rewrite of ETHSBell in Rust. It features...
 * Runtime-less deployment.
 * Native performance.
 * Rust library for client-side processing.
-  * Client-side processing in WASI is blocked by [Rocket async](https://github.com/SergioBenitez/Rocket/projects/1), so it's not possible to do just yet.
+  * With some cargo feature magic, we can now build a library for WASM! 🎉
 
 *Psst! If you're feeling really crafty, you could even self-host this and use it to structure your free time! For example, you could add an extra "class period" and designate it as homework time.*
 

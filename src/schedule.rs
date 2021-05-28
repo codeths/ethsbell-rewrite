@@ -1,3 +1,4 @@
+//! Everything relating to our schedule structures.
 use std::{collections::HashMap, convert::TryInto};
 
 use chrono::{DateTime, Datelike, Duration, Local, NaiveDate, NaiveDateTime, NaiveTime, Timelike};
@@ -17,8 +18,10 @@ use crate::ical::IcalEvent;
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct ScheduleDefinition {
 	/// The URL of the ical calendar we fetch the schedule's data from.
+	#[cfg(feature = "pull")]
 	pub calendar_url: Option<String>,
 	/// The URL of the ical calendar we fetch any overrides from.
+	#[cfg(feature = "pull")]
 	pub override_calendar_url: Option<String>,
 	/// All of the types of schedule there are.
 	pub schedule_types: HashMap<String, ScheduleType>,
@@ -184,6 +187,7 @@ pub struct Schedule {
 	pub calendar: HashMap<NaiveDate, Vec<Event>>,
 	pub definition: ScheduleDefinition,
 }
+#[cfg(feature = "pull")]
 impl From<ScheduleDefinition> for Schedule {
 	fn from(def: ScheduleDefinition) -> Self {
 		let mut new = Schedule {
@@ -196,6 +200,7 @@ impl From<ScheduleDefinition> for Schedule {
 	}
 }
 impl Schedule {
+	#[cfg(feature = "pull")]
 	pub fn update(&mut self) {
 		// Fetch the primary calendar
 		println!("Fetching main calendar...");
@@ -268,7 +273,7 @@ pub enum Event {
 }
 
 /// Write a Vec<IcalEvent> to our runtime schedule struct.
-fn ical_to_ours(schedule: &mut Schedule, data: &Vec<IcalEvent>) {
+pub fn ical_to_ours(schedule: &mut Schedule, data: &Vec<IcalEvent>) {
 	// For every ical event...
 	data.iter().for_each(|event| {
 		let start = event.start.unwrap();

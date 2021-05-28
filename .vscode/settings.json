@@ -17,5 +17,8 @@
 		"timelike",
 		"wasi",
 		"wasm"
+	],
+	"rust-analyzer.cargo.features": [
+		"ws"
 	]
 }

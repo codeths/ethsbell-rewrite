@@ -1,7 +1,10 @@
+//! Functions for parsing iCalendar files.
 use chrono::{Duration, NaiveDate};
+#[cfg(feature = "pull")]
 use reqwest::blocking::get;
 use serde::Deserialize;
 
+/// An event in iCal
 #[derive(Deserialize)]
 pub struct IcalEvent {
 	pub summary: Option<String>,
@@ -10,8 +13,12 @@ pub struct IcalEvent {
 	pub end: Option<NaiveDate>,
 }
 impl IcalEvent {
+	#[cfg(feature = "pull")]
 	pub fn get(url: &String) -> Vec<IcalEvent> {
 		let data = get(url).unwrap().text().unwrap();
+		IcalEvent::from_string(&data)
+	}
+	pub fn from_string(data: &String) -> Vec<IcalEvent> {
 		data.split("BEGIN:VEVENT")
 			.map(|v| v.trim())
 			.map(|vevent| {

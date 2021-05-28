@@ -2,11 +2,11 @@ FROM rustlang/rust:nightly AS builder
 WORKDIR /app
 COPY Cargo.toml Cargo.lock ./
 RUN mkdir src && echo "fn main(){println!(\"dummy\");}" > ./src/main.rs
-RUN cargo build --release --bin ethsbell-rewrite
+RUN cargo build --release --bin ethsbell-rewrite --features=ws
 RUN rm ./src/main.rs
 COPY . .
 RUN touch src/main.rs
-RUN cargo build --release --bin ethsbell-rewrite
+RUN cargo build --release --bin ethsbell-rewrite --features=ws
 
 FROM ubuntu
 WORKDIR /app

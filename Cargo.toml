@@ -1,18 +1,18 @@
 [package]
 name = "ethsbell-rewrite"
-version = "0.5.2"
+version = "0.5.3"
 authors = ["Willow <willow.ch@protonmail.com>"]
 edition = "2018"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-rocket = "0.4.10"
-rocket_contrib = {version = "0.4.10", features = ["json"]}
+rocket = {version = "0.4.10", optional = true}
+rocket_contrib = {version = "0.4.10", features = ["json"], optional = true}
 serde = {version = "1.0.125", features = ["derive"]}
 serde_json = "1.0.64"
 chrono = {version = "0.4.19", features = ["serde"]}
-reqwest = {version = "0.11.3", features = ["blocking"]}
+reqwest = {version = "0.11.3", features = ["blocking"], optional = true}
 serde_regex = "1.1.0"
 regex = "1.4.6"
 urlencoding = "1.1.1"
@@ -22,3 +22,10 @@ base64 = "0.13.0"
 [lib]
 path = "src/main.rs"
 
+[[bin]]
+name = "ethsbell-rewrite"
+required-features = ["ws"]
+
+[features]
+ws = ["rocket", "rocket_contrib", "pull"]
+pull = ["reqwest"]
