@@ -22,6 +22,9 @@ pub mod schedule;
 #[derive(Clone)]
 struct SpecLock(Option<DateTime<Local>>);
 
+/// Re-export to allow for typed deserialization in js
+pub use serde_json::from_str;
+
 #[cfg(feature = "ws")]
 #[macro_use]
 extern crate rocket;

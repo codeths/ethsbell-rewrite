@@ -4,6 +4,7 @@
 		"chrono",
 		"datelike",
 		"datetime",
+		"deserialization",
 		"dtend",
 		"dtstart",
 		"eths",
