@@ -21,6 +21,7 @@ base64 = "0.13.0"
 
 [lib]
 path = "src/main.rs"
+crate-type = ["cdylib", "rlib"]
 
 [[bin]]
 name = "ethsbell-rewrite"
