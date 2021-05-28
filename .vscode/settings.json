@@ -3,6 +3,7 @@
 		"VEVENT",
 		"chrono",
 		"datelike",
+		"datetime",
 		"dtend",
 		"dtstart",
 		"eths",
