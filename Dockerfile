@@ -1,4 +1,8 @@
 FROM rustlang/rust:nightly AS builder
+ARG GITHUB_SHA
+ENV GITHUB_SHA=$GITHUB_SHA
+ARG GITHUB_REPOSITORY
+ENV GITHUB_REPOSITORY=$GITHUB_REPOSITORY
 WORKDIR /app
 COPY Cargo.toml Cargo.lock ./
 RUN mkdir src && echo "fn main(){println!(\"dummy\");}" > ./src/main.rs
