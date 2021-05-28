@@ -20,7 +20,6 @@ thiserror = "1.0.24"
 base64 = "0.13.0"
 
 [lib]
-path = "src/main.rs"
 crate-type = ["cdylib", "rlib"]
 
 [[bin]]

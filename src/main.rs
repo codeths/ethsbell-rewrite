@@ -7,28 +7,19 @@ use std::{
 };
 
 use chrono::{DateTime, Local};
-#[cfg(feature = "ws")]
 use schedule::{Schedule, ScheduleDefinition};
 
-#[cfg(feature = "ws")]
 mod api;
-#[cfg(feature = "ws")]
 mod frontend;
-pub mod ical;
-#[cfg(feature = "ws")]
+mod ical;
 mod login;
-pub mod schedule;
+mod schedule;
 
 #[derive(Clone)]
 struct SpecLock(Option<DateTime<Local>>);
 
-/// Re-export to allow for typed deserialization in js
-pub use serde_json::from_str;
-
-#[cfg(feature = "ws")]
 #[macro_use]
 extern crate rocket;
-#[cfg(feature = "ws")]
 #[allow(dead_code)]
 fn main() {
 	// Build the schedule definition and do our first update.
@@ -56,10 +47,4 @@ fn main() {
 		.manage(schedule.clone())
 		.manage(spec_lock)
 		.launch();
-}
-
-#[cfg(not(feature = "ws"))]
-#[allow(dead_code)]
-fn main() {
-	println!("Dummy main for when ws is disabled")
 }
