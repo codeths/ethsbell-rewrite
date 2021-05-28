@@ -11,11 +11,13 @@
 		"ethsbell",
 		"getel",
 		"ical",
+		"jetli",
 		"reqwest",
 		"socketaddr",
 		"struct",
 		"thiserror",
 		"timelike",
+		"toolchain",
 		"wasi",
 		"wasm"
 	],
