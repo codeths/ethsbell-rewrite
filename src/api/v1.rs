@@ -5,7 +5,7 @@ use crate::{
 	SpecLock,
 };
 use chrono::{DateTime, Datelike, Local, NaiveDate, NaiveDateTime, NaiveTime, TimeZone};
-use rocket::{Data, Route, State};
+use rocket::{http::Status, Data, Route, State};
 use rocket_contrib::json::Json;
 use rocket_okapi::{openapi, routes_with_openapi};
 use std::{
@@ -31,6 +31,7 @@ pub fn routes() -> Vec<Route> {
 		post_spec,
 		check_auth,
 		check_version,
+		coffee,
 	]
 }
 
@@ -272,4 +273,11 @@ fn date_at(
 		}
 		None => Ok(None),
 	}
+}
+
+/// This is an easter egg, but it's also the Docker health check endpoint so don't remove it
+#[openapi(skip)]
+#[get("/coffee")]
+fn coffee(_schedule: State<Arc<RwLock<Schedule>>>) -> Status {
+	Status::ImATeapot
 }
