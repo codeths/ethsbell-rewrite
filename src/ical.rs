@@ -1,8 +1,15 @@
 //! Functions for parsing iCalendar files.
-use chrono::{Duration, NaiveDate};
+use chrono::{Datelike, Duration, NaiveDate, Timelike};
+use okapi::openapi3::Responses;
+use rand::Rng;
 #[cfg(feature = "pull")]
 use reqwest::blocking::get;
+use rocket::Responder;
+use rocket_okapi::response::OpenApiResponder;
+use rocket_okapi::util::add_schema_response;
 use serde::Deserialize;
+
+use crate::schedule::Schedule;
 
 /// An event in iCal
 #[derive(Deserialize)]
@@ -104,5 +111,152 @@ impl IcalEvent {
 			})
 			.filter(|v| (v.description != None || v.summary != None) && v.start != None)
 			.collect()
+	}
+	pub fn generate(schedule: &Schedule, start: NaiveDate, end: NaiveDate) -> String {
+		let mut rng = rand::thread_rng();
+		let mut result = String::new();
+		result += "BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:ETHSBell Rewrite
+";
+		let mut exception_days: Vec<NaiveDate> = vec![];
+		// Populate special events
+		for (date, events) in &schedule.calendar {
+			if date < &start || date > &end {
+				continue;
+			}
+			// Populate the day's schedule
+			if {
+				let mut output = true;
+				for event in events {
+					match event {
+						crate::schedule::Event::ScheduleOverride(_) => output = false,
+						crate::schedule::Event::ScheduleLiteral(_) => output = false,
+						crate::schedule::Event::SpecialEvent(_) => {}
+					}
+				}
+				output
+			} {
+				continue;
+			}
+			exception_days.push(date.clone());
+			let day = schedule.on_date(date.clone());
+			for period in day.periods {
+				result += &format!(
+					"BEGIN:VEVENT
+UID:{uid}
+SUMMARY:{summary}
+DTSTAMP:{dtstamp}
+DTSTART:{dtstart}
+DTEND:{dtend}
+END:VEVENT
+",
+					uid = rng.gen::<usize>(),
+					summary = period.friendly_name,
+					dtstamp = format!(
+						"{:0>4}{:0>2}{:0>2}T{:0>2}{:0>2}{:0>2}",
+						date.year(),
+						date.month(),
+						date.day(),
+						period.start.hour(),
+						period.start.minute(),
+						period.start.second()
+					),
+					dtstart = format!(
+						"{:0>4}{:0>2}{:0>2}T{:0>2}{:0>2}{:0>2}",
+						date.year(),
+						date.month(),
+						date.day(),
+						period.start.hour(),
+						period.start.minute(),
+						period.start.second()
+					),
+					dtend = format!(
+						"{:0>4}{:0>2}{:0>2}T{:0>2}{:0>2}{:0>2}",
+						date.year(),
+						date.month(),
+						date.day(),
+						period.end.hour(),
+						period.end.minute(),
+						period.end.second()
+					),
+				);
+			}
+		}
+		// Populate the typical schedules
+		for (index, id) in schedule.definition.typical_schedule.iter().enumerate() {
+			let schedule_type = schedule
+				.definition
+				.schedule_types
+				.get(id)
+				.expect("Invalid typical schedule type");
+			for period in &schedule_type.periods {
+				result += &format!(
+					"BEGIN:VEVENT
+UID:{uid}
+DTSTAMP:{dtstamp}
+DTSTART:{dtstart}
+DTEND:{dtend}
+SUMMARY:{summary}
+RRULE:FREQ=WEEKLY;BYDAY={day}
+EXDATE:{exdate}
+END:VEVENT
+",
+					day = ["SU", "MO", "TU", "WE", "TH", "FR", "SA"][index],
+					uid = rng.gen::<usize>(),
+					summary = period.friendly_name,
+					dtstart = format!(
+						"{:0>4}{:0>2}{:0>2}T{:0>2}{:0>2}{:0>2}",
+						start.year(),
+						start.month(),
+						start.day(),
+						period.start.hour(),
+						period.start.minute(),
+						period.start.second()
+					),
+					dtstamp = format!(
+						"{:0>4}{:0>2}{:0>2}T{:0>2}{:0>2}{:0>2}",
+						start.year(),
+						start.month(),
+						start.day(),
+						period.start.hour(),
+						period.start.minute(),
+						period.start.second()
+					),
+					dtend = format!(
+						"{:0>4}{:0>2}{:0>2}T{:0>2}{:0>2}{:0>2}",
+						start.year(),
+						start.month(),
+						start.day(),
+						period.end.hour(),
+						period.end.minute(),
+						period.end.second()
+					),
+					exdate = exception_days
+						.iter()
+						.map(|v| format!("{:0>4}{:0>2}{:0>2}T000000", v.year(), v.month(), v.day()))
+						.collect::<Vec<String>>()
+						.join(",")
+				);
+			}
+		}
+		result += "END:VCALENDAR\n";
+		result
+	}
+}
+
+#[derive(Responder)]
+#[response(content_type = "text/calendar")]
+pub struct IcalResponder {
+	pub inner: String,
+}
+impl OpenApiResponder<'_> for IcalResponder {
+	fn responses(
+		gen: &mut rocket_okapi::gen::OpenApiGenerator,
+	) -> rocket_okapi::Result<okapi::openapi3::Responses> {
+		let mut responses = Responses::default();
+		let schema = gen.json_schema::<String>();
+		add_schema_response(&mut responses, 200, "text/calendar", schema)?;
+		Ok(responses)
 	}
 }

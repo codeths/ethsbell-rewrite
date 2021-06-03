@@ -1,10 +1,12 @@
 use super::OurError;
 use crate::{
+	ical,
 	login::Authenticated,
 	schedule::{Period, Schedule, ScheduleDefinition, ScheduleType},
 	SpecLock,
 };
-use chrono::{DateTime, Datelike, Local, NaiveDate, NaiveDateTime, NaiveTime, TimeZone};
+use chrono::{DateTime, Datelike, Duration, Local, NaiveDate, NaiveDateTime, NaiveTime, TimeZone};
+use ethsbell_rewrite::ical::IcalResponder;
 use rocket::{http::Status, Data, Route, State};
 use rocket_contrib::json::Json;
 use rocket_okapi::{openapi, routes_with_openapi};
@@ -31,6 +33,7 @@ pub fn routes() -> Vec<Route> {
 		post_spec,
 		check_auth,
 		check_version,
+		ical,
 		coffee,
 	]
 }
@@ -272,6 +275,20 @@ fn date_at(
 			Ok(Some(Json(period)))
 		}
 		None => Ok(None),
+	}
+}
+
+#[openapi]
+#[get("/ical?<backward>&<forward>")]
+fn ical(backward: i64, forward: i64, schedule: State<Arc<RwLock<Schedule>>>) -> IcalResponder {
+	if schedule.read().unwrap().is_update_needed() {
+		schedule.write().unwrap().update();
+	}
+	let now = Local::now().date().naive_local();
+	let start = now - Duration::days(backward);
+	let end = now + Duration::days(forward);
+	IcalResponder {
+		inner: ical::IcalEvent::generate(&schedule.read().unwrap(), start, end),
 	}
 }
 

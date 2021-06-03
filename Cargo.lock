@@ -333,6 +333,7 @@ dependencies = [
  "base64 0.13.0",
  "chrono",
  "okapi",
+ "rand",
  "regex",
  "reqwest",
  "rocket",

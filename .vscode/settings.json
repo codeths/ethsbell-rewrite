@@ -1,5 +1,11 @@
 {
 	"cSpell.words": [
+		"BYDAY",
+		"DTSTAMP",
+		"EXDATE",
+		"PRODID",
+		"RRULE",
+		"VCALENDAR",
 		"VEVENT",
 		"chrono",
 		"datelike",
