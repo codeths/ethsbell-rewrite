@@ -173,7 +173,7 @@ impl From<ScheduleType> for LegacySchedule {
 			},
 			timeSinceLastPeriod: context[0]
 				.clone()
-				.map(|v| (Local::now().time() - v.end).num_seconds())
+				.map(|v| (Local::now().time() - v.end).num_minutes())
 				.unwrap_or(0) as isize,
 		}
 	}
