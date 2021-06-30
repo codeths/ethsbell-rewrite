@@ -119,15 +119,43 @@
 				}
 			],
 			"regex": "FORCE BLUE DAY"
+		},
+		"summer_school": {
+			"friendly_name": "Summer School",
+			"periods": [
+				{
+					"friendly_name": "Session 1",
+					"start": "08:00:00",
+					"end": "10:30:00",
+					"kind": {
+						"Class": 0
+					}
+				},
+				{
+					"friendly_name": "Lunch",
+					"start": "10:30:00",
+					"end": "11:00:00",
+					"kind": "Lunch"
+				},
+				{
+					"friendly_name": "Session 2",
+					"start": "11:05:00",
+					"end": "13:35:00",
+					"kind": {
+						"Class": 1
+					}
+				}
+			],
+			"regex": "FORCE SUMMER SCHOOL"
 		}
 	},
 	"typical_schedule": [
 		"no_school",
-		"monday",
-		"orange_day",
-		"blue_day",
-		"orange_day",
-		"blue_day",
+		"summer_school",
+		"summer_school",
+		"summer_school",
+		"summer_school",
+		"summer_school",
 		"no_school"
 	]
 }
