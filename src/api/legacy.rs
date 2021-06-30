@@ -104,7 +104,17 @@ struct LegacyPeriod {
 
 impl From<ScheduleType> for LegacySchedule {
 	fn from(schedule: ScheduleType) -> Self {
-		let context = schedule.at_time(Local::now().time());
+		let context = schedule
+			.at_time(Local::now().time())
+			.iter()
+			.map(|v| match v {
+				Some(p) => match p.kind {
+					PeriodType::Break | PeriodType::BeforeSchool | PeriodType::AfterSchool => None,
+					_ => Some(p.clone()),
+				},
+				None => None,
+			})
+			.collect::<Vec<Option<Period>>>();
 		LegacySchedule {
 			schedule: LegacyScheduleKey {
 				name: schedule.friendly_name,
