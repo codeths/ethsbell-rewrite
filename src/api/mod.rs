@@ -11,6 +11,7 @@ use rocket_okapi::{
 
 use crate::login::WantsBasicAuth;
 pub mod v1;
+pub mod legacy;
 
 pub struct ApiFairing;
 
@@ -25,10 +26,18 @@ impl Fairing for ApiFairing {
 	fn on_attach(&self, rocket: rocket::Rocket) -> Result<rocket::Rocket, rocket::Rocket> {
 		Ok(rocket
 			.mount("/api/v1", v1::routes())
+			.mount("/api/legacy", legacy::routes())
 			.mount(
 				"/docs/v1",
 				make_swagger_ui(&SwaggerUIConfig {
 					url: "../../api/v1/openapi.json".to_owned(),
+					..Default::default()
+				}),
+			)
+			.mount(
+				"/docs/legacy",
+				make_swagger_ui(&SwaggerUIConfig {
+					url: "../../api/legacy/openapi.json".to_owned(),
 					..Default::default()
 				}),
 			)
