@@ -109,6 +109,16 @@ impl ScheduleType {
 			[before, current, next]
 		}
 	}
+	pub fn first_class(&self) -> Option<Period> {
+		self.periods
+			.iter()
+			.filter(|v| match v.kind {
+				PeriodType::Class(_) => true,
+				_ => false,
+			})
+			.map(|v| v.clone())
+			.next()
+	}
 }
 
 /// The definition for a period.

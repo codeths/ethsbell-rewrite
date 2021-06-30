@@ -51,6 +51,7 @@ fn display(schedule: State<Arc<RwLock<Schedule>>>) -> Html<String> {
 	))
 }
 
+/// The closest we can get to the original's API with the differences in design between us
 #[openapi]
 #[get("/data")]
 fn data(schedule: State<Arc<RwLock<Schedule>>>) -> Json<LegacySchedule> {
@@ -117,12 +118,24 @@ impl From<ScheduleType> for LegacySchedule {
 			.collect::<Vec<Option<Period>>>();
 		LegacySchedule {
 			schedule: LegacyScheduleKey {
-				name: schedule.friendly_name,
+				name: schedule.friendly_name.clone(),
 				period_array: schedule.periods.iter().map(|v| v.clone().into()).collect(),
 			},
 			theSlot: context[1].clone().map(|v| v.friendly_name),
 			time: Local::now().timestamp() as usize,
-			theNextSlot: context[2].clone().map(|v| v.friendly_name),
+			theNextSlot: match context[2].clone() {
+				Some(v) => match v.kind {
+					PeriodType::Class(_) => Some(v.friendly_name),
+					_ => schedule.first_class().map(|v| match v.kind {
+						PeriodType::Class(_) => v.friendly_name,
+						_ => panic!("?!?!"),
+					}),
+				},
+				None => schedule.first_class().map(|v| match v.kind {
+					PeriodType::Class(_) => v.friendly_name,
+					_ => panic!("?!?!"),
+				}),
+			},
 			periodEndTime: context[1].clone().map(|v| v.end.to_legacy()),
 			endOfPreviousPeriod: context[0].clone().map(|v| v.end_timestamp).unwrap_or(0) as usize,
 			formattedDate: Local::now().date().naive_local().to_legacy(),
@@ -140,17 +153,24 @@ impl From<ScheduleType> for LegacySchedule {
 				})
 				.count() > 1,
 			school_id: "1".to_string(), // Unclear what this is for
-			theNextSlot_: context[2]
-				.clone()
-				.map(|v| match v.kind {
+			theNextSlot_: match context[2].clone() {
+				Some(v) => match v.kind {
+					PeriodType::Class(n) => Some(n as isize),
+					_ => schedule.first_class().map(|v| match v.kind {
+						PeriodType::Class(n) => n as isize,
+						_ => panic!("?!?!"),
+					}),
+				},
+				None => schedule.first_class().map(|v| match v.kind {
 					PeriodType::Class(n) => n as isize,
-					_ => -1,
-				})
-				.unwrap_or(-1),
-			timeLeftInPeriod: context[1]
-				.clone()
-				.map(|v| (v.end - Local::now().time()).num_seconds())
-				.unwrap_or(0) as isize,
+					_ => panic!("?!?!"),
+				}),
+			}
+			.unwrap_or(-1),
+			timeLeftInPeriod: {
+				let now = Local::now();
+				-(now.hour() as isize * 60 + now.minute() as isize)
+			},
 			timeSinceLastPeriod: context[0]
 				.clone()
 				.map(|v| (Local::now().time() - v.end).num_seconds())
