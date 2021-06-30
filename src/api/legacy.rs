@@ -2,7 +2,7 @@ use std::sync::{Arc, RwLock};
 
 use crate::schedule::Schedule;
 use crate::schedule::{Period, PeriodType, ScheduleType};
-use chrono::{Datelike, Local};
+use chrono::{Datelike, Local, NaiveDate, NaiveTime, Timelike, Weekday};
 use rocket::{response::content::Html, Route, State};
 use rocket_contrib::json::Json;
 use rocket_okapi::{openapi, routes_with_openapi};
@@ -113,11 +113,11 @@ impl From<ScheduleType> for LegacySchedule {
 			theSlot: context[1].clone().map(|v| v.friendly_name),
 			time: Local::now().timestamp() as usize,
 			theNextSlot: context[2].clone().map(|v| v.friendly_name),
-			periodEndTime: context[1].clone().map(|v| v.end.to_string()),
+			periodEndTime: context[1].clone().map(|v| v.end.to_legacy()),
 			endOfPreviousPeriod: context[0].clone().map(|v| v.end_timestamp).unwrap_or(0) as usize,
-			formattedDate: Local::now().date().to_string(),
-			dayOfWeek: Local::now().weekday().to_string(),
-			formattedTime: Local::now().time().to_string(),
+			formattedDate: Local::now().date().naive_local().to_legacy(),
+			dayOfWeek: Local::now().weekday().to_legacy(),
+			formattedTime: Local::now().time().to_legacy(),
 			scheduleCode: None,     // Unclear what this is for
 			isListingForDay: false, // Unclear what this is for
 			noSchedule: schedule.periods.len() == 0,
@@ -152,10 +152,40 @@ impl From<ScheduleType> for LegacySchedule {
 impl From<Period> for LegacyPeriod {
 	fn from(period: Period) -> Self {
 		LegacyPeriod {
-			start_time: period.start.to_string(),
-			end_time: period.end.to_string(),
+			start_time: period.start.to_legacy(),
+			end_time: period.end.to_legacy(),
 			period_notice: Some(format!("{:?}", period.kind)),
 			period_name: period.friendly_name,
 		}
+	}
+}
+
+trait ToLegacyFormat {
+	fn to_legacy(self) -> String;
+}
+
+impl ToLegacyFormat for NaiveTime {
+	fn to_legacy(self) -> String {
+		format!("{}:{}", self.hour(), self.minute())
+	}
+}
+impl ToLegacyFormat for NaiveDate {
+	fn to_legacy(self) -> String {
+		format!("{}-{}-{}", self.year(), self.month(), self.day())
+	}
+}
+
+impl ToLegacyFormat for Weekday {
+	fn to_legacy(self) -> String {
+		match self {
+			chrono::Weekday::Mon => "Monday",
+			chrono::Weekday::Tue => "Tuesday",
+			chrono::Weekday::Wed => "Wednesday",
+			chrono::Weekday::Thu => "Thursday",
+			chrono::Weekday::Fri => "Friday",
+			chrono::Weekday::Sat => "Saturday",
+			chrono::Weekday::Sun => "Sunday",
+		}
+		.to_string()
 	}
 }
