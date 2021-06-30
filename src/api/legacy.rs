@@ -68,27 +68,46 @@ fn data(schedule: State<Arc<RwLock<Schedule>>>) -> Json<LegacySchedule> {
 #[derive(Serialize, JsonSchema)]
 #[allow(non_snake_case)]
 struct LegacySchedule {
+	/// Today's schedule
 	pub schedule: LegacyScheduleKey,
+	/// The name of the current period.
 	pub theSlot: Option<String>,
+	/// The time in seconds since 00:00 January 1st, 1970
 	pub time: usize,
+	/// The name of the next period.
 	pub theNextSlot: Option<String>,
+	/// The end of the current period, formatted as H:M
 	pub periodEndTime: Option<String>,
+	/// The end of the previous period in seconds since 00:00 January 1st, 1970. Might be broken.
 	pub endOfPreviousPeriod: usize,
+	/// The current date.
 	pub formattedDate: String,
+	/// The name of the day of the week.
 	pub dayOfWeek: String,
+	/// The current time, formatted as H:M
 	pub formattedTime: String,
+	/// Always null.
 	pub scheduleCode: Option<String>,
+	/// Always false.
 	pub isListingForDay: bool,
+	/// False if there are no periods.
 	pub noSchedule: bool,
+	/// True only if there is one or more Class(_) periods.
 	pub schoolInSession: bool,
+	/// Always "1"
 	pub school_id: String,
+	/// The class number of the next Class(_) period, or -1 if none exist.
 	pub theNextSlot_: isize,
+	/// The time of day as a negative number of minutes.
+	/// I don't understand it either.
 	pub timeLeftInPeriod: isize,
+	/// The time since the end of the last period in minutes.
 	pub timeSinceLastPeriod: isize,
 }
 
 #[derive(Serialize, JsonSchema)]
 #[allow(non_snake_case)]
+/// A container for the schedule's name and the list of its periods.
 struct LegacyScheduleKey {
 	name: String,
 	period_array: Vec<LegacyPeriod>,
@@ -97,9 +116,13 @@ struct LegacyScheduleKey {
 #[derive(Serialize, JsonSchema)]
 #[allow(non_snake_case)]
 struct LegacyPeriod {
+	/// The start of the period, formatted as H:M
 	pub start_time: String,
+	/// The end of the period, formatted as H:M
 	pub end_time: String,
+	/// The period kind shown with Debug.
 	pub period_notice: Option<String>,
+	/// The friendly name of the period.
 	pub period_name: String,
 }
 
