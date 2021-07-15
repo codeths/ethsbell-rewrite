@@ -1,22 +1,22 @@
 use super::OurError;
 use crate::{
 	ical,
+	ical::IcalResponder,
 	login::Authenticated,
 	schedule::{Period, Schedule, ScheduleDefinition, ScheduleType},
 	SpecLock,
-	ical::IcalResponder
 };
 use chrono::{DateTime, Datelike, Duration, Local, NaiveDate, NaiveDateTime, NaiveTime, TimeZone};
 use rocket::{http::Status, Data, Route, State};
 use rocket_contrib::{json::Json, templates::Template};
 use rocket_okapi::{openapi, routes_with_openapi};
+use serde::Serialize;
 use std::{
 	fs::{read_to_string, File, OpenOptions},
 	io::Write,
 	str::FromStr,
 	sync::{Arc, Mutex, RwLock},
 };
-use serde::Serialize;
 
 pub fn routes() -> Vec<Route> {
 	routes_with_openapi![
@@ -68,13 +68,34 @@ fn widget(schedule: State<Arc<RwLock<Schedule>>>) -> Template {
 		None => {}
 	});
 	let ctx = WidgetContext {
-    prev_name: schedule[0].clone().map(|v| v.friendly_name).unwrap_or("None".to_string()),
-    current_name: schedule[1].clone().map(|v| v.friendly_name).unwrap_or("None".to_string()),
-    current_start: schedule[1].clone().map(|v| v.start.to_string()).unwrap_or("".to_string()),
-    current_end: schedule[1].clone().map(|v| v.end.to_string()).unwrap_or("".to_string()),
-    next_name: schedule[2].clone().map(|v| v.friendly_name).unwrap_or("None".to_string()),
-    next_start: schedule[2].clone().map(|v| v.start.to_string()).unwrap_or("".to_string()),
-    prev_end: schedule[0].clone().map(|v| v.end.to_string()).unwrap_or("".to_string()),
+		prev_name: schedule[0]
+			.clone()
+			.map(|v| v.friendly_name)
+			.unwrap_or("None".to_string()),
+		current_name: schedule[1]
+			.clone()
+			.map(|v| v.friendly_name)
+			.unwrap_or("None".to_string()),
+		current_start: schedule[1]
+			.clone()
+			.map(|v| v.start.to_string())
+			.unwrap_or("".to_string()),
+		current_end: schedule[1]
+			.clone()
+			.map(|v| v.end.to_string())
+			.unwrap_or("".to_string()),
+		next_name: schedule[2]
+			.clone()
+			.map(|v| v.friendly_name)
+			.unwrap_or("None".to_string()),
+		next_start: schedule[2]
+			.clone()
+			.map(|v| v.start.to_string())
+			.unwrap_or("".to_string()),
+		prev_end: schedule[0]
+			.clone()
+			.map(|v| v.end.to_string())
+			.unwrap_or("".to_string()),
 	};
 	Template::render("widget", &ctx)
 }
@@ -336,6 +357,7 @@ fn ical(backward: i64, forward: i64, schedule: State<Arc<RwLock<Schedule>>>) -> 
 /// This is an easter egg, but it's also the Docker health check endpoint so don't remove it
 #[openapi(skip)]
 #[get("/coffee")]
-fn coffee(_schedule: State<Arc<RwLock<Schedule>>>) -> Status {
+fn coffee(schedule: State<Arc<RwLock<Schedule>>>) -> Status {
+	let lock = schedule.write().unwrap();
 	Status::ImATeapot
 }
