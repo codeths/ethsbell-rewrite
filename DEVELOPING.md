@@ -34,10 +34,11 @@ Nix is only available for Unix-like systems.
 5. `cd ethsbell-rewrite` - Move your terminal to the newly cloned repository.
 6. `./.vscode/extensions.sh` - Install our recommended extensions.
 7. `code .` - Open VSCode in the newly closed repository.
-8. If you're running newer versions of OpenSuSE (or if `test -f "/etc/services"` fails and `test -f "/usr/etc/services"` succeeds) run `sudo ln -s /usr/etc/services /etc/services`.
-9. Press Ctrl+Shift+P and type "nix sel", enter, "shell", enter.
-10. If all goes well, there should be a prompt to reload in the bottom-left. Accept it and reload, then wait a minute or so.
-11. If everything goes to plan, you should have everything you need to explore our repository.
+8. If VSCode asks you to trust our repository, please do.
+9. If you're running newer versions of OpenSuSE (or if `test -f "/etc/services"` fails and `test -f "/usr/etc/services"` succeeds) run `sudo ln -s /usr/etc/services /etc/services`.
+10. Press Ctrl+Shift+P and type "nix sel", enter, "shell", enter.
+11. If all goes well, there should be a prompt to reload in the bottom-left. Accept it and reload, then wait a minute or so.
+12. If everything goes to plan, you should have everything you need to explore our repository.
 
 ## Not using Nix
 
@@ -102,8 +103,9 @@ Nix is only available for Unix-like systems.
 6. `cd ethsbell-rewrite` - Move your terminal to the newly cloned repository.
 7. If you're on a Unix-like system and installed jq, `./.vscode/extensions.sh`
 8. `code .` - Open VSCode in the repository.
-9. If step 7 didn't apply to you, press Ctrl+P and type "ext ins", press enter, type "@recommended:workspace" in the left sidebar, and install all of the extensions shown there, except those mentioning Nix, since you're not using that.
-10. If everything goes to plan, you should have everything you need to explore our repository.
+9. If VSCode asks you to trust our repository, please do.
+10. If step 7 didn't apply to you, press Ctrl+P and type "ext ins", press enter, type "@recommended:workspace" in the left sidebar, and install all of the extensions shown there, except those mentioning Nix, since you're not using that.
+11. If everything goes to plan, you should have everything you need to explore our repository.
 
 ## I Know What I'm Doing, Thank You Very Much
 
