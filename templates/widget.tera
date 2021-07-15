@@ -4,7 +4,7 @@
 			<td style="font-size:2vw;">
 				{{prev_name}} {{prev_end}}
 			</td>
-			<td style="font-size:4vw;">
+			<td style="font-size:3vw;">
 					< {{current_start}} {{current_name}} {{current_end}} >
 			</td>
 			<td style="font-size:2vw;">
