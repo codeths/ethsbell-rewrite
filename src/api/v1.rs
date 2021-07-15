@@ -357,6 +357,7 @@ fn ical(backward: i64, forward: i64, schedule: State<Arc<RwLock<Schedule>>>) -> 
 /// This is an easter egg, but it's also the Docker health check endpoint so don't remove it
 #[openapi(skip)]
 #[get("/coffee")]
-fn coffee(_schedule: State<Arc<RwLock<Schedule>>>) -> Status {
+fn coffee(schedule: State<Arc<RwLock<Schedule>>>) -> Status {
+	let lock = schedule.write().unwrap();
 	Status::ImATeapot
 }
