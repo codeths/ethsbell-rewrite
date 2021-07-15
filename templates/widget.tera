@@ -1,0 +1,15 @@
+<div>
+	<table>
+		<tr style="vertical-align: middle;">
+			<td style="font-size:150%;">
+				{{prev_name}} {{prev_end}}
+			</td>
+			<td style="font-size:250%;">
+					< {{current_start}} {{current_name}} {{current_end}} >
+			</td>
+			<td style="font-size:150%;">
+					{{next_start}} {{next_name}}
+			</td>
+		</tr>
+	</table>
+</div>

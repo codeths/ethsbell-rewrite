@@ -4,11 +4,11 @@ use crate::{
 	login::Authenticated,
 	schedule::{Period, Schedule, ScheduleDefinition, ScheduleType},
 	SpecLock,
+	ical::IcalResponder
 };
 use chrono::{DateTime, Datelike, Duration, Local, NaiveDate, NaiveDateTime, NaiveTime, TimeZone};
-use ethsbell_rewrite::ical::IcalResponder;
 use rocket::{http::Status, Data, Route, State};
-use rocket_contrib::json::Json;
+use rocket_contrib::{json::Json, templates::Template};
 use rocket_okapi::{openapi, routes_with_openapi};
 use std::{
 	fs::{read_to_string, File, OpenOptions},
@@ -16,6 +16,7 @@ use std::{
 	str::FromStr,
 	sync::{Arc, Mutex, RwLock},
 };
+use serde::Serialize;
 
 pub fn routes() -> Vec<Route> {
 	routes_with_openapi![
@@ -35,7 +36,47 @@ pub fn routes() -> Vec<Route> {
 		check_version,
 		ical,
 		coffee,
+		widget,
 	]
+}
+
+#[derive(Serialize)]
+struct WidgetContext {
+	prev_name: String,
+	current_name: String,
+	current_start: String,
+	current_end: String,
+	next_name: String,
+	next_start: String,
+	prev_end: String,
+}
+
+/// Returns HTML for the output of /today/now/near
+#[openapi(skip)]
+#[get("/widget")]
+fn widget(schedule: State<Arc<RwLock<Schedule>>>) -> Template {
+	if schedule.read().unwrap().is_update_needed() {
+		schedule.write().unwrap().update();
+	}
+	let now = Local::now();
+	let now_date = now.date();
+	let now_time = now.time();
+	let schedule = schedule.read().unwrap().on_date(now_date.naive_local());
+	let mut schedule = schedule.at_time(now_time);
+	schedule.iter_mut().for_each(|v| match v {
+		Some(v) => v.populate(now),
+		None => {}
+	});
+	let ctx = WidgetContext {
+    prev_name: schedule[0].clone().map(|v| v.friendly_name).unwrap_or("None".to_string()),
+    current_name: schedule[1].clone().map(|v| v.friendly_name).unwrap_or("None".to_string()),
+    current_start: schedule[1].clone().map(|v| v.start.to_string()).unwrap_or("".to_string()),
+    current_end: schedule[1].clone().map(|v| v.end.to_string()).unwrap_or("".to_string()),
+    next_name: schedule[2].clone().map(|v| v.friendly_name).unwrap_or("None".to_string()),
+    next_start: schedule[2].clone().map(|v| v.start.to_string()).unwrap_or("".to_string()),
+    prev_end: schedule[0].clone().map(|v| v.end.to_string()).unwrap_or("".to_string()),
+	};
+	Template::render("widget", &ctx)
 }
 
 /// Returns a tuple of the crate version, the CI commit hash, and the CI repository.
