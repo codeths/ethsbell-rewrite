@@ -34,5 +34,5 @@
 	"rust-analyzer.cargo.features": [
 		"ws"
 	],
-	"nixEnvSelector.nixFile": "${workspaceRoot}/shell.nix"
+	"nixEnvSelector.suggestion": false
 }
