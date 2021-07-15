@@ -7,10 +7,12 @@
 		"RRULE",
 		"VCALENDAR",
 		"VEVENT",
+		"armhf",
 		"chrono",
 		"datelike",
 		"datetime",
 		"deserialization",
+		"distros",
 		"dtend",
 		"dtstart",
 		"eths",
@@ -31,5 +33,6 @@
 	],
 	"rust-analyzer.cargo.features": [
 		"ws"
-	]
+	],
+	"nixEnvSelector.nixFile": "${workspaceRoot}/shell.nix"
 }
