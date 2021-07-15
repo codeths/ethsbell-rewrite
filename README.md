@@ -2,10 +2,10 @@
 
 - [ETHSBell Rewrite](#ethsbell-rewrite)
   - [About](#about)
+  - [Development](#development)
   - [Deployment](#deployment)
     - [x86 with Docker](#x86-with-docker)
     - [Non-x86 or without Docker](#non-x86-or-without-docker)
-  - [Development](#development)
 
 ## About
 
@@ -31,6 +31,13 @@ This is a rewrite of ETHSBell in Rust. It features...
   * Never mind, still can't run in WASM. 
 
 *Psst! If you're feeling really crafty, you could even self-host this and use it to structure your free time! For example, you could add an extra "class period" and designate it as homework time.*
+
+## Development
+
+*See [CONTRIBUTING](CONTRIBUTING.md) for contribution guidelines.*
+
+*Follow the instructions in [DEVELOPING](DEVELOPING.md) to set up a development environment.*
+
 
 ## Deployment
 
@@ -63,7 +70,3 @@ cd ethsbell-rewrite
 cargo build
 # The resulting binary will be placed at ./target/release/ethsbell-rewrite
 ```
-
-## Development
-
-See [CONTRIBUTING](CONTRIBUTING.md)

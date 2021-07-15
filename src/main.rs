@@ -7,6 +7,7 @@ use std::{
 };
 
 use chrono::{DateTime, Local};
+use rocket_contrib::templates::Template;
 use schedule::{Schedule, ScheduleDefinition};
 
 mod api;
@@ -46,6 +47,7 @@ fn main() {
 	rocket::ignite()
 		.attach(api::ApiFairing)
 		.attach(frontend::FrontendFairing)
+		.attach(Template::fairing())
 		.manage(schedule.clone())
 		.manage(spec_lock)
 		.launch();
