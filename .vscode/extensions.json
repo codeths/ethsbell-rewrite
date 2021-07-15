@@ -1,0 +1,22 @@
+{
+	"recommendations": [
+		"bbenoist.nix",
+		"bungcip.better-toml",
+		"streetsidesoftware.code-spell-checker",
+		"ms-azuretools.vscode-docker",
+		"serayuzgur.crates",
+		"vadimcn.vscode-lldb",
+		"mhutchie.git-graph",
+		"ms-vsliveshare.vsliveshare",
+		"yzhang.markdown-all-in-one",
+		"arrterian.nix-env-selector",
+		"brettm12345.nixfmt-vscode",
+		"swellaby.vscode-rust-test-adapter",
+		"hdevalke.rust-test-lens",
+		"matklad.rust-analyzer",
+		"hbenl.vscode-test-explorer",
+		"hbenl.vscode-test-explorer-liveshare",
+		"ms-vscode.test-adapter-converter",
+		"dtsvet.vscode-wasm"
+	]
+}
