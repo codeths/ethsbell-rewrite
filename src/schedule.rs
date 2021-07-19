@@ -18,10 +18,8 @@ use crate::ical::IcalEvent;
 #[cfg_attr(feature = "ws", derive(JsonSchema))]
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct ScheduleDefinition {
-	/// The URL of the ical calendar we fetch the schedule's data from.
-	pub calendar_url: Option<String>,
-	/// The URL of the ical calendar we fetch any overrides from.
-	pub override_calendar_url: Option<String>,
+	/// The URL of the ical calendar we fetch the schedule's data from, in ascending order of importance
+	pub calendar_urls: Vec<String>,
 	/// All of the types of schedule there are.
 	pub schedule_types: HashMap<String, ScheduleType>,
 	/// The typical schedule.
@@ -206,22 +204,10 @@ impl From<ScheduleDefinition> for Schedule {
 impl Schedule {
 	#[cfg(feature = "pull")]
 	pub fn update(&mut self) {
-		// Fetch the primary calendar
-		println!("Fetching main calendar...");
-		let calendar_data = match &self.definition.calendar_url {
-			Some(url) => IcalEvent::get(&url),
-			None => vec![],
-		};
-		// Fetch the override calendar
-		println!("Fetching override calendar...");
-		let override_calendar_data = match &self.definition.override_calendar_url {
-			Some(url) => IcalEvent::get(&url),
-			None => vec![],
-		};
-		// Apply the primary calendar
-		ical_to_ours(self, &calendar_data);
-		// Apply the override calendar
-		ical_to_ours(self, &override_calendar_data);
+		// Fetch the calendars
+		for cal in self.definition.calendar_urls.clone() {
+			ical_to_ours(self, &IcalEvent::get(&cal))
+		}
 		// Update the last-updated value
 		self.last_updated = Local::now().naive_local();
 	}
