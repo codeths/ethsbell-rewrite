@@ -72,9 +72,7 @@
 				"friendly_name": "Announcements",
 				"start": "15:30:00",
 				"end": "15:35:00",
-				"kind": {
-					"Class": "Announcements"
-				}
+				"kind": "Announcements"
 			}
 		],
 		"regex": "FORCE ORANGE DAY"
@@ -152,9 +150,7 @@
 				"friendly_name": "Announcements",
 				"start": "15:30:00",
 				"end": "15:35:00",
-				"kind": {
-					"Class": "Announcements"
-				}
+				"kind": "Announcements"
 			}
 		],
 		"regex": "FORCE BLUE DAY"

@@ -1,4 +1,4 @@
-function display(data) {
+async function display(data) {
 	// Display previous
 	getel("prev_start").innerHTML = data[0] ? `from ${data[0].start}` : ""
 	getel("prev_end").innerHTML = data[0] ? `until ${data[0].end}` : ""
@@ -18,12 +18,13 @@ function display(data) {
 			.replace("CURR_END", current.end))
 	}
 	getel("current_parent").innerHTML = currents.join(getel("current_separator").innerHTML)
-	place_boxes(data)
+	let all_data = await get("api/v1/today").then(v=>v.periods)
+	place_boxes(all_data)
 }
 
 go()
 
-const viewport_minutes = 90 // The number of minutes the viewport should show
+const viewport_seconds = 3600*3 // The number of minutes the viewport should show
 const row_height = 50 // The height of a row
 const box_height = 40 // The height of a box
 const row_start = 10 // The height rows start at
@@ -64,26 +65,45 @@ function place_boxes(data) {
 		})
 	}
 	// Determine where the boxes should be placed on-screen
-	let center = window.innerWidth / 2
-	minutes_to_pixels = window.innerWidth / viewport_minutes
-	let now = (Date.now() / 1000)
+	let now = (Date.now() / 1000) + 3600 * 19
 	for (const box of boxes) {
-		let length = (box.end - box.start) / 60
-		let d_time = now - box.start
-		let from_center = d_time * minutes_to_pixels / 60
-		let x = Math.max(center - from_center, 5)
-		let w = Math.min((length * minutes_to_pixels), window.innerWidth - 5 - x)
-		box.w = w
-		box.x = x
-		box.y = row_start + (box.row * row_height)
-		box.h = box_height
-		box.th = text_height
-		let text_margin = (box_height - text_height) / 2
-		box.tx = x + text_margin
-		box.ty = box.y + text_height
+		let length = (box.end - box.start)
+		let relative_time = box.start - now
+		let fraction_time = relative_time / viewport_seconds
+		let fraction_position = 0.5 + fraction_time
+		let fraction_outside_length = 0;
+		if (fraction_position < 0) {
+			fraction_outside_length = -fraction_position
+			fraction_position = 0
+		}
+		let absolute_x = window.innerWidth * fraction_position
+		fraction_position *= 100
+		let fraction_length = length / viewport_seconds
+		fraction_length -= fraction_outside_length
+		if (fraction_length <= 0) {
+			console.log("Zero length array", box);
+			box.hidden = true
+		} else {
+			console.log(boxes);
+			fraction_length *= 100
+			if (fraction_length + fraction_position > 100) {
+				fraction_length = 100 - fraction_position
+			}
+			box.x = fraction_position
+			box.y = row_start + (row_height * box.row)
+			box.w = fraction_length
+			box.h = box_height
+			let text_margin = (box_height - text_height) / 2
+			box.tx = absolute_x + text_margin
+			box.ty = box.y + (box.h/2) + text_margin*2
+			box.th = text_height
+		}
 	}
 	// Set the box's emoji and TODO color
 	for (const box of boxes) {
+		if (box.hidden) {
+			continue
+		}
 		let emoji;
 		if (box.kind.Class) {
 			emoji = "🏫"
@@ -109,8 +129,11 @@ function place_boxes(data) {
 				case "AfterSchool":
 					emoji = "🌇";
 					break;
+				case "Announcements":
+					emoji = "📣"
+					break;
 				default:
-					emoji = "😕";
+					emoji = emoji || "😕";
 			}
 		}
 		box.emoji = emoji;
@@ -120,6 +143,9 @@ function place_boxes(data) {
 	// Write the boxes to the DOM
 	let output = ""
 	for (const box of boxes) {
+		if (box.hidden) {
+			continue
+		}
 		output += getel("period_box").innerHTML
 			.replace("X", box.x)
 			.replace("Y", box.y)
@@ -129,7 +155,7 @@ function place_boxes(data) {
 			.replace("TY", box.ty)
 			.replace("TH", box.th)
 			.replace("COLOR", box.color)
-			.replace("CONTENT", `${box.emoji} ${box.name}`)
+			.replace("CONTENT", box.w > 10 ? `${box.emoji} ${box.name}` : box.emoji)
 	}
 	getel("boxes").innerHTML = output
 }

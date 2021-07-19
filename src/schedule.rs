@@ -191,6 +191,8 @@ pub enum PeriodType {
 	BeforeSchool,
 	/// This period is after school.
 	AfterSchool,
+	/// This period contains announcements.
+	Announcements,
 }
 
 #[cfg_attr(feature = "ws", derive(JsonSchema))]

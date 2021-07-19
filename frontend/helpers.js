@@ -1,5 +1,5 @@
-async function get() {
-	return (await fetch('../api/v1/today/now/near')).json()
+async function get(url) {
+	return (await fetch(url || '../api/v1/today/now/near')).json()
 }
 
 function process(data) {

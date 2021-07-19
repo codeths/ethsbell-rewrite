@@ -1,6 +1,6 @@
 {
 	"monday": {
-        "friendly_name": "Async Monday",
+		"friendly_name": "Async Monday",
 		"periods": [
 			{
 				"friendly_name": "Early Bird",
@@ -79,7 +79,8 @@
 				"kind": {
 					"Class": "Block7"
 				}
-			},{
+			},
+			{
 				"friendly_name": "Block 8",
 				"start": "13:34:00",
 				"end": "14:09:00",
