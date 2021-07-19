@@ -1,41 +1,31 @@
-body {
-	text-align: center;
-	font-family: sans-serif;
-	padding-left: 10vw;
-	padding-right: 10vw;
-	font-size: 2vw;
+nav {
+	display: block;
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	background-color: darkslategrey;
+	padding-left: 20px;
+	padding-right: 20px;
+	color: white;	
+	margin: 0px;
 }
 
-a.normal {
-	font-size: initial;
+h1>a {
+	color: white;
+	text-decoration: none;
 }
 
-.background {
-	background-color: lightgray;
-	padding: 10px
+nav>h1 {
+	display: inline;
+	padding-top: 20px;
 }
 
-#period_name {
-	font-size: 5vw;
+nav>ul {
+	display: inline;
+	float: right;
 }
 
-pre {
-	display: inline-block;
-	background-color: white;
-	text-align: left;
-	tab-size: 2;
-	-moz-tab-size: 2;
-	-o-tab-size: 2;
-	padding: 10px;
-	border-radius: 10px;
-	max-width: 80vw;
-	word-wrap: break-word;
-	white-space: pre-wrap;  
-	border-left-style: solid;
-	border-right-style: solid;
-	border-color: black;
-}
-
-#message {
-	font-size: small;
+nav>ul>li {
+	display: inline;
 }
