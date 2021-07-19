@@ -1,12 +1,3 @@
-async function get() {
-	return (await fetch('../api/v1/today/now/near')).json()
-}
-
-function process(data) {
-	// TODO: This will perform class name replacements
-	return data
-}
-
 function display(data) {
 	// Display previous
 	getel("prev_start").innerHTML = data[0] ? `from ${data[0].start}` : ""
@@ -27,16 +18,6 @@ function display(data) {
 			.replace("CURR_END", current.end))
 	}
 	getel("current_parent").innerHTML = currents.join(getel("current_separator"))
-}
-
-function getel(id) {
-	return document.querySelector(`#${id}`)
-}
-
-async function go() {
-	let data = await get()
-	data = process(data)
-	display(data)
 }
 
 go()
