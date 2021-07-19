@@ -15,7 +15,7 @@ async function go() {
 	let data = await get()
 	data = process(data)
 	display(data)
-	window.setTimeout(go, 5*60*1000)
+	window.setTimeout(go, 1*60*1000)
 }
 
 function human_list(items) {
