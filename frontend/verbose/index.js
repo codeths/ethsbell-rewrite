@@ -11,7 +11,6 @@ async function display(data) {
 	let currents = []
 	for (const current of data[1]) {
 		let new_text = getel("current").innerHTML;
-		console.log(current);
 		currents.push(new_text
 			.replace("CURR_START", current.start)
 			.replace("CURR_NAME", current.friendly_name)
@@ -36,7 +35,6 @@ function place_boxes(data) {
 	let boxes = []
 	data = data.flat().filter(v => v)
 	data.sort((a, b) => {
-		console.log(a, b);
 		return a.start - b.start
 	})
 	for (const period of data) {
@@ -81,10 +79,8 @@ function place_boxes(data) {
 		let fraction_length = length / viewport_seconds
 		fraction_length -= fraction_outside_length
 		if (fraction_length <= 0) {
-			console.log("Zero length array", box);
 			box.hidden = true
 		} else {
-			console.log(boxes);
 			fraction_length *= 100
 			if (fraction_length + fraction_position > 100) {
 				fraction_length = 100 - fraction_position
@@ -139,7 +135,6 @@ function place_boxes(data) {
 		box.emoji = emoji;
 		box.color = 'white'
 	}
-	console.log(boxes);
 	// Write the boxes to the DOM
 	let output = ""
 	for (const box of boxes) {
