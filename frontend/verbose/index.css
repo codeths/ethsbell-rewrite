@@ -30,3 +30,9 @@ html body {
 .small {
 	font-size: 50%;
 }
+
+svg {
+	width: 100%;
+	font-weight: 100;
+	font-family: sans-serif;
+}
