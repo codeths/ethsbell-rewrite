@@ -16,7 +16,7 @@ FROM ubuntu
 WORKDIR /app
 RUN apt-get update && apt-get install -y libssl-dev ca-certificates curl && rm -rf /var/lib/apt/lists
 RUN update-ca-certificates
-COPY --from=builder /app/def.json /app/target/release/ethsbell-rewrite ./
+COPY --from=builder /app/def.json /app/def.d /app/target/release/ethsbell-rewrite ./
 COPY --from=builder /app/frontend ./frontend
 COPY --from=builder /app/templates ./templates
 CMD ["./ethsbell-rewrite"]

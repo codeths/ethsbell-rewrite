@@ -63,36 +63,41 @@ fn widget(schedule: State<Arc<RwLock<Schedule>>>) -> Template {
 	let now_time = now.time();
 	let schedule = schedule.read().unwrap().on_date(now_date.naive_local());
 	let mut schedule = schedule.at_time(now_time);
-	schedule.iter_mut().for_each(|v| match v {
-		Some(v) => v.populate(now),
-		None => {}
-	});
+	schedule.0 = schedule.0.map(|v| v.populate(now));
+	schedule.1.iter_mut().for_each(|v| *v = v.clone().populate(now));
+	schedule.2 = schedule.2.map(|v| v.populate(now));
 	let ctx = WidgetContext {
-		prev_name: schedule[0]
+		prev_name: schedule.0
 			.clone()
 			.map(|v| v.friendly_name)
 			.unwrap_or("None".to_string()),
-		current_name: schedule[1]
+		current_name: schedule.1
+			.clone()
+			.iter()
+			.map(|v| v.friendly_name.clone())
+		.collect::<Vec<String>>()
+		.join(", "),
+		current_start: schedule.1
+		.clone()
+		.iter()
+		.map(|v| v.start.to_string())
+		.collect::<Vec<String>>()
+		.join(", "),
+		current_end: schedule.1
+		.clone()
+		.iter()
+		.map(|v| v.end.to_string())
+		.collect::<Vec<String>>()
+		.join(", "),
+		next_name: schedule.2
 			.clone()
 			.map(|v| v.friendly_name)
 			.unwrap_or("None".to_string()),
-		current_start: schedule[1]
+		next_start: schedule.2
 			.clone()
 			.map(|v| v.start.to_string())
 			.unwrap_or("".to_string()),
-		current_end: schedule[1]
-			.clone()
-			.map(|v| v.end.to_string())
-			.unwrap_or("".to_string()),
-		next_name: schedule[2]
-			.clone()
-			.map(|v| v.friendly_name)
-			.unwrap_or("None".to_string()),
-		next_start: schedule[2]
-			.clone()
-			.map(|v| v.start.to_string())
-			.unwrap_or("".to_string()),
-		prev_end: schedule[0]
+		prev_end: schedule.0
 			.clone()
 			.map(|v| v.end.to_string())
 			.unwrap_or("".to_string()),
@@ -201,7 +206,7 @@ fn today(schedule: State<Arc<RwLock<Schedule>>>, timestamp: Option<i64>) -> Json
 	let now_date = now.date();
 	let schedule = schedule.read().unwrap();
 	let mut schedule = schedule.on_date(now_date.naive_local());
-	schedule.periods.iter_mut().for_each(|v| v.populate(now));
+	schedule.periods.iter_mut().for_each(|v| *v = v.clone().populate(now));
 	Json(schedule)
 }
 
@@ -210,7 +215,7 @@ fn today(schedule: State<Arc<RwLock<Schedule>>>, timestamp: Option<i64>) -> Json
 fn today_now(
 	schedule: State<Arc<RwLock<Schedule>>>,
 	timestamp: Option<i64>,
-) -> Result<Json<Period>, String> {
+) -> Result<Json<Vec<Period>>, String> {
 	if schedule.read().unwrap().is_update_needed() {
 		schedule.write().unwrap().update();
 	}
@@ -223,13 +228,13 @@ fn today_now(
 	let now_date = now.date();
 	let now_time = now.time();
 	let schedule = schedule.read().unwrap().on_date(now_date.naive_local());
-	match schedule.at_time(now_time)[1].clone() {
-		Some(period) => {
+	match schedule.at_time(now_time).1.clone() {
+		period if period.len() > 0 => {
 			let mut period = period.clone();
-			period.populate(now);
+			period.iter_mut().for_each(|v| *v = v.clone().populate(now));
 			Ok(Json(period))
 		}
-		None => Err(String::from("There's no schedule right now, sorry.")),
+		_ => Err(String::from("There's no schedule right now, sorry.")),
 	}
 }
 
@@ -238,7 +243,7 @@ fn today_now(
 fn today_around_now(
 	schedule: State<Arc<RwLock<Schedule>>>,
 	timestamp: Option<i64>,
-) -> Json<[Option<Period>; 3]> {
+) -> Json<(Option<Period>, Vec<Period>, Option<Period>)> {
 	if schedule.read().unwrap().is_update_needed() {
 		schedule.write().unwrap().update();
 	}
@@ -251,11 +256,7 @@ fn today_around_now(
 	let now_date = now.date();
 	let now_time = now.time();
 	let schedule = schedule.read().unwrap().on_date(now_date.naive_local());
-	let mut schedule = schedule.at_time(now_time);
-	schedule.iter_mut().for_each(|v| match v {
-		Some(v) => v.populate(now),
-		None => {}
-	});
+	let schedule = schedule.at_time(now_time);
 	Json(schedule)
 }
 
@@ -265,7 +266,7 @@ fn today_at(
 	schedule: State<Arc<RwLock<Schedule>>>,
 	time_string: String,
 	timestamp: Option<i64>,
-) -> Result<Option<Json<Period>>, OurError> {
+) -> Result<Option<Json<Vec<Period>>>, OurError> {
 	if schedule.read().unwrap().is_update_needed() {
 		schedule.write().unwrap().update();
 	}
@@ -278,13 +279,13 @@ fn today_at(
 	let now_date = now.date();
 	let then_time = NaiveTime::from_str(&time_string)?;
 	let schedule = schedule.read().unwrap().on_date(now_date.naive_local());
-	match schedule.at_time(then_time)[1].clone() {
-		Some(period) => {
+	match schedule.at_time(then_time).1.clone() {
+		period if period.len() > 0 => {
 			let mut period = period.clone();
-			period.populate(now);
+			period.iter_mut().for_each(|v| *v = v.clone().populate(now));
 			Ok(Some(Json(period)))
 		}
-		None => Ok(None),
+		_ => Ok(None),
 	}
 }
 
@@ -306,7 +307,7 @@ fn date(
 		.with_year(then.year())
 		.unwrap();
 	let mut schedule = schedule.read().unwrap().on_date(then);
-	schedule.periods.iter_mut().for_each(|v| v.populate(then_));
+	schedule.periods.iter_mut().for_each(|v| *v = v.clone().populate(then_));
 	Ok(Json(schedule))
 }
 
@@ -316,7 +317,7 @@ fn date_at(
 	schedule: State<Arc<RwLock<Schedule>>>,
 	date_string: String,
 	time_string: String,
-) -> Result<Option<Json<Period>>, OurError> {
+) -> Result<Option<Json<Vec<Period>>>, OurError> {
 	if schedule.read().unwrap().is_update_needed() {
 		schedule.write().unwrap().update();
 	}
@@ -330,13 +331,13 @@ fn date_at(
 		.with_year(then_date.year())
 		.unwrap();
 	let schedule = schedule.read().unwrap().on_date(then_date);
-	match schedule.at_time(then_time)[1].clone() {
-		Some(period) => {
+	match schedule.at_time(then_time).1.clone() {
+		period if period.len() > 0 => {
 			let mut period = period.clone();
-			period.populate(then_);
+			period.iter_mut().for_each(|v| *v = v.clone().populate(then_));
 			Ok(Some(Json(period)))
 		}
-		None => Ok(None),
+		_ => Ok(None),
 	}
 }
 
@@ -358,6 +359,6 @@ fn ical(backward: i64, forward: i64, schedule: State<Arc<RwLock<Schedule>>>) -> 
 #[openapi(skip)]
 #[get("/coffee")]
 fn coffee(schedule: State<Arc<RwLock<Schedule>>>) -> Status {
-	let lock = schedule.write().unwrap();
+	let _lock = schedule.write().unwrap();
 	Status::ImATeapot
 }

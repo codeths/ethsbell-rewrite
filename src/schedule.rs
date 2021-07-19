@@ -47,12 +47,12 @@ pub struct ScheduleType {
 	pub regex: Option<Regex>,
 }
 impl ScheduleType {
-	pub fn at_time(&self, time: NaiveTime) -> [Option<Period>; 3] {
+	pub fn at_time(&self, time: NaiveTime) -> (Option<Period>, Vec<Period>, Option<Period>) {
 		if self.periods.len() == 0 {
-			[None, None, None]
+			(None, vec![], None)
 		} else {
 			let mut before: Option<Period> = None;
-			let mut current: Option<Period> = None;
+			let mut current: Vec<Period> = vec![];
 			let mut next: Option<Period> = None;
 			self.periods.iter().for_each(|period| {
 				if period.end < time {
@@ -68,43 +68,51 @@ impl ScheduleType {
 						_ => {}
 					};
 				} else {
-					current = Some(period.clone())
+					current.push(period.clone());
 				}
 			});
 			match (&before, &current, &next) {
-				(Some(before), None, Some(next)) => {
-					current = Some(Period {
+				(Some(before), v, Some(next)) if v.len() == 0 => {
+					current = vec![Period {
 						friendly_name: "Passing".to_string(),
 						start: before.end,
 						end: next.start,
 						start_timestamp: 0,
 						end_timestamp: 0,
 						kind: PeriodType::Passing,
-					})
+					}]
 				}
-				(None, None, Some(next)) => {
-					current = Some(Period {
+				(None, v, Some(next)) if v.len() == 0 => {
+					current = vec![Period {
 						friendly_name: "Before school".to_string(),
 						start: NaiveTime::from_hms(0, 0, 0),
 						end: next.start,
 						start_timestamp: 0,
 						end_timestamp: 0,
 						kind: PeriodType::BeforeSchool,
-					})
+					}]
 				}
-				(Some(before), None, None) => {
-					current = Some(Period {
+				(Some(before), v, None) if v.len() == 0 => {
+					current = vec![Period {
 						friendly_name: "After School".to_string(),
 						start: before.end,
 						end: NaiveTime::from_hms(23, 59, 59),
 						start_timestamp: 0,
 						end_timestamp: 0,
 						kind: PeriodType::AfterSchool,
-					})
+					}]
 				}
 				_ => {}
 			}
-			[before, current, next]
+			let now = Local::now();
+			(
+				before.map(|v| v.populate(now)),
+				current
+					.iter()
+					.map(|v| v.clone().populate(now))
+					.collect::<Vec<Period>>(),
+				next.map(|v| v.populate(now)),
+			)
 		}
 	}
 }
@@ -139,7 +147,7 @@ pub struct Period {
 	pub kind: PeriodType,
 }
 impl Period {
-	pub fn populate(&mut self, date: DateTime<Local>) {
+	pub fn populate(mut self, date: DateTime<Local>) -> Self {
 		let start_date = date.clone();
 		let end_date = date.clone();
 		self.start_timestamp = start_date
@@ -158,6 +166,7 @@ impl Period {
 			.with_second(self.end.second())
 			.unwrap()
 			.timestamp() as u64;
+		self
 	}
 }
 
@@ -166,7 +175,9 @@ impl Period {
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone)]
 pub enum PeriodType {
 	/// This period has a class in it, and it is this index in a student's schedule.
-	Class(usize),
+	Class(String),
+	/// This period is either a lunch or a class, depending on the student's schedule.
+	ClassOrLunch(String),
 	/// This period is always lunch.
 	Lunch,
 	/// This period is always a break.
