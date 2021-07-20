@@ -50,9 +50,9 @@ function place_boxes(data) {
 
 	// Determine where the boxes should be placed on-screen
 	const now = (Date.now() / 1000);
+	const viewport_width = getel('timeline>svg').clientWidth;
 	for (const box of boxes) {
 		const length = (box.end - box.start);
-		const viewport_width = getel('timeline>svg').clientWidth;
 		const relative_time = box.start - now;
 		const fraction_time = relative_time / viewport_seconds;
 		let fraction_position = 0.5 + fraction_time;
@@ -144,7 +144,7 @@ function place_boxes(data) {
 			.replace('TY', box.ty)
 			.replace('TH', box.th)
 			.replace('COLOR', box.color)
-			.replace('CONTENT', box.w > 10 ? `${box.emoji} ${box.name}` : box.emoji);
+			.replace('CONTENT', ((box.w > 10) && (box.w * viewport_width / 100 > text_height * box.name.length / 1.35)) ? `${box.emoji} ${box.name}` : box.emoji);
 	}
 
 	getel('boxes').innerHTML = output;
