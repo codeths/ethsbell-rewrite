@@ -65,13 +65,13 @@ svg {
 	font-family: sans-serif;
 }
 
-@media (min-aspect-ratio: 1/1) {
+@media (min-aspect-ratio: 4/3) {
 	.portrait_warning {
 		display: none
 	}
 }
 
-@media (max-aspect-ratio: 1/1) {
+@media (max-aspect-ratio: 4/3) {
 	.portrait_warning {
 		text-align: center;
 	}
