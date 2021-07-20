@@ -1,4 +1,5 @@
-html, body {
+html,
+body {
 	height: 100%;
 	margin: 0;
 }
@@ -44,7 +45,7 @@ body {
 	}
 }
 
-.fade_in {
+.fadein {
 	animation: 0.25s ease-in-out 1 fade_in;
 	opacity: 1;
 }
@@ -54,6 +55,6 @@ body {
 	opacity: 0;
 }
 
-.hide_cursor {
+.hidecursor {
 	cursor: none;
 }
