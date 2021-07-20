@@ -23,7 +23,7 @@ async function getToday() {
 
 	currentSchedule = today;
 
-	buildTable(currentSchedule[0].periods);
+	buildTable(currentSchedule.periods);
 	
 	return;
 }
