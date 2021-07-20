@@ -1,10 +1,10 @@
 let all_data;
 
-const viewport_seconds = 3600 * 6; // The number of seconds the viewport should show
-const row_height = 50; // The height of a row
-const box_height = 40; // The height of a box
-const row_start = 10; // The height rows start at
-const text_height = 30; // The size of the font
+let viewport_seconds = 3600 * 6; // The number of seconds the viewport should show
+let row_height = 50; // The height of a row
+let box_height = 40; // The height of a box
+let row_start = 10; // The height rows start at
+let text_height = 30; // The size of the font
 let has_resize_listener = false;
 
 /// Place period boxes for a list of periods.
@@ -14,6 +14,14 @@ function place_boxes(data) {
 			place_boxes(all_data);
 		});
 		has_resize_listener = true;
+		let set_length = event_ => {
+			viewport_seconds = event_.target.value * 3600
+			place_boxes(all_data)
+		}
+		let events = ["input"]
+		for (const event_name of events) {
+			getel("timeline_length")?.addEventListener(event_name, set_length)
+		}
 	}
 
 	// Resolve rows so everything is mutually non-intersecting.

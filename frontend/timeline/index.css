@@ -43,6 +43,13 @@ svg {
 	font-family: sans-serif;
 }
 
+#timeline_length {
+	border: none;
+	background: none;
+	text-align: right;
+	width: 2em;
+}
+
 @media (min-aspect-ratio: 4/3) {
 	.portrait_warning {
 		display: none
