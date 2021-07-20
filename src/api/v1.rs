@@ -7,7 +7,7 @@ use crate::{
 	SpecLock,
 };
 use chrono::{DateTime, Datelike, Duration, Local, NaiveDate, NaiveDateTime, NaiveTime, TimeZone};
-use rocket::{http::Status, Data, Route, State};
+use rocket::{http::Status, response::content::Html, Data, Route, State};
 use rocket_contrib::{json::Json, templates::Template};
 use rocket_okapi::{openapi, routes_with_openapi};
 use serde::Serialize;
@@ -22,6 +22,7 @@ pub fn routes() -> Vec<Route> {
 	routes_with_openapi![
 		get_schedule,
 		today,
+		today_code,
 		date,
 		today_now,
 		today_at,
@@ -37,6 +38,8 @@ pub fn routes() -> Vec<Route> {
 		ical,
 		coffee,
 		widget,
+		license,
+		schedule_from_to,
 	]
 }
 
@@ -62,42 +65,52 @@ fn widget(schedule: State<Arc<RwLock<Schedule>>>) -> Template {
 	let now_date = now.date();
 	let now_time = now.time();
 	let schedule = schedule.read().unwrap().on_date(now_date.naive_local());
-	let mut schedule = schedule.at_time(now_time);
+	let mut schedule = schedule.0.at_time(now_time);
 	schedule.0 = schedule.0.map(|v| v.populate(now));
-	schedule.1.iter_mut().for_each(|v| *v = v.clone().populate(now));
+	schedule
+		.1
+		.iter_mut()
+		.for_each(|v| *v = v.clone().populate(now));
 	schedule.2 = schedule.2.map(|v| v.populate(now));
 	let ctx = WidgetContext {
-		prev_name: schedule.0
+		prev_name: schedule
+			.0
 			.clone()
 			.map(|v| v.friendly_name)
 			.unwrap_or("None".to_string()),
-		current_name: schedule.1
+		current_name: schedule
+			.1
 			.clone()
 			.iter()
 			.map(|v| v.friendly_name.clone())
-		.collect::<Vec<String>>()
-		.join(", "),
-		current_start: schedule.1
-		.clone()
-		.iter()
-		.map(|v| v.start.to_string())
-		.collect::<Vec<String>>()
-		.join(", "),
-		current_end: schedule.1
-		.clone()
-		.iter()
-		.map(|v| v.end.to_string())
-		.collect::<Vec<String>>()
-		.join(", "),
-		next_name: schedule.2
+			.collect::<Vec<String>>()
+			.join(", "),
+		current_start: schedule
+			.1
+			.clone()
+			.iter()
+			.map(|v| v.start.to_string())
+			.collect::<Vec<String>>()
+			.join(", "),
+		current_end: schedule
+			.1
+			.clone()
+			.iter()
+			.map(|v| v.end.to_string())
+			.collect::<Vec<String>>()
+			.join(", "),
+		next_name: schedule
+			.2
 			.clone()
 			.map(|v| v.friendly_name)
 			.unwrap_or("None".to_string()),
-		next_start: schedule.2
+		next_start: schedule
+			.2
 			.clone()
 			.map(|v| v.start.to_string())
 			.unwrap_or("".to_string()),
-		prev_end: schedule.0
+		prev_end: schedule
+			.0
 			.clone()
 			.map(|v| v.end.to_string())
 			.unwrap_or("".to_string()),
@@ -124,8 +137,8 @@ fn check_auth(_auth: Authenticated) -> &'static str {
 
 #[openapi]
 #[get("/spec")]
-fn get_spec() -> Result<String, std::io::Error> {
-	Ok(read_to_string("./def.json")?)
+fn get_spec(schedule: State<Arc<RwLock<Schedule>>>) -> Result<String, std::io::Error> {
+	Ok(serde_json::to_string(&schedule.read().unwrap().definition.clone()).unwrap())
 }
 
 #[openapi(skip)]
@@ -190,6 +203,29 @@ fn get_schedule(schedule: State<Arc<RwLock<Schedule>>>) -> Json<Schedule> {
 	Json(schedule.clone())
 }
 
+#[openapi(skip)]
+#[get("/schedule/from/<start>/to/<end>")]
+fn schedule_from_to(
+	schedule: State<Arc<RwLock<Schedule>>>,
+	start: String,
+	end: String,
+) -> Result<Json<Vec<String>>, OurError> {
+	let start: NaiveDate = serde_json::from_str(&start)?;
+	let end: NaiveDate = serde_json::from_str(&end)?;
+	assert!(start < end);
+	let mut cursor = start.clone();
+	let mut output = vec![];
+	let schedule = schedule.read().unwrap();
+	while cursor < end {
+		match schedule.on_date(cursor.clone()).1 {
+			Some(v) => output.push(v),
+			_ => {}
+		};
+		cursor += Duration::days(1);
+	}
+	Ok(Json(output))
+}
+
 #[openapi]
 #[get("/today?<timestamp>")]
 fn today(schedule: State<Arc<RwLock<Schedule>>>, timestamp: Option<i64>) -> Json<ScheduleType> {
@@ -206,8 +242,35 @@ fn today(schedule: State<Arc<RwLock<Schedule>>>, timestamp: Option<i64>) -> Json
 	let now_date = now.date();
 	let schedule = schedule.read().unwrap();
 	let mut schedule = schedule.on_date(now_date.naive_local());
-	schedule.periods.iter_mut().for_each(|v| *v = v.clone().populate(now));
-	Json(schedule)
+	schedule
+		.0
+		.periods
+		.iter_mut()
+		.for_each(|v| *v = v.clone().populate(now));
+	Json(schedule.0)
+}
+
+#[openapi]
+#[get("/today/code?<timestamp>")]
+fn today_code(
+	schedule: State<Arc<RwLock<Schedule>>>,
+	timestamp: Option<i64>,
+) -> Json<Option<String>> {
+	if schedule.read().unwrap().is_update_needed() {
+		schedule.write().unwrap().update();
+	}
+
+	// Get the current date as a NaiveDate
+	let now = match timestamp {
+		None => Local::now(),
+		Some(timestamp) => Local
+			.from_utc_datetime(&NaiveDateTime::from_timestamp(timestamp, 0))
+			.with_timezone(&Local),
+	};
+	let now_date = now.date();
+	let schedule = schedule.read().unwrap();
+	let schedule = schedule.on_date(now_date.naive_local());
+	Json(schedule.1)
 }
 
 #[openapi]
@@ -228,7 +291,7 @@ fn today_now(
 	let now_date = now.date();
 	let now_time = now.time();
 	let schedule = schedule.read().unwrap().on_date(now_date.naive_local());
-	match schedule.at_time(now_time).1.clone() {
+	match schedule.0.at_time(now_time).1.clone() {
 		period if period.len() > 0 => {
 			let mut period = period.clone();
 			period.iter_mut().for_each(|v| *v = v.clone().populate(now));
@@ -256,7 +319,7 @@ fn today_around_now(
 	let now_date = now.date();
 	let now_time = now.time();
 	let schedule = schedule.read().unwrap().on_date(now_date.naive_local());
-	let schedule = schedule.at_time(now_time);
+	let schedule = schedule.0.at_time(now_time);
 	Json(schedule)
 }
 
@@ -279,7 +342,7 @@ fn today_at(
 	let now_date = now.date();
 	let then_time = NaiveTime::from_str(&time_string)?;
 	let schedule = schedule.read().unwrap().on_date(now_date.naive_local());
-	match schedule.at_time(then_time).1.clone() {
+	match schedule.0.at_time(then_time).1.clone() {
 		period if period.len() > 0 => {
 			let mut period = period.clone();
 			period.iter_mut().for_each(|v| *v = v.clone().populate(now));
@@ -307,8 +370,12 @@ fn date(
 		.with_year(then.year())
 		.unwrap();
 	let mut schedule = schedule.read().unwrap().on_date(then);
-	schedule.periods.iter_mut().for_each(|v| *v = v.clone().populate(then_));
-	Ok(Json(schedule))
+	schedule
+		.0
+		.periods
+		.iter_mut()
+		.for_each(|v| *v = v.clone().populate(then_));
+	Ok(Json(schedule.0))
 }
 
 #[openapi]
@@ -331,10 +398,12 @@ fn date_at(
 		.with_year(then_date.year())
 		.unwrap();
 	let schedule = schedule.read().unwrap().on_date(then_date);
-	match schedule.at_time(then_time).1.clone() {
+	match schedule.0.at_time(then_time).1.clone() {
 		period if period.len() > 0 => {
 			let mut period = period.clone();
-			period.iter_mut().for_each(|v| *v = v.clone().populate(then_));
+			period
+				.iter_mut()
+				.for_each(|v| *v = v.clone().populate(then_));
 			Ok(Some(Json(period)))
 		}
 		_ => Ok(None),
@@ -361,4 +430,19 @@ fn ical(backward: i64, forward: i64, schedule: State<Arc<RwLock<Schedule>>>) -> 
 fn coffee(schedule: State<Arc<RwLock<Schedule>>>) -> Status {
 	let _lock = schedule.write().unwrap();
 	Status::ImATeapot
+}
+
+#[openapi]
+#[get("/license")]
+fn license() -> Html<String> {
+	let authors = env!("CARGO_PKG_AUTHORS");
+	let authors = authors
+		.split(":")
+		.map(|v| v.trim())
+		.collect::<Vec<&str>>()
+		.join(", ");
+	Html(format!(
+		include_str!("../../LICENSE.html"),
+		authors = authors
+	))
 }

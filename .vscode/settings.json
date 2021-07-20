@@ -29,7 +29,8 @@
 		"timelike",
 		"toolchain",
 		"wasi",
-		"wasm"
+		"wasm",
+		"wildkit"
 	],
 	"rust-analyzer.cargo.features": [
 		"ws"

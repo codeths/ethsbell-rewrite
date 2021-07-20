@@ -1,0 +1,59 @@
+html, body {
+	height: 100%;
+	margin: 0;
+}
+
+body {
+	font-family: sans-serif;
+}
+
+.wildkit {
+	position: absolute;
+	left: 0;
+	bottom: 0;
+	height: 80vw;
+}
+
+.none {
+	display: none;
+}
+
+.block {
+	display: block;
+}
+
+.text-center {
+	text-align: center;
+}
+
+@keyframes fade_in {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
+}
+
+@keyframes fade_out {
+	from {
+		opacity: 1;
+	}
+	to {
+		opacity: 0;
+	}
+}
+
+.fade_in {
+	animation: 0.25s ease-in-out 1 fade_in;
+	opacity: 1;
+}
+
+.fadeout {
+	animation: 0.5s ease-in-out 1 fade_out;
+	opacity: 0;
+}
+
+.hide_cursor {
+	cursor: none;
+}

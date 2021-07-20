@@ -55,7 +55,7 @@ impl ScheduleType {
 			let mut current: Vec<Period> = vec![];
 			let mut next: Option<Period> = None;
 			self.periods.iter().for_each(|period| {
-				if period.end < time {
+				if period.end <= time {
 					match before.clone() {
 						Some(before_) if before_.end < period.end => before = Some(period.clone()),
 						None => before = Some(period.clone()),
@@ -74,7 +74,7 @@ impl ScheduleType {
 			match (&before, &current, &next) {
 				(Some(before), v, Some(next)) if v.len() == 0 => {
 					current = vec![Period {
-						friendly_name: "Passing".to_string(),
+						friendly_name: "Passing Period".to_string(),
 						start: before.end,
 						end: next.start,
 						start_timestamp: 0,
@@ -84,7 +84,7 @@ impl ScheduleType {
 				}
 				(None, v, Some(next)) if v.len() == 0 => {
 					current = vec![Period {
-						friendly_name: "Before school".to_string(),
+						friendly_name: "Before School".to_string(),
 						start: NaiveTime::from_hms(0, 0, 0),
 						end: next.start,
 						start_timestamp: 0,
@@ -227,7 +227,7 @@ impl Schedule {
 	pub fn is_update_needed(&self) -> bool {
 		self.last_updated.date() != Local::now().date().naive_local()
 	}
-	pub fn on_date(&self, date: NaiveDate) -> ScheduleType {
+	pub fn on_date(&self, date: NaiveDate) -> (ScheduleType, Option<String>) {
 		let mut literal: Option<ScheduleType> = None;
 		let special: Option<String> = self
 			.calendar
@@ -252,13 +252,19 @@ impl Schedule {
 			.map(|v| v.unwrap().clone())
 			.next();
 		match special {
-			Some(name) => self.definition.schedule_types.get(&name).unwrap().clone(),
+			Some(name) => (
+				self.definition.schedule_types.get(&name).unwrap().clone(),
+				Some(name),
+			),
 			None => match literal {
-				Some(schedule) => schedule,
+				Some(schedule) => (schedule, None),
 				None => {
 					let weekday: usize = date.weekday().num_days_from_sunday().try_into().unwrap();
 					let name = self.definition.typical_schedule[weekday].clone();
-					self.definition.schedule_types.get(&name).unwrap().clone()
+					(
+						self.definition.schedule_types.get(&name).unwrap().clone(),
+						Some(name),
+					)
 				}
 			},
 		}

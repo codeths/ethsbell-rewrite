@@ -145,7 +145,7 @@ PRODID:ETHSBell Rewrite
 			}
 			exception_days.push(date.clone());
 			let day = schedule.on_date(date.clone());
-			for period in day.periods {
+			for period in day.0.periods {
 				result += &format!(
 					"BEGIN:VEVENT
 UID:{uid}

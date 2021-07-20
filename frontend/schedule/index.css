@@ -45,11 +45,11 @@ nav td>ul>li:not(:first-child)::before {
 	flex-direction: column;
 	flex: 1;
 	align-items: center;
-	justify-content: center;
+	justify-content: top;
 }
 
 body {
-	color: white;
+	color: black;
 	display: flex;
 	flex-flow: column;
 }
@@ -84,6 +84,21 @@ body {
 	outline: 0;
 }
 
-body, #wrapper {
-	background-color: #c34614;
+#table {
+	border-collapse: collapse;
+	width: 80%;
+	max-width: 900px;
+	-webkit-box-shadow: 3px 3px 10px 2px rgba(0, 0, 0, 0.1);
+	box-shadow: 3px 3px 10px 2px rgba(0, 0, 0, 0.1);
+	border: none;
+	margin: 50px;
+}
+
+#table tr {
+	border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+#table th, #table td {
+	padding: 15px 10px;
+	text-align: left;
 }
