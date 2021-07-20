@@ -16,7 +16,7 @@ async function display(data) {
 			.replace('CURR_START', human_time(current.start))
 			.replace('CURR_NAME', current.friendly_name)
 			.replace('CURR_END', human_time(current.end)));
-		ends.push(human_time_left(current.end_timestamp));
+		ends.push(human_time_left(current.end));
 	}
 
 	getel('current_parent').innerHTML = currents.join(getel('current_separator').innerHTML);
