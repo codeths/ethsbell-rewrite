@@ -63,7 +63,7 @@ function place_boxes(data) {
 		})
 	}
 	// Determine where the boxes should be placed on-screen
-	let now = (Date.now() / 1000) + 3600 * 19
+	let now = (Date.now() / 1000)
 	for (const box of boxes) {
 		let length = (box.end - box.start)
 		let relative_time = box.start - now
