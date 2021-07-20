@@ -2,7 +2,7 @@ function display(data) {
 	let content = ''
 	if (data[1]) {
 		let names = data[1].map(period => period.friendly_name)
-		let ends = data[1].map(period => period.end)
+		let ends = data[1].map(period => human_time(period.end))
 		content += `
 		${data[1].length > 1 ? 'The current periods are ' : 'It is currently'} 
 		${human_list(names)},

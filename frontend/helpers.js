@@ -34,3 +34,10 @@ function human_list(items) {
 	}
 	return output
 }
+
+function human_time(time) {
+	let [h, m, s] = time.split(":")
+	let now = new Date(Date.now())
+	let date = new Date(now.getFullYear(), now.getMonth(), now.getDate(), h, m, s)
+	return date.toLocaleTimeString([], {hour: 'numeric', minute: '2-digit'})
+}
