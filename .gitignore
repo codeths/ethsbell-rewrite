@@ -1,4 +1,6 @@
 /target
+/coverage_target
 .devcontainer/localtime
 node_modules
 package-lock.json
+/lcov.info

@@ -10,6 +10,8 @@ RUN cargo build --release --bin ethsbell-rewrite --features=ws
 RUN rm ./src/main.rs && rm ./src/lib.rs
 COPY . .
 RUN touch src/main.rs && touch src/lib.rs
+# This is here so the build fails if the tests do.
+RUN cargo test --release --features=ws 
 RUN cargo build --release --bin ethsbell-rewrite --features=ws
 
 FROM ubuntu

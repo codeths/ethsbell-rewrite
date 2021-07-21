@@ -1,6 +1,5 @@
 {
 	"no_school": {
-		"code": "no_school",
 		"friendly_name": "No School",
 		"periods": [],
 		"regex": "(No School)|(Non-Attendance)"

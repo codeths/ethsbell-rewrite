@@ -189,6 +189,19 @@ impl From<ScheduleDefinition> for Schedule {
 		new
 	}
 }
+impl Default for Schedule {
+	fn default() -> Self {
+		Schedule {
+			last_updated: NaiveDateTime::from_timestamp(0, 0),
+			calendar: HashMap::new(),
+			definition: ScheduleDefinition {
+				calendar_urls: vec![],
+				schedule_types: HashMap::new(),
+				typical_schedule: vec![],
+			},
+		}
+	}
+}
 impl Schedule {
 	#[cfg(feature = "pull")]
 	pub fn update(&mut self) {
