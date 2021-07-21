@@ -1,6 +1,6 @@
 {
 	"monday": {
-		"friendly_name": "Async Monday",
+		"friendly_name": "PD Monday",
 		"periods": [
 			{
 				"friendly_name": "Early Bird",
@@ -89,6 +89,11 @@
 				}
 			}
 		],
-		"regex": "FORCE MONDAY"
+		"regex": "FORCE MONDAY",
+		"color": [
+			26,
+			39,
+			65
+		]
 	}
 }

@@ -58,15 +58,15 @@ function plural_suffix(number, string) {
 	return `${string}${number === 1 ? '' : 's'}`;
 }
 
-// Gets current epoch in seconds
-// If timestamp query string is provided, that is used instead.
-function current_epoch() {
+// Gets current date
+// If timestamp query string is provided, that is used instead of current.
+function current_date() {
 	const timestampQueryString = new URLSearchParams(window.location.search).get('timestamp');
 	if (timestampQueryString) {
-		return Number.parseInt(timestampQueryString, 10) * 1000;
+		return new Date(Number.parseInt(timestampQueryString, 10) * 1000);
 	}
 
-	return Date.now();
+	return new Date();
 }
 
 function date_from_api(time) {
@@ -78,13 +78,13 @@ function date_from_api(time) {
 
 function human_time(time) {
 	const date = date_from_api(time);
-	return date.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+	return date.toLocaleTimeString('en-US', {hour: 'numeric', minute: '2-digit', timeZone: 'America/Chicago'});
 }
 
 // Gets a human readable duration from an epoch timestamp
 function human_time_left(endTime, startTime = null, short = false) {
 	const endDate = date_from_api(endTime).getTime();
-	const startDate = startTime ? date_from_api(startTime).getTime() : current_epoch();
+	const startDate = startTime ? date_from_api(startTime).getTime() : current_date().getTime();
 	const timeLeft = Math.floor((endDate - startDate) / 1000);
 	const h = Math.floor(timeLeft / 60 / 60);
 	const m = Math.ceil(timeLeft / 60 % 60);
@@ -101,6 +101,12 @@ function human_time_left(endTime, startTime = null, short = false) {
 	}
 
 	return `${m} ${plural_suffix(m, 'minute')}`;
+}
+
+// Convert date object to YYYY-MM-DD
+function date_to_string(date) {
+	console.log(date);
+	return `${date.getFullYear()}-${('0' + (date.getMonth() + 1)).slice(-2)}-${('0' + date.getDate()).slice(-2)}`;
 }
 
 // Helper functions for full screen
@@ -144,4 +150,27 @@ function toggleFullScreen(element) {
 			enterFullScreen(element);
 		}
 	}
+}
+
+window.addEventListener('load', () => {
+	document.querySelector('#nav-toggle-button').addEventListener('click', () => {
+		document.querySelector('#nav-links').classList.toggle('show');
+	});
+});
+
+// Convert array of RGB to hex
+function bytes_to_color(bytes) {
+	return '#' + bytes.map(b => ('0' + b.toString(16)).slice(-2)).join('');
+}
+
+// Detect whether text should be black or white based on the background color
+function black_or_white(color) {
+	if (!color.startsWith('#')) {
+		color = `#${color}`;
+	}
+	const r = parseInt(color.substring(1, 3), 16);
+	const g = parseInt(color.substring(3, 5), 16);
+	const b = parseInt(color.substring(5, 7), 16);
+	const luma = (0.2126 * r) + (0.7152 * g) + (0.0722 * b);
+	return luma > 128 ? 'black' : 'white';
 }

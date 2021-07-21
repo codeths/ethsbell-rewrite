@@ -75,7 +75,12 @@
 				"kind": "Announcements"
 			}
 		],
-		"regex": "FORCE ORANGE DAY"
+		"regex": "FORCE ORANGE DAY",
+		"color": [
+			195,
+			70,
+			20
+		]
 	},
 	"blue_day": {
 		"friendly_name": "Blue Day",
@@ -153,6 +158,11 @@
 				"kind": "Announcements"
 			}
 		],
-		"regex": "FORCE BLUE DAY"
+		"regex": "FORCE BLUE DAY",
+		"color": [
+			0,
+			123,
+			255
+		]
 	}
 }

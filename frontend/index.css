@@ -1,51 +1,10 @@
-nav {
-	display: flex;
-	justify-content: space-between;
-	background-color: #1a2741;
-	color: white;
-}
-
-nav a {
-	color: white;
-	text-decoration-line: none;
-}
-
-nav table {
-	width: 100%;
-	padding-left: 20px;
-	padding-right: 20px;
-}
-
-nav td.right {
-	text-align: right;
-}
-
-nav td {
-	margin: auto;
-	padding: 0px;
-}
-
-nav td>ul {
-	display: inline-block;
-	list-style: none;
-	position: relative;
-	top: 50%;
-}
-
-nav td>ul>li {
-	display: inline;
-}
-
-nav td>ul>li:not(:first-child)::before {
-	content: ' - ';
-}
-
 #wrapper {
 	display: flex;
 	flex-direction: column;
 	flex: 1;
 	align-items: center;
 	justify-content: center;
+	text-align: center;
 }
 
 body {

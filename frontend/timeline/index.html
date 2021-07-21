@@ -11,75 +11,105 @@
 	<script src="global/helpers.js"></script>
 	<script src="global/timeline.js"></script>
 	<script defer async src="timeline/index.js"></script>
+	<script defer src="global/autohide_nav.js"></script>
 	<meta http-equiv="Content-Security-Policy" content="default-src 'self';">
 </head>
 
 <body>
+	<nav class="abs">
+		<div class="nav-left flex" id="nav-logo">
+			<h1><a href="/">ETHSBell</a></h1>
+		</div>
+		<div id="nav-toggle">
+			<span id="nav-toggle-button" role="button">
+				<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#ffffff">
+					<path d="M0 0h24v24H0V0z" fill="none" />
+					<path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z" />
+				</svg>
+			</span>
+		</div>
+		<div class="nav-right flex" id="nav-links">
+			<ul>
+				<li><a href="/">Home</a></li>
+				<li><a href="/schedule">Schedule</a></li>
+				<li><a href="/timeline" class="active">Timeline</a></li>
+				<li><a href="/about">About</a></li>
+			</ul>
+		</div>
+	</nav>
 	<div class="portrait_warning">This page doesn't work great on narrow screens, sorry!</div>
 	<img class="wildkit" src="../wildkit.svg">
-	<div class="vcenter bg">
-		<div id="timeline">
-			<br><br>
-			showing
-			<input type="number" id="timeline_length" title="Length of the displayed timeline in seconds" value=6>
-			hours
-			<template id="period_box">
-				<g>
-					<rect x="X%" y="Y" width="W%" height="H" rx=5 fill="COLOR"></rect>
-					<text x="TX" y="TY" font-size="TH" fill="black">CONTENT</text>
-				</g>
-			</template>
-			<svg height=110>
-				<g id="boxes" stroke=black stroke-width=2></g>
-				<g stroke=black rx=5px ry=5px>
-					<line x1=0 y1=5 x2=100% y2=5 />
-					<line x1=0 y1=55 x2=100% y2=55 stroke="#a0a0a0" />
-					<line x1=0 y1=105 x2=100% y2=105 />
-					<line x1=50% y1=5 x2=50% y2=105 />
-					<line x1=49% y1=0 x2=50% y2=5 />
-					<line x1=51% y1=0 x2=50% y2=5 />
-					<line x1=49% y1=110 x2=50% y2=105 />
-					<line x1=51% y1=110 x2=50% y2=105 />
-				</g>
-			</svg>
-		</div>
-		<div id="around">
-			<table>
-				<tr>
-					<td class="prev_parent">
-						<div class="small" id="prev_start"></div>
-						<div id="prev_name"></div>
-						<div class="small" id="prev_end"></div>
-					</td>
-					<td>
-						→
-					</td>
-					<template id="current">
-						<td>
-							<div class="small">from CURR_START</div>
-							<div>CURR_NAME</div>
-							<div class="small">until CURR_END</div>
+	<div id="wrapper">
+		<div class="bg">
+			<div id="timeline">
+				<div class="text-center">
+					<br><br>
+					showing
+					<input type="number" id="timeline_length" step=.1 class="timeline_prop"
+						title="Length of the displayed timeline in hours" value=6>
+					hours, offset by
+					<input type="number" id="timeline_offset" step=.1 class="timeline_prop"
+						title="Offset of the displayed timeline in hours" value=0> hours.
+					<br>
+				</div>
+				<template id="period_box">
+					<g>
+						<rect x="X%" y="Y" width="W%" height="H" rx=5 fill="COLOR"></rect>
+						<text x="TX" y="TY" font-size="TH" fill="black">CONTENT</text>
+					</g>
+				</template>
+				<svg height=110>
+					<g id="boxes" stroke=black stroke-width=2></g>
+					<g stroke=black rx=5px ry=5px>
+						<line x1=0 y1=5 x2=100% y2=5 />
+						<line x1=0 y1=55 x2=100% y2=55 stroke="#a0a0a0" />
+						<line x1=0 y1=105 x2=100% y2=105 />
+						<line x1=50% y1=5 x2=50% y2=105 />
+						<line x1=49% y1=0 x2=50% y2=5 />
+						<line x1=51% y1=0 x2=50% y2=5 />
+						<line x1=49% y1=110 x2=50% y2=105 />
+						<line x1=51% y1=110 x2=50% y2=105 />
+					</g>
+				</svg>
+			</div>
+			<div id="around">
+				<table>
+					<tr>
+						<td class="prev_parent">
+							<div class="small" id="prev_start"></div>
+							<div id="prev_name"></div>
+							<div class="small" id="prev_end"></div>
 						</td>
-					</template>
-					<template id="current_separator">
-						<td>&nbsp;and&nbsp;</td>
-					</template>
-					<td>
-						<table>
-							<tr id="current_parent"></tr>
-						</table>
-					</td>
-					<td>
-						→
-					</td>
-					<td id="next_parent">
-						<div class="small" id="next_start"></div>
-						<div id="next_name"></div>
-						<div class="small" id="next_end"></div>
-					</td>
-				</tr>
-			</table>
-			<span id="time_left"></span><br><br>
+						<td>
+							→
+						</td>
+						<template id="current">
+							<td>
+								<div class="small">from CURR_START</div>
+								<div>CURR_NAME</div>
+								<div class="small">until CURR_END</div>
+							</td>
+						</template>
+						<template id="current_separator">
+							<td>&nbsp;and&nbsp;</td>
+						</template>
+						<td>
+							<table>
+								<tr id="current_parent"></tr>
+							</table>
+						</td>
+						<td>
+							→
+						</td>
+						<td id="next_parent">
+							<div class="small" id="next_start"></div>
+							<div id="next_name"></div>
+							<div class="small" id="next_end"></div>
+						</td>
+					</tr>
+				</table>
+				<div id="time_left" class="text-center"></div><br><br>
+			</div>
 		</div>
 	</div>
 </body>
