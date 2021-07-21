@@ -2,11 +2,11 @@ async function display(data) {
 	// Display previous
 	getel('prev_start').innerHTML = data[0] ? `from ${human_time(data[0].start)}` : '';
 	getel('prev_end').innerHTML = data[0] ? `until ${human_time(data[0].end)}` : '';
-	getel('prev_name').innerHTML = data[0].friendly_name || 'None';
+	getel('prev_name').innerHTML = period_html(data[0]);
 	// Display next
 	getel('next_start').innerHTML = data[2] ? `at ${human_time(data[2]?.start)}` : '';
 	getel('next_end').innerHTML = data[2] ? `until ${human_time(data[2]?.end)}` : '';
-	getel('next_name').innerHTML = data[2]?.friendly_name || 'None';
+	getel('next_name').innerHTML = period_html(data[2]);
 	// Display currents
 	const currents = [];
 	const ends = [];
@@ -14,7 +14,7 @@ async function display(data) {
 		const new_text = getel('current').innerHTML;
 		currents.push(new_text
 			.replace('CURR_START', human_time(current.start))
-			.replace('CURR_NAME', current.friendly_name)
+			.replace('CURR_NAME', period_html(current))
 			.replace('CURR_END', human_time(current.end)));
 		ends.push(human_time_left(current.end));
 	}

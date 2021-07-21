@@ -7,9 +7,39 @@ async function get(endpoint = '/api/v1/today/now/near') {
 		.catch(() => null);
 }
 
+const config = JSON.parse(localStorage.getItem('schedule'));
+
+function replace_period(period) {
+	if (period.length > 0) {
+		return period.map(replace_period);
+	}
+
+	if (period.kind.Class || period.kind.ClassOrLunch) {
+		const class_id = period.kind.Class || period.kind.ClassOrLunch;
+		const class_cfg = config[class_id];
+		if (class_cfg) {
+			period.friendly_name = class_cfg.name;
+			period.url = class_cfg.url;
+		}
+
+		return period;
+	}
+
+	return period;
+}
+
 function process(data) {
 	// TODO: This will perform class name replacements
+
+	if (config) {
+		return data.map(replace_period);
+	}
+
 	return data;
+}
+
+function period_html(period) {
+	return period ? (period.url ? `<a href=${period.url}>${period.friendly_name}</a>` : period.friendly_name) : 'None';
 }
 
 function getel(id) {
@@ -168,9 +198,10 @@ function black_or_white(color) {
 	if (!color.startsWith('#')) {
 		color = `#${color}`;
 	}
-	const r = parseInt(color.substring(1, 3), 16);
-	const g = parseInt(color.substring(3, 5), 16);
-	const b = parseInt(color.substring(5, 7), 16);
+
+	const r = Number.parseInt(color.slice(1, 3), 16);
+	const g = Number.parseInt(color.slice(3, 5), 16);
+	const b = Number.parseInt(color.slice(5, 7), 16);
 	const luma = (0.2126 * r) + (0.7152 * g) + (0.0722 * b);
 	return luma > 128 ? 'black' : 'white';
 }

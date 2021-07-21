@@ -5,16 +5,15 @@
 	<meta charset="UTF-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>ETHSBell</title>
-	<link rel="stylesheet" href="/schedule/index.css">
-	<link rel="stylesheet" href="/global/global.css">
-	<script src="/global/helpers.js"></script>
-	<script async defer src="/schedule/index.js"></script>
-	<meta http-equiv="Content-Security-Policy" content="default-src 'self';">
+	<title>Schedule Uploader</title>
+	<link rel="stylesheet" href="config/index.css">
+	<link rel="stylesheet" href="global/global.css">
+	<script src="global/helpers.js"></script>
+	<script defer src="config/schedule.js"></script>
 </head>
 
 <body>
-	<nav>
+	<nav class="abs">
 		<div class="nav-left flex" id="nav-logo">
 			<h1><a href="/">ETHSBell</a></h1>
 		</div>
@@ -29,34 +28,30 @@
 		<div class="nav-right flex" id="nav-links">
 			<ul>
 				<li><a href="/">Home</a></li>
-				<li><a href="/schedule" class="active">Schedule</a></li>
+				<li><a href="/schedule">Schedule</a></li>
 				<li><a href="/timeline">Timeline</a></li>
-				<li><a href="/config">Config</a></li>
+				<li><a href="/config" class="active">Config</a></li>
 				<li><a href="/about">About</a></li>
 			</ul>
 		</div>
 	</nav>
-	<div id="wrapper">
-		<table id="table">
-			<thead>
-				<tr>
-					<th>Period</th>
-					<th>Time</th>
-					<th>Duration</th>
-				</tr>
-			</thead>
-			<tbody id="tbody">
-			</tbody>
-		</table>
-		<div id="selects">
-			<select id="schedule-select">
-				<option value="" disabled selected>Select a Schedule</option>
-			</select>
-			<input type="date" id="date-select">
-		</div>
-		<div id="calendar-table">
-
-		</div>
+	<div class="background">
+		<h1>Upload your schedule</h1>
+		<p>A schedule file should look like this.</p>
+		<pre>{
+	"Block1": {
+		"name": "Your First Period Class",
+		"url": "https://meet.google.com/whatever"
+	},
+	"Block2": {
+		"name": "Class With No Teleconferencing Link",
+		"url": undefined
+	}
+	...
+}</pre>
+		<input type="file" id="cfg"><br>
+		<button id="upload">Upload!</button><br>
+		<span id="status"></span>
 	</div>
 </body>
 

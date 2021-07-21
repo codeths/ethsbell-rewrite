@@ -231,7 +231,7 @@ impl Schedule {
 	pub fn update_async(schedule: Arc<RwLock<Schedule>>) {
 		println!("Refreshing...");
 		// Fetch the calendars
-		let cals = schedule
+		let calendars = schedule
 			.read()
 			.unwrap()
 			.definition
@@ -239,7 +239,7 @@ impl Schedule {
 			.iter()
 			.map(|v| IcalEvent::get(&v))
 			.collect::<Vec<Vec<IcalEvent>>>();
-		for cal in cals {
+		for cal in calendars {
 			ical_to_ours(&mut schedule.write().unwrap(), &cal)
 		}
 		// Update the last-updated value

@@ -1,0 +1,20 @@
+.background {
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	transform: translate(-50%, -50%);
+	border-radius: 20px;
+	background-color: lightgray;
+	padding: 0 30px 30px 30px;
+}
+
+pre {
+	border-style: solid;
+	border-radius: 10px;
+	border-width: 0;
+	border-left-width: 5px;
+	border-right-width: 5px;
+	background-color: white;
+	border-color: purple;
+	padding: 10px;
+}

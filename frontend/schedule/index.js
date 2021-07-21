@@ -22,7 +22,10 @@ let schedules = {};
 let currentSchedule = {};
 
 async function getDate(date = current_date(), setCurrent = false) {
-	if (date instanceof Date) date = date_to_string(date);
+	if (date instanceof Date) {
+		date = date_to_string(date);
+	}
+
 	const day = await get(`/api/v1/on/${date}`);
 	if (!day) {
 		return;
@@ -82,7 +85,7 @@ async function getScheduleList(start, end) {
 			name,
 			date,
 			backgroundColor,
-			textColor
+			textColor,
 		};
 	});
 
@@ -117,21 +120,24 @@ endOfNextWeek.setDate(endOfNextWeek.getDate() + (CALENDAR_WEEKS * 7));
 	const table = document.createElement('table');
 	const tbody = document.createElement('tbody');
 
-    let index = 0;
-    for (let row = 0; row < CALENDAR_WEEKS; row++) {
-        const tr = document.createElement('tr');
-        for (let col = 0; col < 7; col++) {
-            const td = document.createElement('td');
-            const day = scheduleList[index];
-            const humanDate = day.date.toLocaleDateString('en-US', {
-                weekday: 'short',
-                month: 'long',
-                day: 'numeric',
-                timeZone: 'America/Chicago'
-            });
-            td.classList.add('day');
-            td.innerHTML = `<span class="day-name">${humanDate}</span><div class="day-schedule">${day.name}</div>`;
-			if (day.date.toLocaleDateString() == new Date().toLocaleDateString()) td.classList.add('today');
+	let index = 0;
+	for (let row = 0; row < CALENDAR_WEEKS; row++) {
+		const tr = document.createElement('tr');
+		for (let col = 0; col < 7; col++) {
+			const td = document.createElement('td');
+			const day = scheduleList[index];
+			const humanDate = day.date.toLocaleDateString('en-US', {
+				weekday: 'short',
+				month: 'long',
+				day: 'numeric',
+				timeZone: 'America/Chicago',
+			});
+			td.classList.add('day');
+			td.innerHTML = `<span class="day-name">${humanDate}</span><div class="day-schedule">${day.name}</div>`;
+			if (day.date.toLocaleDateString() == new Date().toLocaleDateString()) {
+				td.classList.add('today');
+			}
+
 			td.querySelector('.day-schedule').style.backgroundColor = day.backgroundColor;
 			td.querySelector('.day-schedule').style.color = day.textColor;
 			td.addEventListener('click', () => {
@@ -139,12 +145,13 @@ endOfNextWeek.setDate(endOfNextWeek.getDate() + (CALENDAR_WEEKS * 7));
 				scheduleSelect.value = day.code;
 				dateSelect.value = date_to_string(day.date);
 			});
-			tr.appendChild(td);
-            index++;
-        }
-        tbody.appendChild(tr);
-    }
+			tr.append(td);
+			index++;
+		}
 
-	table.appendChild(tbody);
-    calendarTable.appendChild(table);
+		tbody.append(tr);
+	}
+
+	table.append(tbody);
+	calendarTable.append(table);
 })();

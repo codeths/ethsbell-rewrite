@@ -12,7 +12,8 @@ let last_scroll_touch_x;
 let scrolled_distance = 0;
 
 /// Place period boxes for a list of periods.
-function place_boxes(data) {
+function place_boxes(data_unprocessed) {
+	let data = replace_period(data_unprocessed);
 	if (!has_resize_listener) {
 		window.addEventListener('resize', () => {
 			place_boxes(all_data);
@@ -99,6 +100,7 @@ function place_boxes(data) {
 			end: period.end_timestamp,
 			kind: period.kind,
 			name: period.friendly_name,
+			period,
 		});
 	}
 
@@ -198,7 +200,7 @@ function place_boxes(data) {
 			.replace('TY', box.ty)
 			.replace('TH', box.th)
 			.replace('COLOR', box.color)
-			.replace('CONTENT', ((box.w > 10) && (box.w * viewport_width / 100 > text_height * box.name.length / 1.35)) ? `${box.emoji} ${box.name}` : box.emoji);
+			.replace('CONTENT', ((box.w > 10) && (box.w * viewport_width / 100 > text_height * box.name.length / 1.35)) ? `${box.emoji} ${period_html(box.period)}` : box.emoji);
 	}
 
 	getel('boxes').innerHTML = output;
