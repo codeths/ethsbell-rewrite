@@ -1,27 +1,74 @@
 let all_data;
 
 let viewport_seconds = 3600 * 6; // The number of seconds the viewport should show
-let row_height = 50; // The height of a row
-let box_height = 40; // The height of a box
-let row_start = 10; // The height rows start at
-let text_height = 30; // The size of the font
+let viewport_offset = 0;
+const row_height = 50; // The height of a row
+const box_height = 40; // The height of a box
+const row_start = 10; // The height rows start at
+const text_height = 30; // The size of the font
 let has_resize_listener = false;
+let scroll_timeout;
+let last_scroll_touch_x;
+let scrolled_distance = 0;
 
 /// Place period boxes for a list of periods.
-function place_boxes(data) {
+function place_boxes(data_unprocessed) {
+	let data = replace_period(data_unprocessed);
 	if (!has_resize_listener) {
 		window.addEventListener('resize', () => {
 			place_boxes(all_data);
 		});
 		has_resize_listener = true;
-		let set_length = event_ => {
-			viewport_seconds = event_.target.value * 3600
-			place_boxes(all_data)
-		}
-		let events = ["input"]
+		const set_length = event_ => {
+			viewport_seconds = event_.target.value * 3600;
+			place_boxes(all_data);
+		};
+
+		const set_offset = event_ => {
+			viewport_offset = event_.target.value * 3600;
+			place_boxes(all_data);
+		};
+
+		// Update fields
+		const events = ['input'];
+		getel('timeline_length').value = viewport_seconds / 3600;
+		getel('timeline_offset').value = 0;
 		for (const event_name of events) {
-			getel("timeline_length")?.addEventListener(event_name, set_length)
+			getel('timeline_length')?.addEventListener(event_name, set_length);
+			getel('timeline_offset')?.addEventListener(event_name, set_offset);
 		}
+
+		// Scroll behaviour
+		const scroll = () => {
+			scroll_timeout = false;
+			viewport_offset += scrolled_distance * 2;
+			scrolled_distance = 0;
+			place_boxes(all_data);
+			getel('timeline_offset').value = Math.round(viewport_offset / 360) / 10;
+		};
+
+		getel('timeline')?.addEventListener('wheel', event => {
+			scrolled_distance += event.deltaX;
+			if (!scroll_timeout) {
+				setTimeout(scroll, 10);
+				scroll_timeout = true;
+			}
+		});
+		getel('timeline')?.addEventListener('touchmove', event => {
+			const new_touch_x = event.touches[0].clientX;
+			if (last_scroll_touch_x) {
+				scrolled_distance += (last_scroll_touch_x - new_touch_x) * 10;
+				if (!scroll_timeout) {
+					setTimeout(scroll, 10);
+					scroll_timeout = true;
+				}
+			}
+
+			last_scroll_touch_x = new_touch_x;
+		});
+		getel('timeline')?.addEventListener('touchend', () => {
+			last_scroll_touch_x = undefined;
+		});
 	}
 
 	// Resolve rows so everything is mutually non-intersecting.
@@ -53,11 +100,12 @@ function place_boxes(data) {
 			end: period.end_timestamp,
 			kind: period.kind,
 			name: period.friendly_name,
+			period,
 		});
 	}
 
 	// Determine where the boxes should be placed on-screen
-	const now = (Date.now() / 1000);
+	const now = (Date.now() / 1000) + viewport_offset;
 	const viewport_width = getel('timeline>svg').clientWidth;
 	for (const box of boxes) {
 		const length = (box.end - box.start);
@@ -152,7 +200,7 @@ function place_boxes(data) {
 			.replace('TY', box.ty)
 			.replace('TH', box.th)
 			.replace('COLOR', box.color)
-			.replace('CONTENT', ((box.w > 10) && (box.w * viewport_width / 100 > text_height * box.name.length / 1.35)) ? `${box.emoji} ${box.name}` : box.emoji);
+			.replace('CONTENT', ((box.w > 10) && (box.w * viewport_width / 100 > text_height * box.name.length / 1.35)) ? `${box.emoji} ${period_html(box.period)}` : box.emoji);
 	}
 
 	getel('boxes').innerHTML = output;

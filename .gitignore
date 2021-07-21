@@ -4,3 +4,5 @@
 node_modules
 package-lock.json
 /lcov.info
+# haha macos mfs be like
+.DS_Store

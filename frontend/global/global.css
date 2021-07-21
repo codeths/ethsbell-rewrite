@@ -1,6 +1,111 @@
+nav {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-between;
+	background-color: #1a2741;
+	color: white;
+	padding: 20px 20px;
+}
+
+nav>div {
+	margin: auto;
+	padding: 0px;
+}
+
+nav #nav-logo h1 {
+	margin: 0px;
+}
+
+nav #nav-toggle {
+	height: 24px;
+}
+
+nav #nav-toggle-button {
+	cursor: pointer;
+}
+
+nav #nav-links {
+	max-height: 0px;
+	transition: max-height 0.25s ease-in-out;
+	overflow: hidden;
+}
+
+nav #nav-links.show {
+	max-height: 150px;
+}
+
+nav #nav-links ul {
+	display: block;
+	list-style: none;
+	position: relative;
+	top: 50%;
+	padding: 20px 0px 0px 0px;
+	margin: 0px;
+}
+
+nav #nav-links li {
+	display: block;
+	padding: 5px 0px;
+}
+
+nav .nav-left {
+	flex-grow: 1;
+}
+
+nav .nav-right {
+	flex-grow: 0;
+	flex-shrink: 0;
+	flex-basis: 100%;
+}
+
+nav .nav-left a {
+	color: #ffffff;
+	text-decoration-line: none;
+}
+
+@media only screen and (min-width: 576px) {
+	nav #nav-links {
+		display: block !important;
+		max-height: unset;
+		flex-grow: 2;
+		flex-shrink: unset;
+		flex-basis: unset;
+		transition: max-height none;
+	}
+	nav #nav-links ul {
+		display: inline-block;
+		padding: 0px 0px 0px 0px;
+	}
+	nav #nav-links li {
+		display: inline;
+		padding: 0px 5px;
+	}
+	.nav-right {
+		text-align: right;
+	}
+	nav #nav-toggle {
+		display: none;
+	}
+}
+
+nav .nav-right a {
+	color: rgba(255, 255, 255, 0.75);
+	text-decoration-line: none;
+	transition: color 0.25s ease-in-out;
+}
+
+nav a.active {
+	color: #ffffff;
+}
+
+nav a:hover {
+	color: #ffffff;
+}
+
 html, body {
 	height: 100%;
 	margin: 0;
+	padding: 0;
 }
 
 body {
@@ -44,7 +149,7 @@ body {
 	}
 }
 
-.fade_in {
+.fadein {
 	animation: 0.25s ease-in-out 1 fade_in;
 	opacity: 1;
 }
@@ -54,6 +159,43 @@ body {
 	opacity: 0;
 }
 
-.hide_cursor {
+.hidecursor {
 	cursor: none;
+}
+
+nav.abs {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+}
+
+@keyframes slide_out_top {
+	from {
+		top: 0;
+	}
+	to {
+		top: -30vh;
+	}
+}
+
+@keyframes slide_in_top {
+	from {
+		top: -30vh;
+	}
+	to {
+		top: 0;
+	}
+}
+
+nav.abs.shown {
+	animation-name: slide_in_top;
+	animation-duration: 0.25s;
+	top: 0;
+}
+
+nav.abs.hidden {
+	animation-name: slide_out_top;
+	animation-duration: 0.25s;
+	top: -30vh;
 }

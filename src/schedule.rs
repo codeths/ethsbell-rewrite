@@ -6,6 +6,7 @@ use regex::Regex;
 use serde::{Deserialize, Serialize};
 
 use crate::ical::IcalEvent;
+use std::sync::{Arc, RwLock};
 
 /// The definition of the schedule.
 #[cfg_attr(feature = "ws", derive(JsonSchema))]
@@ -32,6 +33,8 @@ pub struct ScheduleType {
 	#[cfg_attr(feature = "ws", schemars(skip))]
 	#[serde(with = "serde_regex")]
 	pub regex: Option<Regex>,
+	/// The color of the schedule as RGB, for use in frontends.
+	pub color: Option<[u8; 3]>,
 }
 impl ScheduleType {
 	pub fn at_time(&self, time: NaiveTime) -> (Option<Period>, Vec<Period>, Option<Period>) {
@@ -204,16 +207,54 @@ impl Default for Schedule {
 }
 impl Schedule {
 	#[cfg(feature = "pull")]
+	pub fn update_if_needed_async(schedule: Arc<RwLock<Schedule>>) {
+		use std::thread;
+
+		if schedule.read().unwrap().is_update_needed() {
+			schedule.write().unwrap().last_updated = Local::now().naive_local();
+			thread::spawn(|| Schedule::update_async(schedule));
+		}
+	}
+	#[cfg(feature = "pull")]
+	pub fn update_async(schedule: Arc<RwLock<Schedule>>) {
+		println!("Refreshing...");
+		// Fetch the calendars
+		let calendars = schedule
+			.read()
+			.unwrap()
+			.definition
+			.calendar_urls
+			.iter()
+			.map(|v| IcalEvent::get(&v))
+			.collect::<Vec<Vec<IcalEvent>>>();
+		for cal in calendars {
+			ical_to_ours(&mut schedule.write().unwrap(), &cal)
+		}
+		// Update the last-updated value
+		schedule.write().unwrap().last_updated = Local::now().naive_local();
+		println!("Done.");
+	}
+	#[cfg(feature = "pull")]
 	pub fn update(&mut self) {
+		println!("Refreshing...");
 		// Fetch the calendars
 		for cal in self.definition.calendar_urls.clone() {
 			ical_to_ours(self, &IcalEvent::get(&cal))
 		}
 		// Update the last-updated value
 		self.last_updated = Local::now().naive_local();
+		println!("Done.");
 	}
 	pub fn is_update_needed(&self) -> bool {
-		self.last_updated.date() != Local::now().date().naive_local()
+		match option_env!("UPDATE_INTERVAL") {
+			None => self.last_updated.date() != Local::now().date().naive_local(),
+			Some(v) => {
+				let seconds: u64 = v.parse().unwrap();
+				let latest_needed = Local::now().naive_local().timestamp() as u64 - seconds;
+				let last_updated = self.last_updated.timestamp() as u64;
+				latest_needed > last_updated
+			}
+		}
 	}
 	pub fn on_date(&self, date: NaiveDate) -> (ScheduleType, Option<String>) {
 		let mut literal: Option<ScheduleType> = None;

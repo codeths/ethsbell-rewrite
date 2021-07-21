@@ -4,6 +4,7 @@
   },
   "dependencies": {},
   "devDependencies": {
+    "eslint-config-xo": "^0.37.0",
     "xo": "^0.42.0"
   },
   "xo": {
@@ -28,14 +29,17 @@
       "Authorization",
       "place_boxes",
       "req",
-      "display"
+      "display",
+      "current_date",
+      "date_to_string"
     ],
     "rules": {
       "camelcase": 0,
       "no-unused-vars": 0,
       "unicorn/filename-case": 0,
       "no-global-assign": 0,
-      "no-alert": 0
+      "no-alert": 0,
+      "complexity": 0
     },
     "ignores": [
       "/tests/"
