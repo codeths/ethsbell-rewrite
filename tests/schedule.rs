@@ -1,9 +1,9 @@
-use std::{collections::HashMap, convert::TryInto};
+use std::{collections::HashMap};
 
 use chrono::{Local, NaiveDate, NaiveTime};
 use ethsbell_rewrite::ical::IcalEvent;
 use ethsbell_rewrite::schedule::{
-	self, Event, Period, PeriodType, Schedule, ScheduleDefinition, ScheduleType,
+	Event, Period, PeriodType, Schedule, ScheduleDefinition, ScheduleType,
 };
 
 #[test]
@@ -15,6 +15,7 @@ fn on_date_typical() {
 		result.insert(
 			"type_a".to_string(),
 			ScheduleType {
+				color: None,
 				friendly_name: "Test".to_string(),
 				periods: vec![],
 				regex: None,
@@ -23,6 +24,7 @@ fn on_date_typical() {
 		result.insert(
 			"type_b".to_string(),
 			ScheduleType {
+				color: None,
 				friendly_name: "Test".to_string(),
 				periods: vec![],
 				regex: None,
@@ -73,6 +75,7 @@ fn on_date_override() {
 				result.insert(
 					"type_a".to_string(),
 					ScheduleType {
+						color: None,
 						friendly_name: "Test".to_string(),
 						periods: vec![],
 						regex: None,
@@ -81,6 +84,7 @@ fn on_date_override() {
 				result.insert(
 					"type_b".to_string(),
 					ScheduleType {
+						color: None,
 						friendly_name: "Test".to_string(),
 						periods: vec![],
 						regex: None,
@@ -111,6 +115,7 @@ fn on_date_override() {
 #[test]
 fn on_date_literal() {
 	let literal = ScheduleType {
+		color: None,
 		friendly_name: "test_c".to_string(),
 		periods: vec![],
 		regex: None,
@@ -143,6 +148,7 @@ fn on_date_literal() {
 #[test]
 fn at_time_typical() {
 	let schedule = ScheduleType {
+		color: None,
 		friendly_name: "".to_string(),
 		periods: vec![Period {
 			friendly_name: "test_period".to_string(),
@@ -181,6 +187,7 @@ fn at_time_typical() {
 #[test]
 fn at_time_pseudo() {
 	let schedule = ScheduleType {
+		color: None,
 		friendly_name: "".to_string(),
 		periods: vec![
 			Period {
@@ -221,6 +228,7 @@ fn at_time_pseudo() {
 #[test]
 fn at_time_overlap() {
 	let schedule = ScheduleType {
+		color: None,
 		friendly_name: "".to_string(),
 		periods: vec![
 			Period {
@@ -266,6 +274,7 @@ fn at_time_overlap() {
 #[test]
 fn at_time_envelop() {
 	let schedule = ScheduleType {
+		color: None,
 		friendly_name: "".to_string(),
 		periods: vec![
 			Period {
@@ -311,6 +320,7 @@ fn at_time_envelop() {
 #[test]
 fn at_time_no_schedule() {
 	let schedule = ScheduleType {
+		color: None,
 		friendly_name: "".to_string(),
 		periods: vec![],
 		regex: None,
@@ -343,6 +353,7 @@ fn schedule_generate() {
 		result.insert(
 			"type_a".to_string(),
 			ScheduleType {
+				color: None,
 				friendly_name: "Test".to_string(),
 				periods: vec![
 					Period {
@@ -368,6 +379,7 @@ fn schedule_generate() {
 		result.insert(
 			"type_b".to_string(),
 			ScheduleType {
+				color: None,
 				friendly_name: "Test".to_string(),
 				periods: vec![
 					Period {
@@ -393,6 +405,7 @@ fn schedule_generate() {
 		result.insert(
 			"no_school".to_string(),
 			ScheduleType {
+				color: None,
 				friendly_name: "No School".to_string(),
 				periods: vec![],
 				regex: Some(Regex::from_str("a").unwrap()),
