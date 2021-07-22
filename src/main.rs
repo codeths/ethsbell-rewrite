@@ -14,6 +14,7 @@ use schedule::{Schedule, ScheduleDefinition, ScheduleType};
 mod api;
 mod frontend;
 mod ical;
+mod impls;
 mod login;
 mod schedule;
 

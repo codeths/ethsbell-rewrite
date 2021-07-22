@@ -1,21 +1,24 @@
 use std::sync::{Arc, RwLock};
 
+use crate::impls::MaxElement;
 use crate::schedule::Schedule;
 use crate::schedule::{Period, PeriodType, ScheduleType};
 use chrono::{Datelike, Local, NaiveDate, NaiveTime, Timelike, Weekday};
 use rocket::{response::content::Html, Route, State};
 use rocket_contrib::json::Json;
+use rocket_contrib::templates::Template;
 use rocket_okapi::{openapi, routes_with_openapi};
 use serde::Serialize;
+use serde_json::json;
 
 pub fn routes() -> Vec<Route> {
 	routes_with_openapi![display, data]
 }
 
 /// This returns a templated HTML response for use with the original frontend and the browser extension.
-#[openapi]
+#[openapi(skip)]
 #[get("/display")]
-fn display(schedule: State<Arc<RwLock<Schedule>>>) -> Html<String> {
+fn display(schedule: State<Arc<RwLock<Schedule>>>) -> Template {
 	if schedule.read().unwrap().is_update_needed() {
 		schedule.write().unwrap().update();
 	};
@@ -25,30 +28,38 @@ fn display(schedule: State<Arc<RwLock<Schedule>>>) -> Html<String> {
 		.unwrap()
 		.on_date(now.date().naive_local())
 		.clone();
-	let period = schedule.at_time(now.time()).clone();
-	let friendly_name = period[1]
+	let period = schedule.0.at_time(now.time()).clone();
+	let friendly_name = period
+		.1
+		.first()
+		.clone()
+		.map(|v| v.friendly_name.clone())
+		.unwrap_or("No Period".to_string());
+	let next_friendly_name = period
+		.2
 		.clone()
 		.map(|v| v.friendly_name)
 		.unwrap_or("No Period".to_string());
-	let next_friendly_name = period[2]
-		.clone()
-		.map(|v| v.friendly_name)
-		.unwrap_or("No Period".to_string());
-	let start = period[1]
+	let start = period
+		.2
 		.clone()
 		.map(|v| v.start.to_string())
 		.unwrap_or("No Time".to_string());
-	let end = period[1]
+	let end = period
+		.1
+		.first()
 		.clone()
 		.map(|v| v.end.to_string())
 		.unwrap_or("No Time".to_string());
-	Html(format!(
-		include_str!("./legacy-display.html"),
-		start = start,
-		end = end,
-		friendly_name = friendly_name,
-		next_friendly_name = next_friendly_name
-	))
+	Template::render(
+		"legacy-display",
+		json!({
+			"friendly_name": friendly_name,
+			"next_friendly_name": next_friendly_name,
+			"start": start,
+			"end": end
+		}),
+	)
 }
 
 /// The closest we can get to the original's API with the differences in design between us
@@ -60,6 +71,7 @@ fn data(schedule: State<Arc<RwLock<Schedule>>>) -> Json<LegacySchedule> {
 			.read()
 			.unwrap()
 			.on_date(Local::now().date().naive_local())
+			.0
 			.clone()
 			.into(),
 	)
@@ -128,8 +140,18 @@ struct LegacyPeriod {
 
 impl From<ScheduleType> for LegacySchedule {
 	fn from(schedule: ScheduleType) -> Self {
-		let context = schedule
-			.at_time(Local::now().time())
+		let context = schedule.at_time(Local::now().time());
+		let context = [
+			context.0,
+			match context.1.len() {
+				0 => None,
+				1 => Some(context.1[0].clone()),
+				_ => None,
+			},
+			context.2,
+		];
+
+		let context = context
 			.iter()
 			.map(|v| match v {
 				Some(p) => match p.kind {
@@ -178,14 +200,14 @@ impl From<ScheduleType> for LegacySchedule {
 			school_id: "1".to_string(), // Unclear what this is for
 			theNextSlot_: match context[2].clone() {
 				Some(v) => match v.kind {
-					PeriodType::Class(n) => Some(n as isize),
+					PeriodType::Class(n) => Some(n.parse().unwrap()),
 					_ => schedule.first_class().map(|v| match v.kind {
-						PeriodType::Class(n) => n as isize,
+						PeriodType::Class(n) => n.parse().unwrap(),
 						_ => panic!("?!?!"),
 					}),
 				},
 				None => schedule.first_class().map(|v| match v.kind {
-					PeriodType::Class(n) => n as isize,
+					PeriodType::Class(n) => n.parse().unwrap(),
 					_ => panic!("?!?!"),
 				}),
 			}
