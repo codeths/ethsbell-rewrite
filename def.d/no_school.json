@@ -3,7 +3,7 @@
 		"code": "no_school",
 		"friendly_name": "No School",
 		"periods": [],
-		"regex": "(No School)|(Non-Attendance)",
+		"regex": "(No School)|(Non-Attendance)|(SCHOOL CLOSED)",
 		"color": [
 			221,
 			221,
