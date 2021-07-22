@@ -10,6 +10,7 @@ async function get(endpoint = '/api/v1/today/now/near') {
 const config = JSON.parse(localStorage.getItem('schedule')) || {};
 
 function replace_period(period) {
+	if (!period) return period;
 	if (period.length > 0) {
 		return period.map(replace_period);
 	}
@@ -30,7 +31,6 @@ function replace_period(period) {
 
 function process(data) {
 	// TODO: This will perform class name replacements
-
 	if (config) {
 		return data.map(replace_period);
 	}
@@ -108,7 +108,7 @@ function date_from_api(time) {
 
 function human_time(time) {
 	const date = date_from_api(time);
-	return date.toLocaleTimeString('en-US', {hour: 'numeric', minute: '2-digit', timeZone: 'America/Chicago'});
+	return date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', timeZone: 'America/Chicago' });
 }
 
 // Gets a human readable duration from an epoch timestamp
