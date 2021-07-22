@@ -1,21 +1,21 @@
 function $(id) {
-	return document.querySelector(`#${id}`)
+	return document.querySelector(`#${id}`);
 }
 
-async function req(url, request, error_span) {
+async function request(url, request, error_span) {
 	request = {
 		headers: {
-			Authorization
+			Authorization,
 		},
-		...request
-	}
-	let result = await fetch(url, request)
+		...request,
+	};
+	const result = await fetch(url, request);
 	if (result.ok) {
-		$(error_span).innerHTML = ""
-		return result
-	} else {
-		let error = `Failed with ${result.status}: ${await result.text()}`
-		$(error_span).innerHTML = error
-		throw new Error(error)
+		$(error_span).innerHTML = '';
+		return result;
 	}
+
+	const error = `Failed with ${result.status}: ${await result.text()}`;
+	$(error_span).innerHTML = error;
+	throw new Error(error);
 }

@@ -1,27 +1,28 @@
 use super::OurError;
 use crate::{
 	ical,
+	ical::IcalResponder,
 	login::Authenticated,
 	schedule::{Period, Schedule, ScheduleDefinition, ScheduleType},
 	SpecLock,
-	ical::IcalResponder
 };
 use chrono::{DateTime, Datelike, Duration, Local, NaiveDate, NaiveDateTime, NaiveTime, TimeZone};
-use rocket::{http::Status, Data, Route, State};
+use rocket::{http::Status, response::content::Html, Data, Route, State};
 use rocket_contrib::{json::Json, templates::Template};
 use rocket_okapi::{openapi, routes_with_openapi};
+use serde::Serialize;
 use std::{
-	fs::{read_to_string, File, OpenOptions},
+	fs::{File, OpenOptions},
 	io::Write,
 	str::FromStr,
 	sync::{Arc, Mutex, RwLock},
 };
-use serde::Serialize;
 
 pub fn routes() -> Vec<Route> {
 	routes_with_openapi![
 		get_schedule,
 		today,
+		today_code,
 		date,
 		today_now,
 		today_at,
@@ -37,6 +38,8 @@ pub fn routes() -> Vec<Route> {
 		ical,
 		coffee,
 		widget,
+		license,
+		schedule_from_to,
 	]
 }
 
@@ -55,26 +58,60 @@ struct WidgetContext {
 #[openapi(skip)]
 #[get("/widget")]
 fn widget(schedule: State<Arc<RwLock<Schedule>>>) -> Template {
-	if schedule.read().unwrap().is_update_needed() {
-		schedule.write().unwrap().update();
-	}
+	Schedule::update_if_needed_async(schedule.clone());
 	let now = Local::now();
 	let now_date = now.date();
 	let now_time = now.time();
 	let schedule = schedule.read().unwrap().on_date(now_date.naive_local());
-	let mut schedule = schedule.at_time(now_time);
-	schedule.iter_mut().for_each(|v| match v {
-		Some(v) => v.populate(now),
-		None => {}
-	});
+	let mut schedule = schedule.0.at_time(now_time);
+	schedule.0 = schedule.0.map(|v| v.populate(now));
+	schedule
+		.1
+		.iter_mut()
+		.for_each(|v| *v = v.clone().populate(now));
+	schedule.2 = schedule.2.map(|v| v.populate(now));
 	let ctx = WidgetContext {
-    prev_name: schedule[0].clone().map(|v| v.friendly_name).unwrap_or("None".to_string()),
-    current_name: schedule[1].clone().map(|v| v.friendly_name).unwrap_or("None".to_string()),
-    current_start: schedule[1].clone().map(|v| v.start.to_string()).unwrap_or("".to_string()),
-    current_end: schedule[1].clone().map(|v| v.end.to_string()).unwrap_or("".to_string()),
-    next_name: schedule[2].clone().map(|v| v.friendly_name).unwrap_or("None".to_string()),
-    next_start: schedule[2].clone().map(|v| v.start.to_string()).unwrap_or("".to_string()),
-    prev_end: schedule[0].clone().map(|v| v.end.to_string()).unwrap_or("".to_string()),
+		prev_name: schedule
+			.0
+			.clone()
+			.map(|v| v.friendly_name)
+			.unwrap_or("None".to_string()),
+		current_name: schedule
+			.1
+			.clone()
+			.iter()
+			.map(|v| v.friendly_name.clone())
+			.collect::<Vec<String>>()
+			.join(", "),
+		current_start: schedule
+			.1
+			.clone()
+			.iter()
+			.map(|v| v.start.to_string())
+			.collect::<Vec<String>>()
+			.join(", "),
+		current_end: schedule
+			.1
+			.clone()
+			.iter()
+			.map(|v| v.end.to_string())
+			.collect::<Vec<String>>()
+			.join(", "),
+		next_name: schedule
+			.2
+			.clone()
+			.map(|v| v.friendly_name)
+			.unwrap_or("None".to_string()),
+		next_start: schedule
+			.2
+			.clone()
+			.map(|v| v.start.to_string())
+			.unwrap_or("".to_string()),
+		prev_end: schedule
+			.0
+			.clone()
+			.map(|v| v.end.to_string())
+			.unwrap_or("".to_string()),
 	};
 	Template::render("widget", &ctx)
 }
@@ -98,8 +135,8 @@ fn check_auth(_auth: Authenticated) -> &'static str {
 
 #[openapi]
 #[get("/spec")]
-fn get_spec() -> Result<String, std::io::Error> {
-	Ok(read_to_string("./def.json")?)
+fn get_spec(schedule: State<Arc<RwLock<Schedule>>>) -> Result<String, std::io::Error> {
+	Ok(serde_json::to_string(&schedule.read().unwrap().definition.clone()).unwrap())
 }
 
 #[openapi(skip)]
@@ -157,19 +194,40 @@ fn what_time(timestamp: Option<i64>) -> String {
 #[openapi]
 #[get("/schedule")]
 fn get_schedule(schedule: State<Arc<RwLock<Schedule>>>) -> Json<Schedule> {
-	if schedule.read().unwrap().is_update_needed() {
-		schedule.write().unwrap().update();
-	}
+	Schedule::update_if_needed_async(schedule.clone());
 	let schedule = schedule.read().unwrap();
 	Json(schedule.clone())
 }
 
 #[openapi]
+#[get("/schedule/from/<start>/to/<end>")]
+fn schedule_from_to(
+	schedule: State<Arc<RwLock<Schedule>>>,
+	start: String,
+	end: String,
+) -> Result<Json<Vec<String>>, OurError> {
+	Schedule::update_if_needed_async(schedule.clone());
+	let start: NaiveDate = NaiveDate::from_str(&start)?;
+	let end: NaiveDate = NaiveDate::from_str(&end)?;
+	assert!(start < end);
+	let mut cursor = start.clone();
+	let mut output = vec![];
+	let schedule = schedule.read().unwrap();
+	while cursor < end {
+		let that_day = schedule.on_date(cursor.clone());
+		match that_day.1 {
+			Some(v) => output.push(v),
+			None => output.push(serde_json::to_string(&that_day.0)?),
+		};
+		cursor += Duration::days(1);
+	}
+	Ok(Json(output))
+}
+
+#[openapi]
 #[get("/today?<timestamp>")]
 fn today(schedule: State<Arc<RwLock<Schedule>>>, timestamp: Option<i64>) -> Json<ScheduleType> {
-	if schedule.read().unwrap().is_update_needed() {
-		schedule.write().unwrap().update();
-	}
+	Schedule::update_if_needed_async(schedule.clone());
 	// Get the current date as a NaiveDate
 	let now = match timestamp {
 		None => Local::now(),
@@ -180,8 +238,32 @@ fn today(schedule: State<Arc<RwLock<Schedule>>>, timestamp: Option<i64>) -> Json
 	let now_date = now.date();
 	let schedule = schedule.read().unwrap();
 	let mut schedule = schedule.on_date(now_date.naive_local());
-	schedule.periods.iter_mut().for_each(|v| v.populate(now));
-	Json(schedule)
+	schedule
+		.0
+		.periods
+		.iter_mut()
+		.for_each(|v| *v = v.clone().populate(now));
+	Json(schedule.0)
+}
+
+#[openapi]
+#[get("/today/code?<timestamp>")]
+fn today_code(
+	schedule: State<Arc<RwLock<Schedule>>>,
+	timestamp: Option<i64>,
+) -> Json<Option<String>> {
+	Schedule::update_if_needed_async(schedule.clone());
+	// Get the current date as a NaiveDate
+	let now = match timestamp {
+		None => Local::now(),
+		Some(timestamp) => Local
+			.from_utc_datetime(&NaiveDateTime::from_timestamp(timestamp, 0))
+			.with_timezone(&Local),
+	};
+	let now_date = now.date();
+	let schedule = schedule.read().unwrap();
+	let schedule = schedule.on_date(now_date.naive_local());
+	Json(schedule.1)
 }
 
 #[openapi]
@@ -189,10 +271,8 @@ fn today(schedule: State<Arc<RwLock<Schedule>>>, timestamp: Option<i64>) -> Json
 fn today_now(
 	schedule: State<Arc<RwLock<Schedule>>>,
 	timestamp: Option<i64>,
-) -> Result<Json<Period>, String> {
-	if schedule.read().unwrap().is_update_needed() {
-		schedule.write().unwrap().update();
-	}
+) -> Result<Json<Vec<Period>>, String> {
+	Schedule::update_if_needed_async(schedule.clone());
 	let now = match timestamp {
 		None => Local::now(),
 		Some(timestamp) => Local
@@ -202,13 +282,13 @@ fn today_now(
 	let now_date = now.date();
 	let now_time = now.time();
 	let schedule = schedule.read().unwrap().on_date(now_date.naive_local());
-	match schedule.at_time(now_time)[1].clone() {
-		Some(period) => {
+	match schedule.0.at_time(now_time).1.clone() {
+		period if period.len() > 0 => {
 			let mut period = period.clone();
-			period.populate(now);
+			period.iter_mut().for_each(|v| *v = v.clone().populate(now));
 			Ok(Json(period))
 		}
-		None => Err(String::from("There's no schedule right now, sorry.")),
+		_ => Err(String::from("There's no schedule right now, sorry.")),
 	}
 }
 
@@ -217,10 +297,8 @@ fn today_now(
 fn today_around_now(
 	schedule: State<Arc<RwLock<Schedule>>>,
 	timestamp: Option<i64>,
-) -> Json<[Option<Period>; 3]> {
-	if schedule.read().unwrap().is_update_needed() {
-		schedule.write().unwrap().update();
-	}
+) -> Json<(Option<Period>, Vec<Period>, Option<Period>)> {
+	Schedule::update_if_needed_async(schedule.clone());
 	let now = match timestamp {
 		None => Local::now(),
 		Some(timestamp) => Local
@@ -230,11 +308,7 @@ fn today_around_now(
 	let now_date = now.date();
 	let now_time = now.time();
 	let schedule = schedule.read().unwrap().on_date(now_date.naive_local());
-	let mut schedule = schedule.at_time(now_time);
-	schedule.iter_mut().for_each(|v| match v {
-		Some(v) => v.populate(now),
-		None => {}
-	});
+	let schedule = schedule.0.at_time(now_time);
 	Json(schedule)
 }
 
@@ -244,10 +318,8 @@ fn today_at(
 	schedule: State<Arc<RwLock<Schedule>>>,
 	time_string: String,
 	timestamp: Option<i64>,
-) -> Result<Option<Json<Period>>, OurError> {
-	if schedule.read().unwrap().is_update_needed() {
-		schedule.write().unwrap().update();
-	}
+) -> Result<Option<Json<Vec<Period>>>, OurError> {
+	Schedule::update_if_needed_async(schedule.clone());
 	let now = match timestamp {
 		None => Local::now(),
 		Some(timestamp) => Local
@@ -257,13 +329,13 @@ fn today_at(
 	let now_date = now.date();
 	let then_time = NaiveTime::from_str(&time_string)?;
 	let schedule = schedule.read().unwrap().on_date(now_date.naive_local());
-	match schedule.at_time(then_time)[1].clone() {
-		Some(period) => {
+	match schedule.0.at_time(then_time).1.clone() {
+		period if period.len() > 0 => {
 			let mut period = period.clone();
-			period.populate(now);
+			period.iter_mut().for_each(|v| *v = v.clone().populate(now));
 			Ok(Some(Json(period)))
 		}
-		None => Ok(None),
+		_ => Ok(None),
 	}
 }
 
@@ -273,9 +345,7 @@ fn date(
 	schedule: State<Arc<RwLock<Schedule>>>,
 	date_string: String,
 ) -> Result<Json<ScheduleType>, OurError> {
-	if schedule.read().unwrap().is_update_needed() {
-		schedule.write().unwrap().update();
-	}
+	Schedule::update_if_needed_async(schedule.clone());
 	let then = NaiveDate::from_str(&date_string)?;
 	let then_ = Local::now()
 		.with_day(then.day())
@@ -285,8 +355,12 @@ fn date(
 		.with_year(then.year())
 		.unwrap();
 	let mut schedule = schedule.read().unwrap().on_date(then);
-	schedule.periods.iter_mut().for_each(|v| v.populate(then_));
-	Ok(Json(schedule))
+	schedule
+		.0
+		.periods
+		.iter_mut()
+		.for_each(|v| *v = v.clone().populate(then_));
+	Ok(Json(schedule.0))
 }
 
 #[openapi]
@@ -295,10 +369,8 @@ fn date_at(
 	schedule: State<Arc<RwLock<Schedule>>>,
 	date_string: String,
 	time_string: String,
-) -> Result<Option<Json<Period>>, OurError> {
-	if schedule.read().unwrap().is_update_needed() {
-		schedule.write().unwrap().update();
-	}
+) -> Result<Option<Json<Vec<Period>>>, OurError> {
+	Schedule::update_if_needed_async(schedule.clone());
 	let then_date = NaiveDate::from_str(&date_string)?;
 	let then_time = NaiveTime::from_str(&time_string)?;
 	let then_ = Local::now()
@@ -309,22 +381,22 @@ fn date_at(
 		.with_year(then_date.year())
 		.unwrap();
 	let schedule = schedule.read().unwrap().on_date(then_date);
-	match schedule.at_time(then_time)[1].clone() {
-		Some(period) => {
+	match schedule.0.at_time(then_time).1.clone() {
+		period if period.len() > 0 => {
 			let mut period = period.clone();
-			period.populate(then_);
+			period
+				.iter_mut()
+				.for_each(|v| *v = v.clone().populate(then_));
 			Ok(Some(Json(period)))
 		}
-		None => Ok(None),
+		_ => Ok(None),
 	}
 }
 
 #[openapi]
 #[get("/ical?<backward>&<forward>")]
 fn ical(backward: i64, forward: i64, schedule: State<Arc<RwLock<Schedule>>>) -> IcalResponder {
-	if schedule.read().unwrap().is_update_needed() {
-		schedule.write().unwrap().update();
-	}
+	Schedule::update_if_needed_async(schedule.clone());
 	let now = Local::now().date().naive_local();
 	let start = now - Duration::days(backward);
 	let end = now + Duration::days(forward);
@@ -336,6 +408,22 @@ fn ical(backward: i64, forward: i64, schedule: State<Arc<RwLock<Schedule>>>) -> 
 /// This is an easter egg, but it's also the Docker health check endpoint so don't remove it
 #[openapi(skip)]
 #[get("/coffee")]
-fn coffee(_schedule: State<Arc<RwLock<Schedule>>>) -> Status {
+fn coffee(schedule: State<Arc<RwLock<Schedule>>>) -> Status {
+	let _lock = schedule.write().unwrap();
 	Status::ImATeapot
+}
+
+#[openapi]
+#[get("/license")]
+fn license() -> Html<String> {
+	let authors = env!("CARGO_PKG_AUTHORS");
+	let authors = authors
+		.split(":")
+		.map(|v| v.trim())
+		.collect::<Vec<&str>>()
+		.join(", ");
+	Html(format!(
+		include_str!("../../LICENSE.html"),
+		authors = authors
+	))
 }

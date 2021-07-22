@@ -17,6 +17,8 @@ WORKDIR /app
 RUN apt-get update && apt-get install -y libssl-dev ca-certificates curl && rm -rf /var/lib/apt/lists
 RUN update-ca-certificates
 COPY --from=builder /app/def.json /app/target/release/ethsbell-rewrite ./
+COPY --from=builder /app/def.d/* ./def.d/
 COPY --from=builder /app/frontend ./frontend
+COPY --from=builder /app/templates ./templates
 CMD ["./ethsbell-rewrite"]
 HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 CMD curl -o /dev/null -w "%{http_code}\n" http://localhost:8000/api/v1/coffee | grep 418

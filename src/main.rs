@@ -1,5 +1,6 @@
 #![feature(decl_macro)]
 
+use std::collections::HashMap;
 #[cfg(feature = "ws")]
 use std::{
 	env, fs,
@@ -8,7 +9,7 @@ use std::{
 
 use chrono::{DateTime, Local};
 use rocket_contrib::templates::Template;
-use schedule::{Schedule, ScheduleDefinition};
+use schedule::{Schedule, ScheduleDefinition, ScheduleType};
 
 mod api;
 mod frontend;
@@ -36,8 +37,34 @@ fn main() {
 		};
 
 		// Deserialize the definition.
-		let schedule_def: ScheduleDefinition =
+		let mut schedule_def: ScheduleDefinition =
 			serde_json::from_str(&string).expect("Deserialized schedule definition");
+
+		// Load maps from def.d
+		let extra_maps: Vec<HashMap<String, ScheduleType>> = match fs::read_dir("./def.d") {
+			Ok(listing) => {
+				let mut out = vec![];
+				for file in listing
+					.map(|v| v.expect("Couldn't list def.d").path())
+					.filter(|v| v.to_str().unwrap().ends_with(".json"))
+				{
+					println!("{}", file.to_str().unwrap());
+					let string = fs::read_to_string(file).expect("Couldn't read a schedule file");
+					let map =
+						serde_json::from_str(&string).expect("Couldn't interpret a schedule file");
+					out.push(map)
+				}
+				out
+			}
+			Err(_) => vec![],
+		};
+		// Apply maps
+		for map in extra_maps {
+			for (k, v) in map {
+				schedule_def.schedule_types.insert(k, v);
+			}
+		}
+
 		// Build the runtime schedule struct and run the first update.
 		let schedule = Schedule::from(schedule_def);
 		// Wrap the runtime schedule struct in a thread-safe container.

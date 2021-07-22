@@ -1,7 +1,7 @@
 [package]
 name = "ethsbell-rewrite"
-version = "0.7.0"
-authors = ["Willow <willow.ch@protonmail.com>"]
+version = "1.1.2"
+authors = ["Willow Carlson-Huber <willow.ch@protonmail.com>", "Albert Portnoy <albert@asportnoy.com>"]
 edition = "2018"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
@@ -15,7 +15,7 @@ chrono = {version = "0.4.19", features = ["serde"]}
 reqwest = {version = "0.11.3", features = ["blocking"], optional = true}
 serde_regex = "1.1.0"
 regex = "1.4.6"
-urlencoding = "1.1.1"
+urlencoding = "2.0.0"
 thiserror = "1.0.24"
 base64 = "0.13.0"
 rand = "0.8.3"

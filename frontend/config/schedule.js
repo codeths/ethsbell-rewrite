@@ -17,10 +17,9 @@ getel('upload').addEventListener('click', async () => {
 
 	localStorage.setItem('schedule', text);
 	getel('status').innerHTML = 'OK';
-})
-
+});
 
 function getel(id) {
-	let selector = `#${id}`
-	return document.querySelector(selector)
+	const selector = `#${id}`;
+	return document.querySelector(selector);
 }

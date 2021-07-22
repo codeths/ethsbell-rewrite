@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Schedule Uploader</title>
+	<link rel="stylesheet" href="config/index.css">
+	<link rel="stylesheet" href="global/global.css">
+	<script src="global/helpers.js"></script>
+	<script defer src="config/schedule.js"></script>
+</head>
+
+<body>
+	<nav class="abs">
+		<div class="nav-left flex" id="nav-logo">
+			<h1><a href="/">ETHSBell</a></h1>
+		</div>
+		<div id="nav-toggle">
+			<span id="nav-toggle-button" role="button">
+				<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#ffffff">
+					<path d="M0 0h24v24H0V0z" fill="none" />
+					<path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z" />
+				</svg>
+			</span>
+		</div>
+		<div class="nav-right flex" id="nav-links">
+			<ul>
+				<li><a href="/">Home</a></li>
+				<li><a href="/schedule">Schedule</a></li>
+				<li><a href="/timeline">Timeline</a></li>
+				<li><a href="/config" class="active">Config</a></li>
+				<li><a href="/about">About</a></li>
+			</ul>
+		</div>
+	</nav>
+	<div class="background">
+		<h1>Upload your schedule</h1>
+		<p>A schedule file should look like this.</p>
+		<pre>{
+	"Block1": {
+		"name": "Your First Period Class",
+		"url": "https://meet.google.com/whatever"
+	},
+	"Block2": {
+		"name": "Class With No Teleconferencing Link",
+		"url": undefined
+	}
+	...
+}</pre>
+		<input type="file" id="cfg"><br>
+		<button id="upload">Upload!</button><br>
+		<span id="status"></span>
+	</div>
+</body>
+
+</html>

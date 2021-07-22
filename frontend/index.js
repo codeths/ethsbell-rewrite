@@ -1,104 +1,112 @@
-let notification
+const periodText = document.querySelector('#period');
+const endTimeText = document.querySelector('#end_time');
+const nextText = document.querySelector('#next');
 
-async function update() {
-	let messageTimer = setTimeout(() => {
-		getel("message").innerHTML = "(We refresh our copy of the calendars during the first request of the day, so your request might be delayed if you're the first client of the day. Sorry for any inconvenience.)"
-	}, 1000);
-	let data = await get();
-	clearTimeout(messageTimer);
-	getel("message").innerHTML = "";
-	let sets = ['prev', 'curr', 'next']
-	for (let i = 0; i < data.length; ++i) {
-		let parent = getel(`${sets[i]}_parent`);
-		if (data[i]) {
-			put(data[i], sets[i], i === 1)
-			if (parent) {
-				parent.style.display = "block";
-			}
-		} else {
-			if (parent) {
-				parent.style.display = "none";
-			} else {
-				put({friendly_name: "No School"}, sets[i])
-			}
-		}
-	}
-	if (data[1].end) {
-		let elapsed = data[1].end.getTime() - (new Date(Date.now())).getTime()
-		setTimeout(update, elapsed)
-	}
+// Gets data from /today/now/near
+function display(data) {
+    if (data[1]) {
+        if (data[1][0].kind == "AfterSchool") {
+            periodText.textContent = '';
+            endTimeText.textContent = 'School\'s out!';
+            nextText.textContent = '';
+        } else if (data[1][0].kind == "BeforeSchool") {
+            periodText.textContent = '';
+            endTimeText.textContent = 'School hasn\'t started yet!';
+            nextText.textContent = '';
+        } else {
+            const names = data[1].map(period => period.friendly_name);
+            const ends = data[1].map(period => `${human_time(period.end)} (in ${human_time_left(period.end)})`);
+            periodText.textContent = `${human_list(names)} ${data[1].length > 1 ? 'end' : 'ends'} at`;
+
+            endTimeText.textContent = ends.every(value => value === ends[0]) ? `${ends[0]}` : `${human_list(ends)}${data[1].length > 1 ? ', respectively.' : '.'}`;
+
+            nextText.textContent = data[2] ? `The next period is ${data[2].friendly_name}, which ends at ${human_time(data[2].end)}` : 'This is the last period.';
+        }
+    } else {
+        periodText.textContent = 'There is no current period.';
+        endTimeText.textContent = '';
+        nextText.textContent = '';
+    }
 }
 
-async function get() {
-	let data = await (await fetch("/api/v1/today/now/near")).json()
-	for (let i of data) {
-		if (!i) {continue}
-		let start_date = new Date(Date.now());
-		let end_date = new Date(Date.now());
-		let start_split = i.start.split(":")
-		let end_split = i.end.split(":")
-		start_date.setHours(start_split[0])
-		start_date.setMinutes(start_split[1])
-		start_date.setSeconds(0)
-		end_date.setHours(end_split[0])
-		end_date.setMinutes(end_split[1])
-		end_date.setSeconds(0)
-		i.start = start_date
-		i.end = end_date
-	}
-	console.log(data);
-	return data
+go();
+
+// Full screen button
+const fullScreenButton = document.querySelector('#fullscreen');
+const wrapper = document.querySelector('#wrapper');
+const enterFull = document.querySelector('#enter_full');
+const exitFull = document.querySelector('#exit_full');
+
+// Show button if browser supports full screen
+if (canFullScreen()) {
+    fullScreenButton.style.display = 'inline-block';
+    fullScreenButton.addEventListener('click', async () => {
+        toggleFullScreen(wrapper);
+    });
 }
 
-function put(period, element_set, notify) {
-	let schedule = false;
-	try {
-		schedule = JSON.parse(localStorage.getItem('schedule'));
-	} catch {}
-	let friendly_name = period.friendly_name;
-	let url;
-	if (period?.kind?.Class != undefined && schedule && schedule[period.kind.Class]) {
-		let period_def = schedule[period.kind.Class]
-		friendly_name = period_def.name	
-		url = period_def.url
-	}
-	let start = getel(`${element_set}_start`);
-	let end = getel(`${element_set}_end`);
-	let name = getel(`${element_set}_name`);
-	let time_parent = getel(`${element_set}_time_parent`);
-	if (period.start && period.end) {
-		time_parent.style.display = "block"
-	} else {
-		time_parent.style.display = "none"
-	}
-	if (start && period.start) {
-		start.innerHTML = ` at ${period.start.toLocaleTimeString()}`
-	}
-	if (end && period.end) {
-		end.innerHTML = ` until ${period.end.toLocaleTimeString()}`
-	}
-	if (name) {
-		name.innerHTML = `${url ? `<a href=${url}>` : ''}${friendly_name}${url ? `</a>` : ''}`
-	}
-	if (notify) {
-		if (notification !== undefined) {
-			if (notification.close) {
-				notification.close()
-			}
-			notification = new Notification(`New period ${friendly_name}`);
-		} else {
-			notification = true
-		}
-	}
+// Show appropriate icon when entering/exiting full screen
+document.addEventListener('fullscreenchange', () => {
+    if (isFullScreen()) {
+        enterFull.classList.add('none');
+        exitFull.classList.remove('none');
+    } else {
+        enterFull.classList.remove('none');
+        exitFull.classList.add('none');
+    }
+
+    // Show full screen button
+    fadeIn();
+    idleTimer();
+});
+
+// Hide full screen button and cursor if full screen when idle
+let idleCursorTimeout = setTimeout(fadeOut, 5000);
+let doNotHideButton = false;
+
+// Run fade in animation
+function fadeIn() {
+    if (fullScreenButton.classList.contains('fadeout')) {
+        fullScreenButton.classList.add('fadein');
+        fullScreenButton.classList.remove('fadeout');
+    }
+
+    document.body.classList.remove('hidecursor');
 }
 
-function getel(id) {
-	let selector = `#${id}`
-	return document.querySelector(selector)
+// Run fade out animation
+function fadeOut() {
+    if (doNotHideButton) {
+        return;
+    }
+
+    if (!isFullScreen()) {
+        return;
+    }
+
+    fullScreenButton.classList.remove('fadein');
+    fullScreenButton.classList.add('fadeout');
+    setTimeout(() => document.body.classList.add('hidecursor'), 500);
 }
 
-getel("enable_notifications").addEventListener('click', async () => {
-  await Notification.requestPermission();
-})
+// Reset idle timer
+function idleTimer() {
+    clearTimeout(idleCursorTimeout);
+    idleCursorTimeout = setTimeout(fadeOut, 5000);
+}
 
-update()
+// Reset idle timer when mouse moved
+document.addEventListener('mousemove', () => {
+    fadeIn();
+    idleTimer();
+});
+
+// Block fade out when hovering full screen button
+fullScreenButton.addEventListener('mouseenter', () => {
+    doNotHideButton = true;
+});
+
+// Unblock fade out when stop hovering full screen button
+fullScreenButton.addEventListener('mouseleave', () => {
+    doNotHideButton = false;
+});

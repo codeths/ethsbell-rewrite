@@ -1,0 +1,48 @@
+{
+  "scripts": {
+    "lint": "xo"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "eslint-config-xo": "^0.37.0",
+    "xo": "^0.42.0"
+  },
+  "xo": {
+    "envs": [
+      "browser"
+    ],
+    "globals": [
+      "localStorage",
+      "human_time",
+      "document",
+      "human_time_left",
+      "fetch",
+      "$",
+      "isFullScreen",
+      "human_list",
+      "go",
+      "all_data",
+      "get",
+      "getel",
+      "canFullScreen",
+      "toggleFullScreen",
+      "Authorization",
+      "place_boxes",
+      "req",
+      "display",
+      "current_date",
+      "date_to_string"
+    ],
+    "rules": {
+      "camelcase": 0,
+      "no-unused-vars": 0,
+      "unicorn/filename-case": 0,
+      "no-global-assign": 0,
+      "no-alert": 0,
+      "complexity": 0
+    },
+    "ignores": [
+      "/tests/"
+    ]
+  }
+}

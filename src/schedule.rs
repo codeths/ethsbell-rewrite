@@ -6,6 +6,7 @@ use regex::Regex;
 use serde::{Deserialize, Serialize};
 
 use crate::ical::IcalEvent;
+use std::sync::{Arc, RwLock};
 
 /// The definition of the schedule.
 /// ```rust
@@ -18,10 +19,8 @@ use crate::ical::IcalEvent;
 #[cfg_attr(feature = "ws", derive(JsonSchema))]
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct ScheduleDefinition {
-	/// The URL of the ical calendar we fetch the schedule's data from.
-	pub calendar_url: Option<String>,
-	/// The URL of the ical calendar we fetch any overrides from.
-	pub override_calendar_url: Option<String>,
+	/// The URL of the ical calendar we fetch the schedule's data from, in ascending order of importance
+	pub calendar_urls: Vec<String>,
 	/// All of the types of schedule there are.
 	pub schedule_types: HashMap<String, ScheduleType>,
 	/// The typical schedule.
@@ -47,17 +46,19 @@ pub struct ScheduleType {
 	#[cfg_attr(feature = "ws", schemars(skip))]
 	#[serde(with = "serde_regex")]
 	pub regex: Option<Regex>,
+	/// The color of the schedule as RGB, for use in frontends.
+	pub color: Option<[u8; 3]>,
 }
 impl ScheduleType {
-	pub fn at_time(&self, time: NaiveTime) -> [Option<Period>; 3] {
+	pub fn at_time(&self, time: NaiveTime) -> (Option<Period>, Vec<Period>, Option<Period>) {
 		if self.periods.len() == 0 {
-			[None, None, None]
+			(None, vec![], None)
 		} else {
 			let mut before: Option<Period> = None;
-			let mut current: Option<Period> = None;
+			let mut current: Vec<Period> = vec![];
 			let mut next: Option<Period> = None;
 			self.periods.iter().for_each(|period| {
-				if period.end < time {
+				if period.end <= time {
 					match before.clone() {
 						Some(before_) if before_.end < period.end => before = Some(period.clone()),
 						None => before = Some(period.clone()),
@@ -70,43 +71,51 @@ impl ScheduleType {
 						_ => {}
 					};
 				} else {
-					current = Some(period.clone())
+					current.push(period.clone());
 				}
 			});
 			match (&before, &current, &next) {
-				(Some(before), None, Some(next)) => {
-					current = Some(Period {
-						friendly_name: "Passing".to_string(),
+				(Some(before), v, Some(next)) if v.len() == 0 => {
+					current = vec![Period {
+						friendly_name: "Passing Period".to_string(),
 						start: before.end,
 						end: next.start,
 						start_timestamp: 0,
 						end_timestamp: 0,
 						kind: PeriodType::Passing,
-					})
+					}]
 				}
-				(None, None, Some(next)) => {
-					current = Some(Period {
-						friendly_name: "Before school".to_string(),
+				(None, v, Some(next)) if v.len() == 0 => {
+					current = vec![Period {
+						friendly_name: "Before School".to_string(),
 						start: NaiveTime::from_hms(0, 0, 0),
 						end: next.start,
 						start_timestamp: 0,
 						end_timestamp: 0,
 						kind: PeriodType::BeforeSchool,
-					})
+					}]
 				}
-				(Some(before), None, None) => {
-					current = Some(Period {
+				(Some(before), v, None) if v.len() == 0 => {
+					current = vec![Period {
 						friendly_name: "After School".to_string(),
 						start: before.end,
 						end: NaiveTime::from_hms(23, 59, 59),
 						start_timestamp: 0,
 						end_timestamp: 0,
 						kind: PeriodType::AfterSchool,
-					})
+					}]
 				}
 				_ => {}
 			}
-			[before, current, next]
+			let now = Local::now();
+			(
+				before.map(|v| v.populate(now)),
+				current
+					.iter()
+					.map(|v| v.clone().populate(now))
+					.collect::<Vec<Period>>(),
+				next.map(|v| v.populate(now)),
+			)
 		}
 	}
 	pub fn first_class(&self) -> Option<Period> {
@@ -151,7 +160,7 @@ pub struct Period {
 	pub kind: PeriodType,
 }
 impl Period {
-	pub fn populate(&mut self, date: DateTime<Local>) {
+	pub fn populate(mut self, date: DateTime<Local>) -> Self {
 		let start_date = date.clone();
 		let end_date = date.clone();
 		self.start_timestamp = start_date
@@ -170,6 +179,7 @@ impl Period {
 			.with_second(self.end.second())
 			.unwrap()
 			.timestamp() as u64;
+		self
 	}
 }
 
@@ -178,7 +188,9 @@ impl Period {
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone)]
 pub enum PeriodType {
 	/// This period has a class in it, and it is this index in a student's schedule.
-	Class(usize),
+	Class(String),
+	/// This period is either a lunch or a class, depending on the student's schedule.
+	ClassOrLunch(String),
 	/// This period is always lunch.
 	Lunch,
 	/// This period is always a break.
@@ -192,6 +204,8 @@ pub enum PeriodType {
 	BeforeSchool,
 	/// This period is after school.
 	AfterSchool,
+	/// This period contains announcements.
+	Announcements,
 }
 
 #[cfg_attr(feature = "ws", derive(JsonSchema))]
@@ -215,30 +229,56 @@ impl From<ScheduleDefinition> for Schedule {
 }
 impl Schedule {
 	#[cfg(feature = "pull")]
+	pub fn update_if_needed_async(schedule: Arc<RwLock<Schedule>>) {
+		use std::thread;
+
+		if schedule.read().unwrap().is_update_needed() {
+			schedule.write().unwrap().last_updated = Local::now().naive_local();
+			thread::spawn(|| Schedule::update_async(schedule));
+		}
+	}
+	#[cfg(feature = "pull")]
+	pub fn update_async(schedule: Arc<RwLock<Schedule>>) {
+		println!("Refreshing...");
+		// Fetch the calendars
+		let calendars = schedule
+			.read()
+			.unwrap()
+			.definition
+			.calendar_urls
+			.iter()
+			.map(|v| IcalEvent::get(&v))
+			.collect::<Vec<Vec<IcalEvent>>>();
+		for cal in calendars {
+			ical_to_ours(&mut schedule.write().unwrap(), &cal)
+		}
+		// Update the last-updated value
+		schedule.write().unwrap().last_updated = Local::now().naive_local();
+		println!("Done.");
+	}
+	#[cfg(feature = "pull")]
 	pub fn update(&mut self) {
-		// Fetch the primary calendar
-		println!("Fetching main calendar...");
-		let calendar_data = match &self.definition.calendar_url {
-			Some(url) => IcalEvent::get(&url),
-			None => vec![],
-		};
-		// Fetch the override calendar
-		println!("Fetching override calendar...");
-		let override_calendar_data = match &self.definition.override_calendar_url {
-			Some(url) => IcalEvent::get(&url),
-			None => vec![],
-		};
-		// Apply the primary calendar
-		ical_to_ours(self, &calendar_data);
-		// Apply the override calendar
-		ical_to_ours(self, &override_calendar_data);
+		println!("Refreshing...");
+		// Fetch the calendars
+		for cal in self.definition.calendar_urls.clone() {
+			ical_to_ours(self, &IcalEvent::get(&cal))
+		}
 		// Update the last-updated value
 		self.last_updated = Local::now().naive_local();
+		println!("Done.");
 	}
 	pub fn is_update_needed(&self) -> bool {
-		self.last_updated.date() != Local::now().date().naive_local()
+		match option_env!("UPDATE_INTERVAL") {
+			None => self.last_updated.date() != Local::now().date().naive_local(),
+			Some(v) => {
+				let seconds: u64 = v.parse().unwrap();
+				let latest_needed = Local::now().naive_local().timestamp() as u64 - seconds;
+				let last_updated = self.last_updated.timestamp() as u64;
+				latest_needed > last_updated
+			}
+		}
 	}
-	pub fn on_date(&self, date: NaiveDate) -> ScheduleType {
+	pub fn on_date(&self, date: NaiveDate) -> (ScheduleType, Option<String>) {
 		let mut literal: Option<ScheduleType> = None;
 		let special: Option<String> = self
 			.calendar
@@ -263,13 +303,19 @@ impl Schedule {
 			.map(|v| v.unwrap().clone())
 			.next();
 		match special {
-			Some(name) => self.definition.schedule_types.get(&name).unwrap().clone(),
+			Some(name) => (
+				self.definition.schedule_types.get(&name).unwrap().clone(),
+				Some(name),
+			),
 			None => match literal {
-				Some(schedule) => schedule,
+				Some(schedule) => (schedule, None),
 				None => {
 					let weekday: usize = date.weekday().num_days_from_sunday().try_into().unwrap();
 					let name = self.definition.typical_schedule[weekday].clone();
-					self.definition.schedule_types.get(&name).unwrap().clone()
+					(
+						self.definition.schedule_types.get(&name).unwrap().clone(),
+						Some(name),
+					)
 				}
 			},
 		}

@@ -1,0 +1,96 @@
+#wrapper {
+	display: flex;
+	flex-direction: column;
+	flex: 1;
+	align-items: center;
+	justify-content: top;
+}
+
+body {
+	color: black;
+	display: flex;
+	flex-flow: column;
+}
+
+.center {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.big {
+	font-size: 300%;
+}
+
+#content span {
+	display: inline-block;
+}
+
+#end_time {
+	font-size: 150%;
+	padding: 20px 0;
+	font-weight: bold;
+}
+
+#fullscreen {
+	display: none;
+	position: absolute;
+	right: 25px;
+	bottom: 25px;
+	top: unset;
+	cursor: pointer;
+	outline: 0;
+}
+
+#table, #calendar-table table {
+	border-collapse: collapse;
+	-webkit-box-shadow: 3px 3px 10px 2px rgba(0, 0, 0, 0.1);
+	box-shadow: 3px 3px 10px 2px rgba(0, 0, 0, 0.1);
+	border: none;
+}
+
+#table, #calendar-table {
+	width: 80%;
+	max-width: 1000px;
+	margin: 50px;
+}
+
+#calendar-table table {
+	width: 100%;
+}
+
+#table tr, #calendar-table table td {
+	border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+#calendar-table td {
+	vertical-align: top;
+}
+
+#table th, #table td, #calendar-table table th, #calendar-table table td {
+	padding: 15px 10px;
+	text-align: left;
+}
+
+#date-select {
+	font-family: sans-serif;
+}
+
+#schedule-select, #date-select {
+	width: 250px;
+	height: 25px;
+	margin: 10px;
+}
+
+#calendar-table .today {
+	border: 2px solid black !important;
+	background-color: rgba(0, 0, 0, 0.05);
+}
+
+.day-schedule {
+	padding: 5px;
+	margin-top: 10px;
+	border: 1px solid rgba(0, 0, 0, 0.1);
+	border-radius: 5px;
+	cursor: pointer;
+}

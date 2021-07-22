@@ -1,13 +1,16 @@
 {
 	"cSpell.words": [
 		"BYDAY",
+		"CURR",
 		"DTSTAMP",
 		"EXDATE",
 		"PRODID",
+		"Portnoy",
 		"RRULE",
 		"VCALENDAR",
 		"VEVENT",
 		"armhf",
+		"camelcase",
 		"chrono",
 		"datelike",
 		"datetime",
@@ -17,7 +20,10 @@
 		"dtstart",
 		"eths",
 		"ethsbell",
+		"fadein",
+		"frontends",
 		"getel",
+		"hidecursor",
 		"ical",
 		"jetli",
 		"openapi",
@@ -28,8 +34,10 @@
 		"thiserror",
 		"timelike",
 		"toolchain",
+		"vcenter",
 		"wasi",
-		"wasm"
+		"wasm",
+		"wildkit"
 	],
 	"rust-analyzer.cargo.features": [
 		"ws"

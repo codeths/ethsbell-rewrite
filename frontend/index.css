@@ -1,41 +1,48 @@
-body {
+#wrapper {
+	display: flex;
+	flex-direction: column;
+	flex: 1;
+	align-items: center;
+	justify-content: center;
 	text-align: center;
-	font-family: sans-serif;
-	padding-left: 10vw;
-	padding-right: 10vw;
-	font-size: 2vw;
 }
 
-a.normal {
-	font-size: initial;
+body {
+	color: white;
+	display: flex;
+	flex-flow: column;
 }
 
-.background {
-	background-color: lightgray;
-	padding: 10px
+.center {
+	display: flex;
+	align-items: center;
+	justify-content: center;
 }
 
-#period_name {
-	font-size: 5vw;
+.big {
+	font-size: 300%;
 }
 
-pre {
+#content span {
 	display: inline-block;
-	background-color: white;
-	text-align: left;
-	tab-size: 2;
-	-moz-tab-size: 2;
-	-o-tab-size: 2;
-	padding: 10px;
-	border-radius: 10px;
-	max-width: 80vw;
-	word-wrap: break-word;
-	white-space: pre-wrap;  
-	border-left-style: solid;
-	border-right-style: solid;
-	border-color: black;
 }
 
-#message {
-	font-size: small;
+#end_time {
+	font-size: 150%;
+	padding: 20px 0;
+	font-weight: bold;
+}
+
+#fullscreen {
+	display: none;
+	position: absolute;
+	right: 25px;
+	bottom: 25px;
+	top: unset;
+	cursor: pointer;
+	outline: 0;
+}
+
+body, #wrapper {
+	background-color: #c34614;
 }
