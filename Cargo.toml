@@ -1,6 +1,6 @@
 [package]
 name = "ethsbell-rewrite"
-version = "1.1.1"
+version = "1.1.2"
 authors = ["Willow Carlson-Huber <willow.ch@protonmail.com>", "Albert Portnoy <albert@asportnoy.com>"]
 edition = "2018"
 
