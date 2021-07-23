@@ -1,0 +1,58 @@
+<div id="wrapper">
+	<h1>{friendly_name}</h1>
+	From {start} until {end}, then<br>
+	<b>{next_friendly_name}</b>
+</div>
+<!-- If your app parses this, please change it! This is human-readable data and isn't included in our stability guarantees.
+	   We're trying to make it as compatible as possible, but this endpoint and the one at /data are deprecated.
+     The new API documentation is available at https://bell-dev.wolo.dev/docs/v1 -->
+
+<!-- The following is taken from the original ETHSBell's response -->
+
+<style>
+	@keyframes slide {
+		from {
+			left: 100%;
+		}
+
+		to {
+			left: -100%;
+		}
+	}
+
+	@-webkit-keyframes slide {
+		from {
+			left: 100%;
+		}
+
+		to {
+			left: -100%;
+		}
+	}
+
+	#marquee {
+		color: white;
+		width: 100%;
+		height: 120px;
+		line-height: 120px;
+		overflow: hidden;
+		position: relative;
+	}
+
+	#text {
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 120px;
+		font-size: 30px;
+		animation-name: slide;
+		animation-duration: 10s;
+		animation-timing-function: linear;
+		animation-iteration-count: infinite;
+		-webkit-animation-name: slide;
+		-webkit-animation-duration: 10s;
+		-webkit-animation-timing-function: linear;
+		-webkit-animation-iteration-count: infinite;
+	}
+</style>

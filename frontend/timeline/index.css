@@ -50,7 +50,7 @@ body {
 
 svg {
 	width: 100%;
-	font-weight: 100;
+	font-weight: 50;
 	font-family: sans-serif;
 }
 
@@ -106,4 +106,9 @@ svg {
 	flex: 1;
 	align-items: center;
 	justify-content: center;
+	width: 100%;
+}
+
+.bg {
+	width: 100%;
 }
