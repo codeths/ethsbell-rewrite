@@ -1,10 +1,8 @@
 use std::sync::{Arc, RwLock};
 
-use crate::impls::MaxElement;
-use crate::schedule::Schedule;
-use crate::schedule::{Period, PeriodType, ScheduleType};
+use crate::schedule::{Period, PeriodType, ScheduleType, Schedule};
 use chrono::{Datelike, Local, NaiveDate, NaiveTime, Timelike, Weekday};
-use rocket::{response::content::Html, Route, State};
+use rocket::{Route, State};
 use rocket_contrib::json::Json;
 use rocket_contrib::templates::Template;
 use rocket_okapi::{openapi, routes_with_openapi};

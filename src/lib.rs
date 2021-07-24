@@ -3,8 +3,8 @@
 extern crate rocket_okapi;
 
 pub mod ical;
+mod impls;
 pub mod schedule;
-pub mod impls;
 
-/// Re-export to allow for typed deserialization in js
+/// Re-export things from serde.
 pub use serde_json::from_str;
