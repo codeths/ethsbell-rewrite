@@ -7,3 +7,4 @@ package-lock.json
 # haha macos mfs be like
 .DS_Store
 node_modules
+/schema

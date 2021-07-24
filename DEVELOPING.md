@@ -5,6 +5,8 @@
   - [Using Nix](#using-nix)
   - [Not using Nix](#not-using-nix)
   - [I Know What I'm Doing, Thank You Very Much](#i-know-what-im-doing-thank-you-very-much)
+  - [Extra spice](#extra-spice)
+    - [JSON IDE support](#json-ide-support)
 
 These instructions have lots of information for new programmers. If you know what you're doing, read [this section](#i-know-what-im-doing-thank-you-very-much).
 
@@ -115,3 +117,11 @@ Nix is only available for Unix-like systems.
 4. Otherwise, install all of the workspace recommended extensions.
 5. If using Nix, load the profile in shell.nix.
 6. Otherwise, install Rust.
+
+## Extra spice
+
+### JSON IDE support
+
+When specifying a schedule type in `def.d`, you can add a property `"$schema": "../schema/Map_of_ScheduleType.json"` and run `cargo run --features ws --bin bell_mkschema` to generate files that will tell your IDE exactly what should and shouldn't be in there.
+
+Technically you could name a schedule `$schema`, which would break this functionality, so please don't do that.

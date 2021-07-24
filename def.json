@@ -1,4 +1,5 @@
 {
+	"$schema": "./schema/ScheduleDefinition.json",
 	"calendar_urls": [
 		"https://www.eths.k12.il.us/site/handlers/icalfeed.ashx?MIID=1",
 		"https://calendar.google.com/calendar/ical/c_2grbomp971179cnol52ldia1v0%40group.calendar.google.com/public/basic.ics"

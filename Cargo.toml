@@ -3,6 +3,7 @@ name = "ethsbell-rewrite"
 version = "1.2.1"
 authors = ["Willow Carlson-Huber <willow.ch@protonmail.com>", "Albert Portnoy <albert@asportnoy.com>"]
 edition = "2018"
+default-run = "ethsbell-rewrite"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 

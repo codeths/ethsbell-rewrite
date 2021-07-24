@@ -1,4 +1,5 @@
 {
+	"$schema": "../schema/Map_of_ScheduleType.json",
 	"orange_day": {
 		"friendly_name": "Orange Day",
 		"periods": [
