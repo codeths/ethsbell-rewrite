@@ -32,6 +32,10 @@ crate-type = ["cdylib", "rlib"]
 name = "ethsbell-rewrite"
 required-features = ["ws"]
 
+[[bin]]
+name = "bell_mkschema"
+required-features = ["ws"]
+
 [features]
 ws = ["rocket", "rocket_contrib", "pull", "rocket_okapi", "schemars", "okapi"]
 pull = ["reqwest"]
