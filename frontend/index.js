@@ -4,7 +4,7 @@ const nextText = document.querySelector('#next');
 
 // Gets data from /today/now/near
 function display(data) {
-    if (data[1]) {
+    if (data[1] && data[1][0]) {
         if (data[1][0].kind == "AfterSchool") {
             periodText.textContent = '';
             endTimeText.textContent = 'School\'s out!';
