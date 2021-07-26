@@ -24,6 +24,7 @@ pub fn routes() -> Vec<Route> {
 		today,
 		today_code,
 		date,
+		date_code,
 		today_now,
 		today_at,
 		date_at,
@@ -362,6 +363,24 @@ fn date(
 		.iter_mut()
 		.for_each(|v| *v = v.clone().populate(then_));
 	Ok(Json(schedule.0))
+}
+#[openapi]
+#[get("/on/<date_string>/code")]
+fn date_code(
+	schedule: State<Arc<RwLock<Schedule>>>,
+	date_string: String,
+) -> Result<Json<Option<String>>, OurError> {
+	Schedule::update_if_needed_async(schedule.clone());
+	let then = NaiveDate::from_str(&date_string)?;
+	let then_ = Local::now()
+		.with_day(then.day())
+		.unwrap()
+		.with_month(then.month())
+		.unwrap()
+		.with_year(then.year())
+		.unwrap();
+	let schedule = schedule.read().unwrap().on_date(then);
+	Ok(Json(schedule.1))
 }
 
 #[openapi]

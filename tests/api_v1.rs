@@ -106,6 +106,55 @@ fn on() {
 	)
 }
 
+#[test]
+fn on_code() {
+	let mut schedule = Schedule::default();
+	// Add test A
+	let test_a = ScheduleType {
+		friendly_name: "Test A".to_string(),
+		periods: vec![],
+		regex: None,
+		color: Some([0, 0, 0]),
+	};
+	schedule
+		.definition
+		.schedule_types
+		.insert("test_a".to_string(), test_a.clone());
+	// Add no
+	let no = ScheduleType {
+		friendly_name: "No".to_string(),
+		periods: vec![],
+		regex: Some(Regex::new("No").unwrap()),
+		color: Some([0, 0, 0]),
+	};
+	schedule
+		.definition
+		.schedule_types
+		.insert("no".to_string(), no.clone());
+	// Build typical schedule
+	schedule.definition.typical_schedule =
+		vec!["test_a", "no", "test_a", "no", "test_a", "no", "test_a"]
+			.iter()
+			.map(|v| v.to_string())
+			.collect();
+	let client = client(schedule.clone());
+	// Check test A
+	let mut response = client.get("/api/v1/on/2021-07-27/code").dispatch();
+	assert_eq!(response.status(), Status::Ok);
+	assert_eq!(response.content_type(), Some(ContentType::JSON));
+	assert_eq!(
+		response.body_string(),
+		Some(serde_json::to_string("test_a").unwrap())
+	);
+	// Check "no"
+	let mut response = client.get("/api/v1/on/2021-07-26/code").dispatch();
+	assert_eq!(response.status(), Status::Ok);
+	assert_eq!(response.content_type(), Some(ContentType::JSON));
+	assert_eq!(
+		response.body_string(),
+		Some(serde_json::to_string("no").unwrap())
+	)
+}
 
 #[test]
 fn on_at() {
