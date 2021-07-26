@@ -9,13 +9,6 @@ use crate::ical::IcalEvent;
 use std::sync::{Arc, RwLock};
 
 /// The definition of the schedule.
-/// ```rust
-/// use ethsbell_rewrite::schedule::ScheduleDefinition;
-/// use chrono::naive::NaiveTime;
-/// use std::collections::HashMap;
-/// let schedule_text = "{\"calendar_url\":\"http://example.com/cal.ical\", \"override_calendar_url\":\"http://example.com/cal.ical\", \"schedule_types\": {}, \"typical_schedule\": []}";
-/// let schedule: ScheduleDefinition = serde_json::from_str(&schedule_text).unwrap();
-/// ```
 #[cfg_attr(feature = "ws", derive(JsonSchema))]
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct ScheduleDefinition {
@@ -29,12 +22,6 @@ pub struct ScheduleDefinition {
 }
 
 /// A type of schedule that can occur.
-/// ```rust
-/// use ethsbell_rewrite::schedule::ScheduleType;
-/// use chrono::naive::NaiveTime;
-/// let schedule_text = "{\"friendly_name\":\"Test Schedule\", \"periods\": []}";
-/// let schedule: ScheduleType = serde_json::from_str(&schedule_text).unwrap();
-/// ```
 #[cfg_attr(feature = "ws", derive(JsonSchema))]
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct ScheduleType {
@@ -131,18 +118,6 @@ impl ScheduleType {
 }
 
 /// The definition for a period.
-/// ```rust
-/// use ethsbell_rewrite::schedule::{Period, PeriodType};
-/// use chrono::naive::NaiveTime;
-/// let period_text = "{\"friendly_name\":\"Test Period\", \"start\":\"08:00:00\", \"end\":\"09:00:00\",\"kind\":{\"Class\": 0}}";
-/// let period: Period = serde_json::from_str(&period_text).unwrap();
-/// assert_eq!(period, Period {
-/// 	friendly_name: "Test Period".to_string(),
-/// 	start: NaiveTime::from_hms(8,0,0),
-///		end: NaiveTime::from_hms(9,0,0),
-///		kind: PeriodType::Class(0)
-/// })
-/// ```
 #[cfg_attr(feature = "ws", derive(JsonSchema))]
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone)]
 pub struct Period {
@@ -225,6 +200,19 @@ impl From<ScheduleDefinition> for Schedule {
 		};
 		new.update();
 		new
+	}
+}
+impl Default for Schedule {
+	fn default() -> Self {
+		Schedule {
+			last_updated: NaiveDateTime::from_timestamp(0, 0),
+			calendar: HashMap::new(),
+			definition: ScheduleDefinition {
+				calendar_urls: vec![],
+				schedule_types: HashMap::new(),
+				typical_schedule: vec![],
+			},
+		}
 	}
 }
 impl Schedule {

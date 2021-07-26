@@ -42,5 +42,6 @@
 	"rust-analyzer.cargo.features": [
 		"ws"
 	],
-	"nixEnvSelector.suggestion": false
+	"nixEnvSelector.suggestion": false,
+	"rcover.testCommand": "cargo test --features ws"
 }
