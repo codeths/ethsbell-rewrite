@@ -25,6 +25,7 @@
 		"getel",
 		"hidecursor",
 		"ical",
+		"impls",
 		"jetli",
 		"openapi",
 		"reqwest",
