@@ -43,5 +43,7 @@
 		"ws"
 	],
 	"nixEnvSelector.suggestion": false,
-	"rcover.testCommand": "cargo test --features ws"
+	"rcover.testCommand": "cargo test --features ws",
+	"editor.detectIndentation": false,
+	"editor.insertSpaces": false
 }
