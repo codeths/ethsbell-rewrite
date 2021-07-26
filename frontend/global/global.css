@@ -7,7 +7,7 @@ nav {
 	padding: 20px 20px;
 }
 
-nav>div {
+nav > div {
 	margin: auto;
 	padding: 0px;
 }
@@ -63,6 +63,14 @@ nav .nav-left a {
 	text-decoration-line: none;
 }
 
+.big {
+	font-size: 200%;
+}
+
+.content {
+	padding: 10px;
+}
+
 @media only screen and (min-width: 576px) {
 	nav #nav-links {
 		display: block !important;
@@ -86,6 +94,10 @@ nav .nav-left a {
 	nav #nav-toggle {
 		display: none;
 	}
+
+	.big {
+		font-size: 300%;
+	}
 }
 
 nav .nav-right a {
@@ -102,7 +114,8 @@ nav a:hover {
 	color: #ffffff;
 }
 
-html, body {
+html,
+body {
 	height: 100%;
 	margin: 0;
 	padding: 0;
