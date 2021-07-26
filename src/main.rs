@@ -15,11 +15,10 @@ mod api;
 mod frontend;
 mod ical;
 mod impls;
+mod locks;
 mod login;
 mod schedule;
-
-#[derive(Clone)]
-struct SpecLock(Option<DateTime<Local>>);
+pub use locks::SpecLock;
 
 #[macro_use]
 extern crate rocket;

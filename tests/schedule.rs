@@ -1,4 +1,4 @@
-use std::{collections::HashMap};
+use std::collections::HashMap;
 
 use chrono::{Local, NaiveDate, NaiveTime};
 use ethsbell_rewrite::ical::IcalEvent;
@@ -9,27 +9,23 @@ use ethsbell_rewrite::schedule::{
 #[test]
 fn on_date_typical() {
 	let mut schedule = Schedule::default();
+	let type_a = ScheduleType {
+		color: None,
+		friendly_name: "Test A".to_string(),
+		periods: vec![],
+		regex: None,
+	};
+	let type_b = ScheduleType {
+		color: None,
+		friendly_name: "Test A".to_string(),
+		periods: vec![],
+		regex: None,
+	};
 	schedule.last_updated = Local::now().naive_local();
 	schedule.definition.schedule_types = {
 		let mut result = HashMap::new();
-		result.insert(
-			"type_a".to_string(),
-			ScheduleType {
-				color: None,
-				friendly_name: "Test".to_string(),
-				periods: vec![],
-				regex: None,
-			},
-		);
-		result.insert(
-			"type_b".to_string(),
-			ScheduleType {
-				color: None,
-				friendly_name: "Test".to_string(),
-				periods: vec![],
-				regex: None,
-			},
-		);
+		result.insert("type_a".to_string(), type_a.clone());
+		result.insert("type_b".to_string(), type_b.clone());
 		result
 	};
 	schedule.definition.typical_schedule = vec![
@@ -42,25 +38,31 @@ fn on_date_typical() {
 		"type_b".to_string(),
 	];
 	assert_eq!(
-		schedule
-			.on_date(NaiveDate::from_ymd(2021, 7, 21))
-			.1
-			.unwrap(),
-		"type_b"
+		schedule.on_date(NaiveDate::from_ymd(2021, 7, 21)),
+		(type_b, Some("type_b".to_string()))
 	);
 
 	assert_eq!(
-		schedule
-			.on_date(NaiveDate::from_ymd(2021, 7, 18))
-			.1
-			.unwrap(),
-		"type_a"
+		schedule.on_date(NaiveDate::from_ymd(2021, 7, 18)),
+		(type_a, Some("type_a".to_string()))
 	);
 }
 
 #[test]
 fn on_date_override() {
 	let date = NaiveDate::from_ymd(2021, 7, 20);
+	let type_a = ScheduleType {
+		color: None,
+		friendly_name: "Test A".to_string(),
+		periods: vec![],
+		regex: None,
+	};
+	let type_b = ScheduleType {
+		color: None,
+		friendly_name: "Test A".to_string(),
+		periods: vec![],
+		regex: None,
+	};
 	let schedule = Schedule {
 		last_updated: Local::now().naive_local(),
 		calendar: {
@@ -72,24 +74,8 @@ fn on_date_override() {
 			calendar_urls: vec![],
 			schedule_types: {
 				let mut result = HashMap::new();
-				result.insert(
-					"type_a".to_string(),
-					ScheduleType {
-						color: None,
-						friendly_name: "Test".to_string(),
-						periods: vec![],
-						regex: None,
-					},
-				);
-				result.insert(
-					"type_b".to_string(),
-					ScheduleType {
-						color: None,
-						friendly_name: "Test".to_string(),
-						periods: vec![],
-						regex: None,
-					},
-				);
+				result.insert("type_a".to_string(), type_a.clone());
+				result.insert("type_b".to_string(), type_b.clone());
 				result
 			},
 			typical_schedule: vec![
@@ -104,11 +90,8 @@ fn on_date_override() {
 		},
 	};
 	assert_eq!(
-		schedule
-			.on_date(NaiveDate::from_ymd(2021, 7, 20))
-			.1
-			.unwrap(),
-		"type_b"
+		schedule.on_date(NaiveDate::from_ymd(2021, 7, 20)),
+		(type_b, Some("type_b".to_string()))
 	);
 }
 
@@ -139,48 +122,42 @@ fn on_date_literal() {
 			typical_schedule: vec![],
 		},
 	};
-	assert_eq!(
-		schedule.on_date(date).0.friendly_name,
-		literal.friendly_name
-	)
+	assert_eq!(schedule.on_date(date), (literal, None))
 }
 
 #[test]
 fn at_time_typical() {
+	let mut test_period = Period {
+		friendly_name: "test_period".to_string(),
+		start: NaiveTime::from_hms(8, 0, 0),
+		start_timestamp: 0,
+		end: NaiveTime::from_hms(16, 0, 0),
+		end_timestamp: 0,
+		kind: PeriodType::Lunch,
+	};
 	let schedule = ScheduleType {
 		color: None,
 		friendly_name: "".to_string(),
-		periods: vec![Period {
-			friendly_name: "test_period".to_string(),
-			start: NaiveTime::from_hms(8, 0, 0),
-			start_timestamp: 0,
-			end: NaiveTime::from_hms(16, 0, 0),
-			end_timestamp: 0,
-			kind: PeriodType::Lunch,
-		}],
+		periods: vec![test_period.clone()],
 		regex: None,
 	};
+	// timestamps won't be the same, that's fine
+	let new = schedule.at_time(NaiveTime::from_hms(12, 0, 0)).1;
+	test_period.start_timestamp = new[0].start_timestamp;
+	test_period.end_timestamp = new[0].end_timestamp;
 	assert_eq!(
-		schedule.at_time(NaiveTime::from_hms(12, 0, 0)).1[0].friendly_name,
-		"test_period"
+		schedule.at_time(NaiveTime::from_hms(12, 0, 0)).1,
+		vec![test_period.clone()]
 	);
 
 	assert_eq!(
-		schedule
-			.at_time(NaiveTime::from_hms(17, 0, 0))
-			.0
-			.unwrap()
-			.friendly_name,
-		"test_period"
+		schedule.at_time(NaiveTime::from_hms(17, 0, 0)).0,
+		Some(test_period.clone())
 	);
 
 	assert_eq!(
-		schedule
-			.at_time(NaiveTime::from_hms(6, 0, 0))
-			.2
-			.unwrap()
-			.friendly_name,
-		"test_period"
+		schedule.at_time(NaiveTime::from_hms(6, 0, 0)).2,
+		Some(test_period.clone())
 	);
 }
 

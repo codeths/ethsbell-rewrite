@@ -10,7 +10,7 @@ use std::sync::{Arc, RwLock};
 
 /// The definition of the schedule.
 #[cfg_attr(feature = "ws", derive(JsonSchema))]
-#[derive(Serialize, Deserialize, Debug, Clone)]
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
 pub struct ScheduleDefinition {
 	/// The URL of the ical calendar we fetch the schedule's data from, in ascending order of importance
 	pub calendar_urls: Vec<String>,
@@ -35,6 +35,15 @@ pub struct ScheduleType {
 	pub regex: Option<Regex>,
 	/// The color of the schedule as RGB, for use in frontends.
 	pub color: Option<[u8; 3]>,
+}
+impl PartialEq for ScheduleType {
+	fn eq(&self, other: &Self) -> bool {
+		self.friendly_name == other.friendly_name
+			&& self.periods == other.periods
+			&& self.color == other.color
+			&& self.regex.clone().map(|v| v.to_string())
+				== other.regex.clone().map(|v| v.to_string())
+	}
 }
 impl ScheduleType {
 	pub fn at_time(&self, time: NaiveTime) -> (Option<Period>, Vec<Period>, Option<Period>) {
@@ -184,7 +193,7 @@ pub enum PeriodType {
 }
 
 #[cfg_attr(feature = "ws", derive(JsonSchema))]
-#[derive(Serialize, Clone)]
+#[derive(Serialize, Clone, PartialEq, Debug)]
 pub struct Schedule {
 	pub last_updated: NaiveDateTime,
 	pub calendar: HashMap<NaiveDate, Vec<Event>>,
@@ -312,7 +321,7 @@ impl Schedule {
 
 /// Types of calendar events.
 #[cfg_attr(feature = "ws", derive(JsonSchema))]
-#[derive(Serialize, Clone, PartialEq)]
+#[derive(Serialize, Clone, PartialEq, Debug)]
 pub enum Event {
 	/// This variant causes an override of the current schedule to the schedule named in the variant.
 	ScheduleOverride(String),

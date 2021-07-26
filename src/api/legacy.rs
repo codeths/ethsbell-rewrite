@@ -4,7 +4,7 @@ use crate::impls::MaxElement;
 use crate::schedule::Schedule;
 use crate::schedule::{Period, PeriodType, ScheduleType};
 use chrono::{Datelike, Local, NaiveDate, NaiveTime, Timelike, Weekday};
-use rocket::{response::content::Html, Route, State};
+use rocket::{Route, State};
 use rocket_contrib::json::Json;
 use rocket_contrib::templates::Template;
 use rocket_okapi::{openapi, routes_with_openapi};
@@ -31,10 +31,14 @@ fn display(schedule: State<Arc<RwLock<Schedule>>>) -> Template {
 	let period = schedule.0.at_time(now.time()).clone();
 	let friendly_name = period
 		.1
-		.first()
-		.clone()
+		.iter()
 		.map(|v| v.friendly_name.clone())
-		.unwrap_or("No Period".to_string());
+		.collect::<Vec<String>>()
+		.join(", ");
+	let friendly_name = match friendly_name.len() {
+		0 => "No Period".to_string(),
+		_ => friendly_name,
+	};
 	let next_friendly_name = period
 		.2
 		.clone()
@@ -42,14 +46,19 @@ fn display(schedule: State<Arc<RwLock<Schedule>>>) -> Template {
 		.unwrap_or("No Period".to_string());
 	let start = period
 		.2
-		.clone()
-		.map(|v| v.start.to_string())
+		.iter()
+		.map(|v| v.start)
+		.max_element()
+		.map(|v| v.to_string())
+		.next()
 		.unwrap_or("No Time".to_string());
 	let end = period
 		.1
-		.first()
-		.clone()
-		.map(|v| v.end.to_string())
+		.iter()
+		.map(|v| v.end)
+		.max_element()
+		.map(|v| v.to_string())
+		.next()
 		.unwrap_or("No Time".to_string());
 	Template::render(
 		"legacy-display",
