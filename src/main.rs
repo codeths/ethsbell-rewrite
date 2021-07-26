@@ -18,6 +18,7 @@ mod locks;
 mod login;
 mod schedule;
 pub use locks::SpecLock;
+use serde_json::Value;
 
 #[macro_use]
 extern crate rocket;
@@ -49,8 +50,18 @@ fn main() {
 				{
 					println!("{}", file.to_str().unwrap());
 					let string = fs::read_to_string(file).expect("Couldn't read a schedule file");
-					let map =
+					let mut map: HashMap<String, Value> =
 						serde_json::from_str(&string).expect("Couldn't interpret a schedule file");
+					map.remove(&"$schema".to_string());
+					let map = map
+						.iter()
+						.map(|(k, v)| {
+							(
+								k.clone(),
+								serde_json::from_value::<ScheduleType>(v.clone()).unwrap(),
+							)
+						})
+						.collect::<HashMap<String, ScheduleType>>();
 					out.push(map)
 				}
 				out
