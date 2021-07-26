@@ -5,7 +5,7 @@ use super::{IcalEvent, Schedule, ScheduleType};
 
 /// Types of calendar events.
 #[cfg_attr(feature = "ws", derive(JsonSchema))]
-#[derive(Serialize, Clone, PartialEq)]
+#[derive(Serialize, Clone, PartialEq, Debug)]
 pub enum Event {
 	/// This variant causes an override of the current schedule to the schedule named in the variant.
 	ScheduleOverride(String),

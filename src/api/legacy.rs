@@ -1,6 +1,7 @@
 use std::sync::{Arc, RwLock};
 
-use crate::schedule::{Period, PeriodType, ScheduleType, Schedule};
+use crate::impls::MaxElement;
+use crate::schedule::{Period, PeriodType, Schedule, ScheduleType};
 use chrono::{Datelike, Local, NaiveDate, NaiveTime, Timelike, Weekday};
 use rocket::{Route, State};
 use rocket_contrib::json::Json;
@@ -29,10 +30,14 @@ fn display(schedule: State<Arc<RwLock<Schedule>>>) -> Template {
 	let period = schedule.0.at_time(now.time()).clone();
 	let friendly_name = period
 		.1
-		.first()
-		.clone()
+		.iter()
 		.map(|v| v.friendly_name.clone())
-		.unwrap_or("No Period".to_string());
+		.collect::<Vec<String>>()
+		.join(", ");
+	let friendly_name = match friendly_name.len() {
+		0 => "No Period".to_string(),
+		_ => friendly_name,
+	};
 	let next_friendly_name = period
 		.2
 		.clone()
@@ -40,14 +45,19 @@ fn display(schedule: State<Arc<RwLock<Schedule>>>) -> Template {
 		.unwrap_or("No Period".to_string());
 	let start = period
 		.2
-		.clone()
-		.map(|v| v.start.to_string())
+		.iter()
+		.map(|v| v.start)
+		.max_element()
+		.map(|v| v.to_string())
+		.next()
 		.unwrap_or("No Time".to_string());
 	let end = period
 		.1
-		.first()
-		.clone()
-		.map(|v| v.end.to_string())
+		.iter()
+		.map(|v| v.end)
+		.max_element()
+		.map(|v| v.to_string())
+		.next()
 		.unwrap_or("No Time".to_string());
 	Template::render(
 		"legacy-display",
@@ -107,7 +117,7 @@ struct LegacySchedule {
 	/// Always "1"
 	pub school_id: String,
 	/// The class number of the next Class(_) period, or -1 if none exist.
-	pub theNextSlot_: isize,
+	pub theNextSlot_: String,
 	/// The time of day as a negative number of minutes.
 	/// I don't understand it either.
 	pub timeLeftInPeriod: isize,
@@ -200,7 +210,7 @@ impl From<ScheduleType> for LegacySchedule {
 				Some(v) => match v.kind {
 					PeriodType::Class(n) => Some(n.parse().unwrap()),
 					_ => schedule.first_class().map(|v| match v.kind {
-						PeriodType::Class(n) => n.parse().unwrap(),
+						PeriodType::Class(n) => n,
 						_ => panic!("?!?!"),
 					}),
 				},
@@ -209,7 +219,7 @@ impl From<ScheduleType> for LegacySchedule {
 					_ => panic!("?!?!"),
 				}),
 			}
-			.unwrap_or(-1),
+			.unwrap_or("-1".to_string()),
 			timeLeftInPeriod: {
 				let now = Local::now();
 				-(now.hour() as isize * 60 + now.minute() as isize)

@@ -11,11 +11,11 @@ const config = JSON.parse(localStorage.getItem('schedule')) || {};
 
 function replace_period(period) {
 	if (!period) return period;
-	if (period.length > 0) {
+	if (Array.isArray(period)) {
 		return period.map(replace_period);
 	}
 
-	if (period.kind.Class || period.kind.ClassOrLunch) {
+	if (period.kind?.Class || period.kind?.ClassOrLunch) {
 		const class_id = period.kind.Class || period.kind.ClassOrLunch;
 		const class_cfg = config[class_id];
 		if (class_cfg) {
@@ -99,9 +99,8 @@ function current_date() {
 	return new Date();
 }
 
-function date_from_api(time) {
+function date_from_api(time, now = current_date()) {
 	const [h, m, s] = time.split(':');
-	const now = new Date(Date.now());
 	const date = new Date(now.getFullYear(), now.getMonth(), now.getDate(), h, m, s);
 	return date;
 }
@@ -113,8 +112,8 @@ function human_time(time) {
 
 // Gets a human readable duration from an epoch timestamp
 function human_time_left(endTime, startTime = null, short = false) {
-	const endDate = date_from_api(endTime).getTime();
 	const startDate = startTime ? date_from_api(startTime).getTime() : current_date().getTime();
+	const endDate = date_from_api(endTime).getTime();
 	const timeLeft = Math.floor((endDate - startDate) / 1000);
 	const h = Math.floor(timeLeft / 60 / 60);
 	const m = Math.ceil(timeLeft / 60 % 60);

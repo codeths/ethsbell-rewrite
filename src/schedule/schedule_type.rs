@@ -103,3 +103,13 @@ impl ScheduleType {
 			.next()
 	}
 }
+
+impl PartialEq for ScheduleType {
+	fn eq(&self, other: &Self) -> bool {
+		self.friendly_name == other.friendly_name
+			&& self.periods == other.periods
+			&& self.color == other.color
+			&& self.regex.clone().map(|v| v.to_string())
+				== other.regex.clone().map(|v| v.to_string())
+	}
+}

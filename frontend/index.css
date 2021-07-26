@@ -19,11 +19,7 @@ body {
 	justify-content: center;
 }
 
-.big {
-	font-size: 300%;
-}
-
-#content span {
+.content span {
 	display: inline-block;
 }
 
@@ -43,6 +39,7 @@ body {
 	outline: 0;
 }
 
-body, #wrapper {
+body,
+#wrapper {
 	background-color: #c34614;
 }

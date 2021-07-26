@@ -12,7 +12,7 @@ use super::{ical_to_ours, Event, IcalEvent, ScheduleDefinition, ScheduleType};
 
 /// A structure containing all of the information we need to operate.
 #[cfg_attr(feature = "ws", derive(JsonSchema))]
-#[derive(Serialize, Clone)]
+#[derive(Serialize, Clone, PartialEq, Debug)]
 pub struct Schedule {
 	/// When this schedule's calendar data was last updated.
 	pub last_updated: NaiveDateTime,
