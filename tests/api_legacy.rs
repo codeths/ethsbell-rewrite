@@ -1,28 +1,15 @@
 #![cfg(feature = "ws")]
 
-use std::sync::{Arc, Mutex, RwLock};
-
 use chrono::NaiveTime;
 use ethsbell_rewrite::{
+	rocket_builder::rocket,
 	schedule::{Period, PeriodType, Schedule, ScheduleType},
-	SpecLock,
 };
 use rocket::{http::Status, local::Client};
-use rocket_contrib::templates::Template;
 // This file is mostly just here to make sure the legacy endpoints don't panic; it's up to you to keep them working correctly.
 
 fn client(schedule: Schedule) -> Client {
-	let schedule = Arc::new(RwLock::new(schedule));
-	let spec_lock = Arc::new(Mutex::new(SpecLock(None)));
-	Client::new(
-		rocket::ignite()
-			.attach(ethsbell_rewrite::api::ApiFairing)
-			.attach(ethsbell_rewrite::frontend::FrontendFairing)
-			.attach(Template::fairing())
-			.manage(schedule.clone())
-			.manage(spec_lock),
-	)
-	.unwrap()
+	Client::new(rocket(schedule)).unwrap()
 }
 
 #[test]

@@ -1,31 +1,18 @@
 #![cfg(feature = "ws")]
 
-use std::sync::{Arc, Mutex, RwLock};
-
 use chrono::{Local, NaiveDateTime, NaiveTime};
 use ethsbell_rewrite::{
+	rocket_builder::rocket,
 	schedule::{Period, PeriodType, Schedule, ScheduleType},
-	SpecLock,
 };
 use regex::Regex;
 use rocket::{
 	http::{ContentType, Status},
 	local::Client,
 };
-use rocket_contrib::templates::Template;
 
 fn client(schedule: Schedule) -> Client {
-	let schedule = Arc::new(RwLock::new(schedule));
-	let spec_lock = Arc::new(Mutex::new(SpecLock(None)));
-	Client::new(
-		rocket::ignite()
-			.attach(ethsbell_rewrite::api::ApiFairing)
-			.attach(ethsbell_rewrite::frontend::FrontendFairing)
-			.attach(Template::fairing())
-			.manage(schedule.clone())
-			.manage(spec_lock),
-	)
-	.unwrap()
+	Client::new(rocket(schedule)).unwrap()
 }
 
 #[test]

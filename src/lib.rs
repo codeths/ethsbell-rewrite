@@ -16,6 +16,8 @@ pub mod locks;
 #[cfg(feature = "ws")]
 pub mod login;
 #[cfg(feature = "ws")]
+pub mod rocket_builder;
+#[cfg(feature = "ws")]
 pub use locks::SpecLock;
 #[cfg(feature = "ws")]
 pub mod frontend;
