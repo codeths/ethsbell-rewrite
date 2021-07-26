@@ -319,6 +319,56 @@ fn schedule_pull() {
 
 #[cfg(feature = "pull")]
 #[test]
+fn schedule_ical() {
+	use chrono::Duration;
+	use regex::Regex;
+
+	let mut definition = Schedule::default().definition;
+	definition.schedule_types.insert(
+		"no".to_string(),
+		ScheduleType {
+			friendly_name: "No".to_string(),
+			periods: vec![Period {
+				friendly_name: "No".to_string(),
+				start: Local::now().naive_local().time(),
+				end: Local::now().naive_local().time() + Duration::hours(2),
+				kind: PeriodType::Break,
+				start_timestamp: 0,
+				end_timestamp: 0,
+			}],
+			regex: Some(Regex::new("[Nn]o").unwrap()),
+			color: Some([0; 3]),
+		},
+	);
+	definition.schedule_types.insert(
+		"yes".to_string(),
+		ScheduleType {
+			friendly_name: "Yes".to_string(),
+			periods: vec![Period {
+				friendly_name: "Yes".to_string(),
+				start: Local::now().naive_local().time(),
+				end: Local::now().naive_local().time() + Duration::hours(1),
+				kind: PeriodType::Break,
+				start_timestamp: 0,
+				end_timestamp: 0,
+			}],
+			regex: None,
+			color: Some([0; 3]),
+		},
+	);
+	definition.typical_schedule = vec!["yes".to_string(); 7];
+	definition.calendar_urls =
+		vec!["https://www.eths.k12.il.us/site/handlers/icalfeed.ashx?MIID=1".to_string()];
+	let _schedule = Schedule::from(definition);
+	let _ical = IcalEvent::generate(
+		&_schedule,
+		NaiveDate::from_ymd(2020, 1, 1),
+		NaiveDate::from_ymd(2022, 1, 1),
+	);
+}
+
+#[cfg(feature = "pull")]
+#[test]
 fn schedule_generate() {
 	use std::str::FromStr;
 

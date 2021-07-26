@@ -118,7 +118,7 @@ struct LegacySchedule {
 	/// Always "1"
 	pub school_id: String,
 	/// The class number of the next Class(_) period, or -1 if none exist.
-	pub theNextSlot_: isize,
+	pub theNextSlot_: String,
 	/// The time of day as a negative number of minutes.
 	/// I don't understand it either.
 	pub timeLeftInPeriod: isize,
@@ -211,7 +211,7 @@ impl From<ScheduleType> for LegacySchedule {
 				Some(v) => match v.kind {
 					PeriodType::Class(n) => Some(n.parse().unwrap()),
 					_ => schedule.first_class().map(|v| match v.kind {
-						PeriodType::Class(n) => n.parse().unwrap(),
+						PeriodType::Class(n) => n,
 						_ => panic!("?!?!"),
 					}),
 				},
@@ -220,7 +220,7 @@ impl From<ScheduleType> for LegacySchedule {
 					_ => panic!("?!?!"),
 				}),
 			}
-			.unwrap_or(-1),
+			.unwrap_or("-1".to_string()),
 			timeLeftInPeriod: {
 				let now = Local::now();
 				-(now.hour() as isize * 60 + now.minute() as isize)
