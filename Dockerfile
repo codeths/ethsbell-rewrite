@@ -6,6 +6,7 @@ ENV GITHUB_REPOSITORY=$GITHUB_REPOSITORY
 WORKDIR /app
 COPY Cargo.toml Cargo.lock ./
 RUN mkdir src && echo "fn main(){println!(\"dummy\");}" > ./src/main.rs && touch src/lib.rs
+RUN mkdir src/bin && echo "fn main(){println!(\"dummy\");}" > ./src/bin/bell_mkschema.rs
 RUN cargo build --release --bin ethsbell-rewrite --features=ws
 RUN rm ./src/main.rs && rm ./src/lib.rs
 COPY . .
