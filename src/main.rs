@@ -7,7 +7,6 @@ use std::{
 	sync::{Arc, Mutex, RwLock},
 };
 
-use chrono::{DateTime, Local};
 use rocket_contrib::templates::Template;
 use schedule::{Schedule, ScheduleDefinition, ScheduleType};
 
