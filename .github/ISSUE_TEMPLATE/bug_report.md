@@ -10,6 +10,8 @@ assignees: ''
 (Content in parentheses can be removed from the submitted issue.)
 (Only submit this issue if you believe the program is behaving incorrectly.)
 
+(If the bug is only present in the browser extension, please file your report at https://github.com/chromezoneeths/ethsbell-extension)
+
 **Describe the bug**
 (A clear and concise description of what the bug is.)
 
