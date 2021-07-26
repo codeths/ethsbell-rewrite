@@ -55,6 +55,7 @@ struct WidgetContext {
 }
 
 /// Returns HTML for the output of /today/now/near
+/// This is frontend and is not considered in our versioning or tests.
 #[openapi(skip)]
 #[get("/widget")]
 fn widget(schedule: State<Arc<RwLock<Schedule>>>) -> Template {
