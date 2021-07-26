@@ -1604,8 +1604,7 @@ dependencies = [
 [[package]]
 name = "rocket_prometheus"
 version = "0.8.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2abe0163d1f71b2b915f2ee6d040353408df554192ed35f897fd5d8c0ba64cb0"
+source = "git+https://github.com/chromezoneeths/rocket_prometheus#0d0d18640581ad14416498fecad0ff5217c13b2f"
 dependencies = [
  "prometheus",
  "rocket",
