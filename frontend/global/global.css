@@ -131,6 +131,20 @@ body {
 	text-align: center;
 }
 
+.absolute.text-center {
+	position: absolute;
+	left: 50%;
+	transform: translateX(-50%);
+}
+
+.float.left {
+	float: left;
+}
+
+.float.right {
+	float: right;
+}
+
 @keyframes fade_in {
 	from {
 		opacity: 0;

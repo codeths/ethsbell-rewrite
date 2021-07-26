@@ -1,6 +1,6 @@
 let all_data;
 
-let viewport_seconds = 3600 * 6; // The number of seconds the viewport should show
+let viewport_seconds = 3600 * 4; // The number of seconds the viewport should show
 let viewport_offset = 0;
 const row_height = 50; // The height of a row
 const box_height = 40; // The height of a box
@@ -204,4 +204,10 @@ function place_boxes(data_unprocessed) {
 	}
 
 	getel('boxes').innerHTML = output;
+	let pointer_time = new Date(Date.now() + (viewport_offset * 1000))
+	getel('pointer_time').innerHTML = (pointer_time).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', timeZone: 'America/Chicago' })
+	let left_time = new Date(Date.now() + (viewport_offset * 1000) - (viewport_seconds * 500))
+	getel('left_time').innerHTML = (left_time).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', timeZone: 'America/Chicago' })
+	let right_time = new Date(Date.now() + (viewport_offset * 1000) + (viewport_seconds * 500))
+	getel('right_time').innerHTML = (right_time).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', timeZone: 'America/Chicago' })
 }
