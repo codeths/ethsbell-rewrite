@@ -107,3 +107,36 @@ body {
 	border-radius: 5px;
 	cursor: pointer;
 }
+
+#calendar {
+	position: relative;
+}
+
+#calendar {
+	width: 80%;
+	max-width: 1000px;
+	margin: 50px;
+	height: 500px;
+}
+
+#calendar .event {
+	position: absolute;
+	box-sizing: border-box;
+	margin: 5px;
+	padding: 5px;
+	border: 1px solid black;
+	background-color: white;
+	border-radius: 5px;
+	width: 100%;
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+	flex-wrap: wrap;
+	align-content: flex-start;
+	text-overflow: ellipsis;
+}
+
+#calendar .event-name,
+#calendar .event-time {
+	padding: 5px 10px;
+}
