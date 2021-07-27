@@ -1,8 +1,7 @@
 use std::sync::{Arc, RwLock};
 
 use crate::impls::MaxElement;
-use crate::schedule::Schedule;
-use crate::schedule::{Period, PeriodType, ScheduleType};
+use crate::schedule::{Period, PeriodType, Schedule, ScheduleType};
 use chrono::{Datelike, Local, NaiveDate, NaiveTime, Timelike, Weekday};
 use rocket::{Route, State};
 use rocket_contrib::json::Json;

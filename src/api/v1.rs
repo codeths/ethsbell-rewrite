@@ -372,13 +372,6 @@ fn date_code(
 ) -> Result<Json<Option<String>>, OurError> {
 	Schedule::update_if_needed_async(schedule.clone());
 	let then = NaiveDate::from_str(&date_string)?;
-	let then_ = Local::now()
-		.with_day(then.day())
-		.unwrap()
-		.with_month(then.month())
-		.unwrap()
-		.with_year(then.year())
-		.unwrap();
 	let schedule = schedule.read().unwrap().on_date(then);
 	Ok(Json(schedule.1))
 }

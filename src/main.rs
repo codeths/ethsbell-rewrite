@@ -16,8 +16,10 @@ mod ical;
 mod impls;
 mod locks;
 mod login;
+pub mod rocket_builder;
 mod schedule;
 pub use locks::SpecLock;
+use serde_json::Value;
 
 #[macro_use]
 extern crate rocket;
@@ -49,8 +51,18 @@ fn main() {
 				{
 					println!("{}", file.to_str().unwrap());
 					let string = fs::read_to_string(file).expect("Couldn't read a schedule file");
-					let map =
+					let mut map: HashMap<String, Value> =
 						serde_json::from_str(&string).expect("Couldn't interpret a schedule file");
+					map.remove(&"$schema".to_string());
+					let map = map
+						.iter()
+						.map(|(k, v)| {
+							(
+								k.clone(),
+								serde_json::from_value::<ScheduleType>(v.clone()).unwrap(),
+							)
+						})
+						.collect::<HashMap<String, ScheduleType>>();
 					out.push(map)
 				}
 				out
@@ -67,14 +79,7 @@ fn main() {
 		// Build the runtime schedule struct and run the first update.
 		let schedule = Schedule::from(schedule_def);
 		// Wrap the runtime schedule struct in a thread-safe container.
-		Arc::new(RwLock::new(schedule))
+		schedule
 	};
-	let spec_lock = Arc::new(Mutex::new(SpecLock(None)));
-	rocket::ignite()
-		.attach(api::ApiFairing)
-		.attach(frontend::FrontendFairing)
-		.attach(Template::fairing())
-		.manage(schedule.clone())
-		.manage(spec_lock)
-		.launch();
+	rocket_builder::rocket(schedule).launch();
 }

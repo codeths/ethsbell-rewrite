@@ -1,6 +1,7 @@
 /.vscode
 /.git
 /target
+/coverage_target
 /dockerignore
 /.gitignore
 /Dockerfile

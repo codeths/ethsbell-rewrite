@@ -1,16 +1,7 @@
-//! Functions for parsing iCalendar files.
 use chrono::{Datelike, Duration, NaiveDate, Timelike};
-#[cfg(feature = "ws")]
-use okapi::openapi3::Responses;
 use rand::Rng;
 #[cfg(feature = "pull")]
 use reqwest::blocking::get;
-#[cfg(feature = "ws")]
-use rocket::Responder;
-#[cfg(feature = "ws")]
-use rocket_okapi::response::OpenApiResponder;
-#[cfg(feature = "ws")]
-use rocket_okapi::util::add_schema_response;
 use serde::Deserialize;
 
 use crate::schedule::Schedule;
@@ -246,22 +237,5 @@ END:VEVENT
 		}
 		result += "END:VCALENDAR\n";
 		result
-	}
-}
-
-#[cfg_attr(feature = "ws", derive(Responder))]
-#[cfg_attr(feature = "ws", response(content_type = "text/calendar"))]
-pub struct IcalResponder {
-	pub inner: String,
-}
-#[cfg(feature = "ws")]
-impl OpenApiResponder<'_> for IcalResponder {
-	fn responses(
-		gen: &mut rocket_okapi::gen::OpenApiGenerator,
-	) -> rocket_okapi::Result<okapi::openapi3::Responses> {
-		let mut responses = Responses::default();
-		let schema = gen.json_schema::<String>();
-		add_schema_response(&mut responses, 200, "text/calendar", schema)?;
-		Ok(responses)
 	}
 }
