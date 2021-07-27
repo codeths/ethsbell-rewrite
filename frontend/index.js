@@ -27,6 +27,7 @@ function display(data) {
 		endTimeText.textContent = 'No School';
 		nextText.textContent = '';
 	}
+	update_progress(data)
 }
 
 go();
