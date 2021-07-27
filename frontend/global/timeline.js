@@ -196,7 +196,7 @@ function place_boxes(data_unprocessed) {
 		element.style.left = `${box.x}%`
 		element.style.top = `${box.y}px`
 		element.style.width = `${box.w}%`
-		element.style.height = box.h
+		element.style.height = `${box.h}px`
 		element.style['font-size'] = `${box.th}px`
 		element.innerHTML = `&nbsp;${box.emoji} ${period_html(box.period)}`
 		getel('boxes').appendChild(element)	
