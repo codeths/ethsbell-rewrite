@@ -112,3 +112,20 @@ svg {
 .bg {
 	width: 100%;
 }
+
+#boxes {
+	position: relative;
+	top: -115px;
+}
+
+.timeline_rect {
+	display: inline;
+	position: absolute;
+	background-color: white;
+	border-radius: 5px;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	border-style: solid;
+	border-width: 1px;
+}
