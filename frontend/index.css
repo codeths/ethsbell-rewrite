@@ -39,7 +39,45 @@ body {
 	outline: 0;
 }
 
-body,
-#wrapper {
+body, #wrapper {
 	background-color: #c34614;
+}
+
+.progress_label {
+	font-size: small;
+}
+
+#progress_parent {
+	border-radius: 10px;
+	border-style: solid;
+	border-color: rgba(0, 0, 0, 0.25);
+	border-width: 1px;
+	box-shadow: 0 0 5px 5px rgba(0, 0, 0, 0.25) inset;
+	background-color: #c34614;
+	overflow: hidden;
+}
+
+.progress_bar {
+	text-align: left;
+	display: block;
+	border: none;
+	width: 100%;
+	/* border-radius: 10px; */
+	height: 20px;
+	box-sizing: border-box;
+}
+
+.progress_bar:not(:last-child) {
+	border-bottom-style: solid;
+	border-bottom-width: 1px;
+	border-bottom-color: #1a2741;
+}
+
+.progress_bar::before {
+	background-color: #1a2741;
+	display: block;
+	height: 100%;
+	content: '';
+	width: var(--width);
+	/* border-radius: 10px; */
 }
