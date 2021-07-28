@@ -1,0 +1,148 @@
+{
+	"$schema": "../schema/Map_of_ScheduleType.json",
+	"first_day_2021": {
+		"friendly_name": "First Day of School",
+		"periods": [
+			{
+				"start": "08:15:00",
+				"end": "08:45:00",
+				"kind": {
+					"Class": "Block1"
+				},
+				"friendly_name": "Block 1"
+			},
+			{
+				"start": "08:50:00",
+				"end": "09:05:00",
+				"kind": {
+					"Class": "Block2"
+				},
+				"friendly_name": "Block 2"
+			},
+			{
+				"start": "09:10:00",
+				"end": "09:25:00",
+				"kind": {
+					"Class": "Block3"
+				},
+				"friendly_name": "Block 3"
+			},
+			{
+				"start": "09:30:00",
+				"end": "09:45:00",
+				"kind": {
+					"Class": "Block4"
+				},
+				"friendly_name": "Block 4"
+			},
+			{
+				"start": "09:50:00",
+				"end": "10:05:00",
+				"kind": {
+					"Class": "Block5"
+				},
+				"friendly_name": "Block 5"
+			},
+			{
+				"start": "10:10:00",
+				"end": "10:25:00",
+				"kind": {
+					"Class": "Block6"
+				},
+				"friendly_name": "Block 6"
+			},
+			{
+				"start": "10:30:00",
+				"end": "10:45:00",
+				"kind": {
+					"Class": "Block7"
+				},
+				"friendly_name": "Block 7"
+			},
+			{
+				"start": "10:50:00",
+				"end": "11:05:00",
+				"kind": {
+					"Class": "Block8"
+				},
+				"friendly_name": "Block 8"
+			},
+			{
+				"start": "11:10:00",
+				"end": "12:10:00",
+				"kind": "Lunch",
+				"friendly_name": "Lunch"
+			},
+			{
+				"start": "12:15:00",
+				"end": "12:40:00",
+				"kind": {
+					"Class": "Block1"
+				},
+				"friendly_name": "Block 1"
+			},
+			{
+				"start": "12:45:00",
+				"end": "13:00:00",
+				"kind": {
+					"Class": "Block2"
+				},
+				"friendly_name": "Block 2"
+			},
+			{
+				"start": "13:05:00",
+				"end": "13:20:00",
+				"kind": {
+					"Class": "Block3"
+				},
+				"friendly_name": "Block 3"
+			},
+			{
+				"start": "13:25:00",
+				"end": "13:40:00",
+				"kind": {
+					"Class": "Block4"
+				},
+				"friendly_name": "Block 4"
+			},
+			{
+				"start": "13:45:00",
+				"end": "14:00:00",
+				"kind": {
+					"Class": "Block5"
+				},
+				"friendly_name": "Block 5"
+			},
+			{
+				"start": "14:05:00",
+				"end": "14:20:00",
+				"kind": {
+					"Class": "Block6"
+				},
+				"friendly_name": "Block 6"
+			},
+			{
+				"start": "14:25:00",
+				"end": "14:40:00",
+				"kind": {
+					"Class": "Block7"
+				},
+				"friendly_name": "Block 7"
+			},
+			{
+				"start": "14:45:00",
+				"end": "15:00:00",
+				"kind": {
+					"Class": "Block8"
+				},
+				"friendly_name": "Block 8"
+			}
+		],
+		"regex": "First Day of School",
+		"color": [
+			77,
+			171,
+			171
+		]
+	}
+}
