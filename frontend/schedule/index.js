@@ -22,22 +22,20 @@ let schedules = {};
 let currentSchedule = {};
 
 async function getDate(date = current_date(), setCurrent = false) {
-	if (date instanceof Date) {
-		date = date_to_string(date);
-	}
+	let dateStr = date_to_string(date)
 
-	const day = await get(`/api/v1/on/${date}`);
+	const day = await get(`/api/v1/on/${dateStr}`);
 	if (!day) {
 		return;
 	}
 
-	place_boxes(day.periods);
+	place_boxes(day.periods, date);
 
 	if (setCurrent) {
 		currentSchedule = day;
 	}
 
-	buildTable(day.periods);
+	// buildTable(day.periods);
 
 	for (const option of [...scheduleSelect.querySelectorAll('option')]) {
 		if (option.textContent === day.friendly_name) {
@@ -77,7 +75,12 @@ async function getScheduleList(start, end) {
 	const days = scheduleList.map((scheduleCode, i) => {
 		const date = new Date(start);
 		date.setDate(date.getDate() + i);
-		const schedule = schedules[scheduleCode] || null;
+		let schedule = schedules[scheduleCode] || null;
+		if (!schedule) {
+			try {
+				schedule = JSON.parse(scheduleCode);
+			} catch (e) { }
+		}
 		const name = schedule?.friendly_name || null;
 		const backgroundColor = schedule?.color ? bytes_to_color(schedule.color) : '#FFFFFF';
 		const textColor = black_or_white(backgroundColor);
@@ -97,14 +100,16 @@ async function getScheduleList(start, end) {
 scheduleSelect.addEventListener('change', () => {
 	const selected = scheduleSelect.value;
 	if (schedules[selected]) {
-		buildTable(schedules[selected].periods);
+		// buildTable(schedules[selected].periods);
+		place_boxes(schedules[selected].periods);
+
 	}
 });
 
 dateSelect.valueAsDate = current_date();
 
 dateSelect.addEventListener('change', () => {
-	const date = dateSelect.value;
+	const date = dateSelect.valueAsDate;
 	getDate(date);
 });
 
@@ -143,7 +148,8 @@ endOfNextWeek.setDate(endOfNextWeek.getDate() + (CALENDAR_WEEKS * 7));
 			td.querySelector('.day-schedule').style.backgroundColor = day.backgroundColor;
 			td.querySelector('.day-schedule').style.color = day.textColor;
 			td.addEventListener('click', () => {
-				buildTable(day.schedule);
+				// buildTable(day.schedule);
+				place_boxes(day.schedule, day.date);
 				scheduleSelect.value = day.code;
 				dateSelect.value = date_to_string(day.date);
 			});
