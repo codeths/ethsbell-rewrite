@@ -24,7 +24,13 @@ function getel(id) {
 	return document.querySelector(selector);
 }
 
-let working_copy = JSON.parse(localStorage.getItem('schedule')) || { schedule: {} }
+let working_copy = JSON.parse(localStorage.getItem('schedule')) || {
+	schedule: {},
+	foreground_color: "#1a2741",
+	background_color: "#c34614",
+	foreground_text_color: "#ffffff",
+	background_text_color: "#ffffff"
+}
 
 getel('class_id').addEventListener('change', switchClass)
 switchClass()
