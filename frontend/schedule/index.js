@@ -6,18 +6,6 @@ const scheduleSelect = document.querySelector('#schedule-select');
 const dateSelect = document.querySelector('#date-select');
 const calendarTable = document.querySelector('#calendar-table');
 
-function buildTable(data) {
-	tbodyElement.innerHTML = '';
-
-	for (const period of data) {
-		const tr = document.createElement('tr');
-		tr.innerHTML = `<td>${period.friendly_name}</td>
-						<td>${human_time(period.start)} - ${human_time(period.end)}</td>
-						<td>${human_time_left(period.end, period.start, true)}</td>`;
-		tbodyElement.append(tr);
-	}
-}
-
 let schedules = {};
 let currentSchedule = {};
 
@@ -34,8 +22,6 @@ async function getDate(date = current_date(), setCurrent = false) {
 	if (setCurrent) {
 		currentSchedule = day;
 	}
-
-	// buildTable(day.periods);
 
 	for (const option of [...scheduleSelect.querySelectorAll('option')]) {
 		if (option.textContent === day.friendly_name) {
@@ -100,7 +86,6 @@ async function getScheduleList(start, end) {
 scheduleSelect.addEventListener('change', () => {
 	const selected = scheduleSelect.value;
 	if (schedules[selected]) {
-		// buildTable(schedules[selected].periods);
 		place_boxes(schedules[selected].periods);
 
 	}
@@ -148,7 +133,6 @@ endOfNextWeek.setDate(endOfNextWeek.getDate() + (CALENDAR_WEEKS * 7));
 			td.querySelector('.day-schedule').style.backgroundColor = day.backgroundColor;
 			td.querySelector('.day-schedule').style.color = day.textColor;
 			td.addEventListener('click', () => {
-				// buildTable(day.schedule);
 				place_boxes(day.schedule, day.date);
 				scheduleSelect.value = day.code;
 				dateSelect.value = date_to_string(day.date);
