@@ -2,12 +2,8 @@
 
 use std::collections::HashMap;
 #[cfg(feature = "ws")]
-use std::{
-	env, fs,
-	sync::{Arc, Mutex, RwLock},
-};
+use std::{env, fs};
 
-use rocket_contrib::templates::Template;
 use schedule::{Schedule, ScheduleDefinition, ScheduleType};
 
 mod api;
