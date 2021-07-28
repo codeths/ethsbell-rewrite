@@ -25,6 +25,7 @@ fn things() {
 		kind: PeriodType::Class("".to_string()),
 	};
 	let test_a = ScheduleType {
+		hide: false,
 		friendly_name: "Test A".to_string(),
 		periods: vec![period.clone()],
 		regex: None,

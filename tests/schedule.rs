@@ -10,12 +10,14 @@ use ethsbell_rewrite::schedule::{
 fn on_date_typical() {
 	let mut schedule = Schedule::default();
 	let type_a = ScheduleType {
+		hide: false,
 		color: None,
 		friendly_name: "Test A".to_string(),
 		periods: vec![],
 		regex: None,
 	};
 	let type_b = ScheduleType {
+		hide: false,
 		color: None,
 		friendly_name: "Test A".to_string(),
 		periods: vec![],
@@ -52,12 +54,14 @@ fn on_date_typical() {
 fn on_date_override() {
 	let date = NaiveDate::from_ymd(2021, 7, 20);
 	let type_a = ScheduleType {
+		hide: false,
 		color: None,
 		friendly_name: "Test A".to_string(),
 		periods: vec![],
 		regex: None,
 	};
 	let type_b = ScheduleType {
+		hide: false,
 		color: None,
 		friendly_name: "Test A".to_string(),
 		periods: vec![],
@@ -98,6 +102,7 @@ fn on_date_override() {
 #[test]
 fn on_date_literal() {
 	let literal = ScheduleType {
+		hide: false,
 		color: None,
 		friendly_name: "test_c".to_string(),
 		periods: vec![],
@@ -136,6 +141,7 @@ fn at_time_typical() {
 		kind: PeriodType::Lunch,
 	};
 	let schedule = ScheduleType {
+		hide: false,
 		color: None,
 		friendly_name: "".to_string(),
 		periods: vec![test_period.clone()],
@@ -164,6 +170,7 @@ fn at_time_typical() {
 #[test]
 fn at_time_pseudo() {
 	let schedule = ScheduleType {
+		hide: false,
 		color: None,
 		friendly_name: "".to_string(),
 		periods: vec![
@@ -205,6 +212,7 @@ fn at_time_pseudo() {
 #[test]
 fn at_time_overlap() {
 	let schedule = ScheduleType {
+		hide: false,
 		color: None,
 		friendly_name: "".to_string(),
 		periods: vec![
@@ -251,6 +259,7 @@ fn at_time_overlap() {
 #[test]
 fn at_time_envelop() {
 	let schedule = ScheduleType {
+		hide: false,
 		color: None,
 		friendly_name: "".to_string(),
 		periods: vec![
@@ -297,6 +306,7 @@ fn at_time_envelop() {
 #[test]
 fn at_time_no_schedule() {
 	let schedule = ScheduleType {
+		hide: false,
 		color: None,
 		friendly_name: "".to_string(),
 		periods: vec![],
@@ -327,6 +337,7 @@ fn schedule_ical() {
 	definition.schedule_types.insert(
 		"no".to_string(),
 		ScheduleType {
+			hide: false,
 			friendly_name: "No".to_string(),
 			periods: vec![Period {
 				friendly_name: "No".to_string(),
@@ -343,6 +354,7 @@ fn schedule_ical() {
 	definition.schedule_types.insert(
 		"yes".to_string(),
 		ScheduleType {
+			hide: false,
 			friendly_name: "Yes".to_string(),
 			periods: vec![Period {
 				friendly_name: "Yes".to_string(),
@@ -380,6 +392,7 @@ fn schedule_generate() {
 		result.insert(
 			"type_a".to_string(),
 			ScheduleType {
+				hide: false,
 				color: None,
 				friendly_name: "Test".to_string(),
 				periods: vec![
@@ -406,6 +419,7 @@ fn schedule_generate() {
 		result.insert(
 			"type_b".to_string(),
 			ScheduleType {
+				hide: false,
 				color: None,
 				friendly_name: "Test".to_string(),
 				periods: vec![
@@ -432,6 +446,7 @@ fn schedule_generate() {
 		result.insert(
 			"no_school".to_string(),
 			ScheduleType {
+				hide: false,
 				color: None,
 				friendly_name: "No School".to_string(),
 				periods: vec![],

@@ -20,6 +20,9 @@ pub struct ScheduleType {
 	pub regex: Option<Regex>,
 	/// The color of the schedule as RGB, for use in frontends.
 	pub color: Option<[u8; 3]>,
+	/// Whether the schedule type should be hidden by frontends
+	#[serde(default)]
+	pub hide: bool,
 }
 impl ScheduleType {
 	/// Returns a tuple of the previous Period, a Vec<Period> of the current periods, and the next Period.

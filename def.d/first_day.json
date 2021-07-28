@@ -1,6 +1,7 @@
 {
 	"$schema": "../schema/Map_of_ScheduleType.json",
 	"first_day_2021": {
+		"hide": true,
 		"friendly_name": "First Day of School",
 		"periods": [
 			{

@@ -48,6 +48,7 @@ fn on() {
 	let mut schedule = Schedule::default();
 	// Add test A
 	let test_a = ScheduleType {
+		hide: false,
 		friendly_name: "Test A".to_string(),
 		periods: vec![],
 		regex: None,
@@ -59,6 +60,7 @@ fn on() {
 		.insert("test_a".to_string(), test_a.clone());
 	// Add no
 	let no = ScheduleType {
+		hide: false,
 		friendly_name: "No".to_string(),
 		periods: vec![],
 		regex: Some(Regex::new("No").unwrap()),
@@ -98,6 +100,7 @@ fn on_code() {
 	let mut schedule = Schedule::default();
 	// Add test A
 	let test_a = ScheduleType {
+		hide: false,
 		friendly_name: "Test A".to_string(),
 		periods: vec![],
 		regex: None,
@@ -109,6 +112,7 @@ fn on_code() {
 		.insert("test_a".to_string(), test_a.clone());
 	// Add no
 	let no = ScheduleType {
+		hide: false,
 		friendly_name: "No".to_string(),
 		periods: vec![],
 		regex: Some(Regex::new("No").unwrap()),
@@ -156,6 +160,7 @@ fn on_at() {
 		kind: PeriodType::Class("".to_string()),
 	};
 	let test_a = ScheduleType {
+		hide: false,
 		friendly_name: "Test A".to_string(),
 		periods: vec![period.clone()],
 		regex: None,
@@ -197,6 +202,7 @@ fn now() {
 		kind: PeriodType::Class("".to_string()),
 	};
 	let test_a = ScheduleType {
+		hide: false,
 		friendly_name: "Test A".to_string(),
 		periods: vec![period.clone()],
 		regex: None,
@@ -266,6 +272,7 @@ fn now_near() {
 		kind: PeriodType::Class("".to_string()),
 	};
 	let test_a = ScheduleType {
+		hide: false,
 		friendly_name: "Test A".to_string(),
 		periods: vec![
 			period_before.clone(),
@@ -330,6 +337,7 @@ fn today_at() {
 		kind: PeriodType::Class("".to_string()),
 	};
 	let test_a = ScheduleType {
+		hide: false,
 		friendly_name: "Test A".to_string(),
 		periods: vec![period.clone()],
 		regex: None,
@@ -365,6 +373,7 @@ fn today() {
 		kind: PeriodType::Class("".to_string()),
 	};
 	let test_a = ScheduleType {
+		hide: false,
 		friendly_name: "Test A".to_string(),
 		periods: vec![period.clone()],
 		regex: None,
@@ -398,6 +407,7 @@ fn today_code() {
 		kind: PeriodType::Class("".to_string()),
 	};
 	let test_a = ScheduleType {
+		hide: false,
 		friendly_name: "Test A".to_string(),
 		periods: vec![period.clone()],
 		regex: None,
