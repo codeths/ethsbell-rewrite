@@ -4,6 +4,7 @@
 	flex: 1;
 	align-items: center;
 	justify-content: flex-start;
+	margin-top: 25px;
 }
 
 body {
@@ -112,7 +113,7 @@ body {
 	width: 80%;
 	max-width: 1000px;
 	border: 2px solid black;
-	margin: 25px 5px;
+	margin: 5px;
 	border-radius: 5px;
 	box-sizing: border-box;
 	padding: 10px 10px 10px 70px;
@@ -133,6 +134,7 @@ body {
 	width: calc(100% - 20px);
 	left: 10px;
 	height: 3px;
+	border-radius: 1.5px;
 	background-color: rgba(255, 0, 0, 0.5);
 	display: none;
 	z-index: 100;
