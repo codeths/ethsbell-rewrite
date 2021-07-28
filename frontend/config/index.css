@@ -1,14 +1,10 @@
 .background {
-	position: absolute;
-	left: 50%;
-	top: 50%;
-	transform: translate(-50%, -50%);
-	border-radius: 20px;
-	background-color: lightgray;
-	padding: 0 30px 30px 30px;
+	padding: 30px 300px 30px 300px;
 }
 
 pre {
+	display: inline-block;
+	text-align: left;
 	border-style: solid;
 	border-radius: 10px;
 	border-width: 0;
@@ -17,4 +13,5 @@ pre {
 	background-color: white;
 	border-color: purple;
 	padding: 10px;
+	tab-size: 2;
 }

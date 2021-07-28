@@ -7,7 +7,7 @@ async function get(endpoint = '/api/v1/today/now/near') {
 		.catch(() => null);
 }
 
-const config = JSON.parse(localStorage.getItem('schedule')) || {};
+const config = JSON.parse(localStorage.getItem('schedule')) || { schedule: {} };
 
 function replace_period(period) {
 	if (!period) return period;
@@ -17,7 +17,7 @@ function replace_period(period) {
 
 	if (period.kind?.Class || period.kind?.ClassOrLunch) {
 		const class_id = period.kind.Class || period.kind.ClassOrLunch;
-		const class_cfg = config[class_id];
+		const class_cfg = config.schedule[class_id];
 		if (class_cfg) {
 			period.friendly_name = class_cfg.name;
 			period.url = class_cfg.url;

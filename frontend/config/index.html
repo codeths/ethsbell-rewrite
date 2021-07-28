@@ -13,6 +13,9 @@
 </head>
 
 <body>
+	<br>
+	<br>
+	<br><br>
 	<nav class="abs">
 		<div class="nav-left flex" id="nav-logo">
 			<h1><a href="/">ETHSBell</a></h1>
@@ -39,19 +42,50 @@
 		<h1>Upload your schedule</h1>
 		<p>A schedule file should look like this.</p>
 		<pre>{
-	"Block1": {
-		"name": "Your First Period Class",
-		"url": "https://meet.google.com/whatever"
-	},
-	"Block2": {
-		"name": "Class With No Teleconferencing Link",
-		"url": undefined
+	"schedule": {
+		"Block1": {
+			"name": "Your First Period Class",
+			"url": "https://meet.google.com/whatever"
+		},
+		"Block2": {
+			"name": "Class With No Teleconferencing Link",
+			"url": undefined
+		}
+		...
 	}
-	...
 }</pre>
-		<input type="file" id="cfg"><br>
+		<br>
+		<input type="file" id="cfg">
 		<button id="upload">Upload!</button><br>
 		<span id="status"></span>
+		<hr>
+		<h1>Schedule Helper</h1>
+		<p>
+			You can use the schedule helper to configure the software graphically if you aren't willing or able to write a
+			file yourself. Some functionality may have been omitted to keep things simple, however.
+		</p>
+		<label for="class_id">Class ID:</label>
+		<select id="class_id">
+			<option value="">Select...</option>
+			<option value="EarlyBird">Early Bird</option>
+			<option value="Block1">Block 1</option>
+			<option value="Block2">Block 2</option>
+			<option value="Block3">Block 3</option>
+			<option value="Block4">Block 4</option>
+			<option value="Block5">Block 5</option>
+			<option value="Block6">Block 6</option>
+			<option value="Block7">Block 7</option>
+			<option value="Block8">Block 8</option>
+		</select>
+		<br>
+		<label for="name">Name:</label>
+		<input id="name">
+		<br>
+		<label for="url">URL:</label>
+		<input id="url">
+		<br>
+		<button id="save">Save</button>
+		<button id="download">Download locally</button>
 	</div>
 </body>
 

@@ -23,3 +23,48 @@ function getel(id) {
 	const selector = `#${id}`;
 	return document.querySelector(selector);
 }
+
+let working_copy = JSON.parse(localStorage.getItem('schedule')) || { schedule: {} }
+
+getel('class_id').addEventListener('change', switchClass)
+switchClass()
+
+function switchClass() {
+	let id = getel('class_id').value
+	if (id === '') {
+		return
+	}
+
+	let data = config.schedule[id]
+	getel('name').value = data ? data.name : id
+	getel('url').value = data ? data.url || '' : ''
+}
+
+getel('name').addEventListener('input', update_working)
+getel('url').addEventListener('input', update_working)
+
+function update_working() {
+	let id = getel('class_id').value
+	let name = getel('name').value
+	if (name.length == 0) {name = undefined;}
+	let url = getel('url').value
+	if (url.length == 0) { url = undefined; }
+	
+	if (!name) {
+		delete working_copy.schedule[id];
+	} else {
+		working_copy.schedule[id] = {
+			name,
+			url
+		}
+	}
+}
+
+getel('save').addEventListener('click', () => {
+	update_working()
+	localStorage.setItem('schedule', JSON.stringify(working_copy))
+})
+
+getel('download').addEventListener('click', () => {
+	alert('doesn\'t work yet')
+})
