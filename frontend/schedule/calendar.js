@@ -25,19 +25,6 @@ function place_boxes(data_unprocessed, date = current_date(), force = false) {
 		let containerHeight = sInDay / 60 * pixels_per_minute;
 		let lastColHeight = {};
 
-		let indicatorDate = new Date(Math.ceil(startDate.getTime() / 1000 / 60 / 60) * 1000 * 60 * 60);
-		while (indicatorDate.getTime() < endDate.getTime()) {
-			const time = indicatorDate.toLocaleTimeString('en-US', { timeZone: 'America/Chicago' })
-			const formatted = `${time.split(':')[0]} ${time.split(' ')[1]}`;
-			const top = (indicatorDate.getTime() / 1000 - startTime) / 60 * pixels_per_minute;
-			const span = document.createElement('span');
-			span.classList.add('time');
-			span.innerText = formatted;
-			span.style.top = `${top}px`;
-			calendarEl.appendChild(span);
-			indicatorDate.setTime(indicatorDate.getTime() + 60 * 60 * 1000);
-		}
-
 		// Resolve rows so everything is mutually non-intersecting.
 		events = [];
 
@@ -77,6 +64,19 @@ function place_boxes(data_unprocessed, date = current_date(), force = false) {
 		calendarEl.style.height = `${containerHeight}px`;
 	}
 
+	let indicatorDate = new Date(Math.ceil(startDate.getTime() / 1000 / 60 / 60) * 1000 * 60 * 60);
+	while (indicatorDate.getTime() < endDate.getTime()) {
+		const time = indicatorDate.toLocaleTimeString('en-US', { timeZone: 'America/Chicago' })
+		const formatted = `${time.split(':')[0]} ${time.split(' ')[1]}`;
+		const top = (indicatorDate.getTime() / 1000 - startTime) / 60 * pixels_per_minute;
+		const span = document.createElement('span');
+		span.classList.add('time');
+		span.innerText = formatted;
+		span.style.top = `${top}px`;
+		calendarEl.appendChild(span);
+		indicatorDate.setTime(indicatorDate.getTime() + 60 * 60 * 1000);
+	}
+
 	const num_cols = Math.max(...events.map(e => e.col)) + 1;
 	const colwidth = calendarEl.clientWidth / num_cols;
 	const percent = 1 / num_cols * 100;
@@ -99,7 +99,7 @@ function place_boxes(data_unprocessed, date = current_date(), force = false) {
 		const el = document.createElement('div');
 		el.classList.add('event');
 
-		el.style.top = `${event.startPos}px`;
+		el.style.top = `${event.startPos - 3}px`;
 		el.style.height = `${event.height}px`;
 
 		el.style.left = `calc(${percent * event.col}% ${leftOffset < 0 ? '+' : '-'} ${Math.abs(leftOffset)}px)`
@@ -138,7 +138,7 @@ setInterval(updateNowBar, 1000);
 function updateNowBar() {
 	const now = new Date().getTime() / 1000;
 	if (nowBarEl && startTime && endTime && now >= startTime && now <= endTime) {
-		nowBarEl.style.top = `${(now - startTime) / 60 * pixels_per_minute}px`;
+		nowBarEl.style.top = `${(now - startTime) / 60 * pixels_per_minute + 10}px`;
 		nowBarEl.style.display = 'block';
 	} else {
 		nowBarEl.style.display = 'none';
