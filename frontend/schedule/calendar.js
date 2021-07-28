@@ -9,6 +9,11 @@ const pixels_per_minute = 1.5;
 
 /// Place period boxes for a list of periods.
 function place_boxes(data_unprocessed, date = current_date()) {
+	if (data_unprocessed.length == 0) {
+		calendarEl.innerHTML = '';
+		calendarEl.style.height = `auto`;
+		return;
+	}
 	const data = replace_period(data_unprocessed).filter(v => v);
 	const startDate = date_from_api(data[0].start, date);
 	const startTime = startDate.getTime() / 1000;
