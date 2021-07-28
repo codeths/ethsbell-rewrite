@@ -209,6 +209,9 @@ function black_or_white(color) {
 // Apply user colors
 window.addEventListener('load', () => {
 	let cfg = JSON.parse(localStorage.getItem('schedule'));
+	if (!cfg) {
+		return
+	}
 	if (cfg.background_color) {
 		document.querySelector('body').style.setProperty('--background_color', cfg.background_color)
 	}
