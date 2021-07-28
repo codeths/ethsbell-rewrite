@@ -69,11 +69,11 @@ body {
 .progress_bar:not(:last-child) {
 	border-bottom-style: solid;
 	border-bottom-width: 1px;
-	border-bottom-color: #1a2741;
+	border-bottom-color: var(--background_text_color);
 }
 
 .progress_bar::before {
-	background-color: #1a2741;
+	background-color: var(--background_text_color);
 	display: block;
 	height: 100%;
 	content: '';

@@ -3,7 +3,6 @@ nav {
 	flex-wrap: wrap;
 	justify-content: space-between;
 	background-color: #1a2741;
-	color: white;
 	padding: 20px 20px;
 }
 
@@ -59,7 +58,7 @@ nav .nav-right {
 }
 
 nav .nav-left a {
-	color: #ffffff;
+	color: var(--foreground_text_color);
 	-webkit-text-decoration-line: none;
 	text-decoration-line: none;
 }
@@ -101,18 +100,18 @@ nav .nav-left a {
 }
 
 nav .nav-right a {
-	color: rgba(255, 255, 255, 0.75);
 	-webkit-text-decoration-line: none;
 	text-decoration-line: none;
 	transition: color 0.25s ease-in-out;
+	color: var(--foreground_text_color);
 }
 
 nav a.active {
-	color: #ffffff;
+	color: var(--foreground_text_color);
 }
 
 nav a:hover {
-	color: #ffffff;
+	color: var(--foreground_text_color);
 }
 
 html, body {
