@@ -36,15 +36,21 @@ async function getSchedules() {
 		return;
 	}
 
-	schedules = today.schedule_types;
+	schedules = today.schedule_types
 
 	scheduleSelect.innerHTML = '<option value="" disabled selected>Select a Schedule</option>';
 
-	for (const schedule of Object.keys(schedules)) {
+	for (const schedule of Object.keys(schedules).sort((a, b) => {
+		if (schedules[a].hide && !schedules[b].hide) return 1;
+		if (!schedules[a].hide && schedules[b].hide) return -1;
+		return schedules[a].friendly_name.localeCompare(schedules[b].friendly_name);
+	})) {
 		const option = document.createElement('option');
 		option.value = schedule;
 		if (currentSchedule.friendly_name === schedules[schedule].friendly_name) {
 			option.selected = true;
+		} else {
+			option.hidden = schedules[schedule].hide;
 		}
 
 		option.innerHTML = schedules[schedule].friendly_name;
