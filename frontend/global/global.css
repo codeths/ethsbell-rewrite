@@ -259,3 +259,20 @@ nav.abs.hidden {
 	animation-duration: 0.25s;
 	top: -30vh;
 }
+
+body {
+	--foreground_color: #1a2741;
+	--background_color: #c34614;
+	--foreground_text_color: #ffffff;
+	--background_text_color: #ffffff;
+}
+
+.foreground {
+	background-color: var(--foreground_color);
+	color: var(--foreground_text_color);
+}
+
+.background {
+	background-color: var(--background_color);
+	color: var(--background_text_color);
+}

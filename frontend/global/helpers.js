@@ -205,3 +205,20 @@ function black_or_white(color) {
 	const luma = (0.2126 * r) + (0.7152 * g) + (0.0722 * b);
 	return luma > 128 ? 'black' : 'white';
 }
+
+// Apply user colors
+window.addEventListener('load', () => {
+	let cfg = JSON.parse(localStorage.getItem('schedule'));
+	if (cfg.background_color) {
+		document.querySelector('body').style.setProperty('--background_color', cfg.background_color)
+	}
+	if (cfg.background_color) {
+		document.querySelector('body').style.setProperty('--foreground_color', cfg.foreground_color)
+	}
+	if (cfg.background_color) {
+		document.querySelector('body').style.setProperty('--background_text_color', cfg.background_text_color)
+	}
+	if (cfg.background_color) {
+		document.querySelector('body').style.setProperty('--foreground_text_color', cfg.foreground_text_color)
+	}
+})

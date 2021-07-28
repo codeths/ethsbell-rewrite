@@ -39,19 +39,67 @@
 		<h1>Upload your schedule</h1>
 		<p>A schedule file should look like this.</p>
 		<pre>{
-	"Block1": {
-		"name": "Your First Period Class",
-		"url": "https://meet.google.com/whatever"
+	"schedule": {
+		"Block1": {
+			"name": "Your First Period Class",
+			"url": "https://meet.google.com/whatever"
+		},
+		"Block2": {
+			"name": "Class With No Teleconferencing Link",
+			"url": undefined
+		}
+		...
 	},
-	"Block2": {
-		"name": "Class With No Teleconferencing Link",
-		"url": undefined
-	}
-	...
+	"foreground_color": "#1a2741",
+	"background_color": "#c34614",
+	"foreground_text_color": "#ffffff",
+	"background_text_color": "#ffffff"
 }</pre>
 		<input type="file" id="cfg"><br>
 		<button id="upload">Upload!</button><br>
 		<span id="status"></span>
+		<hr>
+		<h1>Schedule Helper</h1>
+		<p>
+			You can use the schedule helper to configure the software graphically if you aren't willing or able to write a
+			file yourself. Some functionality may have been omitted to keep things simple, however.
+		</p>
+		<label for="class_id">Class ID:</label>
+		<select id="class_id">
+			<option value="">Select...</option>
+			<option value="EarlyBird">Early Bird</option>
+			<option value="Block1">Block 1</option>
+			<option value="Block2">Block 2</option>
+			<option value="Block3">Block 3</option>
+			<option value="Block4">Block 4</option>
+			<option value="Block5">Block 5</option>
+			<option value="Block6">Block 6</option>
+			<option value="Block7">Block 7</option>
+			<option value="Block8">Block 8</option>
+		</select>
+		<br>
+		<label for="name">Name:</label>
+		<input id="name">
+		<br>
+		<label for="url">URL:</label>
+		<input id="url">
+		<br>
+		---
+		<br>
+		<label for="foreground_color">Foreground Color: </label>
+		<input type="color" id="foreground_color">
+		<br>
+		<label for="background_color">Background Color: </label>
+		<input type="color" id="background_color">
+		<br>
+		<label for="foreground_text_color">Foreground Text Color: </label>
+		<input type="color" id="foreground_text_color">
+		<br>
+		<label for="background_text_color">Background Text Color: </label>
+		<input type="color" id="background_text_color">
+		<br>
+		<button id="save">Save</button>
+		<button id="download">Download locally</button>
 	</div>
 </body>
 
