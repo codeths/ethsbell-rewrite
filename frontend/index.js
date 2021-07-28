@@ -5,11 +5,11 @@ const nextText = document.querySelector('#next');
 // Gets data from /today/now/near
 function display(data) {
 	if (data[1] && data[1][0]) {
-		if (data[1][0].kind == "AfterSchool") {
+		if (data[1][0].kind === 'AfterSchool') {
 			periodText.textContent = '';
 			endTimeText.textContent = 'School\'s out!';
 			nextText.textContent = '';
-		} else if (data[1][0].kind == "BeforeSchool") {
+		} else if (data[1][0].kind === 'BeforeSchool') {
 			periodText.textContent = '';
 			endTimeText.textContent = 'School hasn\'t started yet!';
 			nextText.textContent = '';
@@ -27,7 +27,8 @@ function display(data) {
 		endTimeText.textContent = 'No School';
 		nextText.textContent = '';
 	}
-	update_progress(data)
+
+	update_progress(data);
 }
 
 go();

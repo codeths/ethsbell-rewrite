@@ -10,9 +10,12 @@ async function get(endpoint = '/api/v1/today/now/near') {
 const config = JSON.parse(localStorage.getItem('schedule')) || {};
 
 function replace_period(period) {
-	if (!period) return period;
+	if (!period) {
+		return period;
+	}
+
 	if (Array.isArray(period)) {
-		return period.map(replace_period);
+		return period.map(v => replace_period(v));
 	}
 
 	if (period.kind?.Class || period.kind?.ClassOrLunch) {
@@ -30,9 +33,8 @@ function replace_period(period) {
 }
 
 function process(data) {
-	// TODO: This will perform class name replacements
 	if (config) {
-		return data.map(replace_period);
+		return data.map(v => replace_period(v));
 	}
 
 	return data;
@@ -107,7 +109,7 @@ function date_from_api(time, now = current_date()) {
 
 function human_time(time) {
 	const date = date_from_api(time);
-	return date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', timeZone: 'America/Chicago' });
+	return date.toLocaleTimeString('en-US', {hour: 'numeric', minute: '2-digit', timeZone: 'America/Chicago'});
 }
 
 // Gets a human readable duration from an epoch timestamp

@@ -30,6 +30,7 @@ async function getDate(date = current_date(), setCurrent = false) {
 	if (!day) {
 		return;
 	}
+
 	place_boxes(day.periods);
 
 	if (setCurrent) {
@@ -135,7 +136,7 @@ endOfNextWeek.setDate(endOfNextWeek.getDate() + (CALENDAR_WEEKS * 7));
 			});
 			td.classList.add('day');
 			td.innerHTML = `<span class="day-name">${humanDate}</span><div class="day-schedule">${day.name}</div>`;
-			if (day.date.toLocaleDateString() == new Date().toLocaleDateString()) {
+			if (day.date.toLocaleDateString() === new Date().toLocaleDateString()) {
 				td.classList.add('today');
 			}
 
