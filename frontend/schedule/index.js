@@ -17,7 +17,7 @@ async function getDate(date = current_date(), setCurrent = false) {
 		return;
 	}
 
-	place_boxes(day.periods, date);
+	place_boxes(day.periods, date, true);
 
 	if (setCurrent) {
 		currentSchedule = day;
@@ -92,7 +92,7 @@ async function getScheduleList(start, end) {
 scheduleSelect.addEventListener('change', () => {
 	const selected = scheduleSelect.value;
 	if (schedules[selected]) {
-		place_boxes(schedules[selected].periods);
+		place_boxes(schedules[selected].periods, current_date(), true);
 
 	}
 });
@@ -139,7 +139,7 @@ endOfNextWeek.setDate(endOfNextWeek.getDate() + (CALENDAR_WEEKS * 7));
 			td.querySelector('.day-schedule').style.backgroundColor = day.backgroundColor;
 			td.querySelector('.day-schedule').style.color = day.textColor;
 			td.addEventListener('click', () => {
-				place_boxes(day.schedule, day.date);
+				place_boxes(day.schedule, day.date, true);
 				scheduleSelect.value = day.code;
 				dateSelect.value = date_to_string(day.date);
 			});
