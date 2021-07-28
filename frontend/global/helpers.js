@@ -134,7 +134,6 @@ function human_time_left(endTime, startTime = null, short = false) {
 
 // Convert date object to YYYY-MM-DD
 function date_to_string(date) {
-	console.log(date);
 	return `${date.getFullYear()}-${('0' + (date.getMonth() + 1)).slice(-2)}-${('0' + date.getDate()).slice(-2)}`;
 }
 

@@ -30,6 +30,7 @@ async function getDate(date = current_date(), setCurrent = false) {
 	if (!day) {
 		return;
 	}
+	place_boxes(day.periods);
 
 	if (setCurrent) {
 		currentSchedule = day;
