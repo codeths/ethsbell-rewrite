@@ -36,7 +36,7 @@ fn spec() {
 	let client = client(schedule.clone());
 	let mut response = client.get("/api/v1/spec").dispatch();
 	assert_eq!(response.status(), Status::Ok);
-	assert_eq!(response.content_type(), Some(ContentType::Plain));
+	assert_eq!(response.content_type(), Some(ContentType::JSON));
 	assert_eq!(
 		response.body_string(),
 		Some(serde_json::to_string(&schedule.definition).unwrap())
