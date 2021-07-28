@@ -99,7 +99,7 @@ function place_boxes(data_unprocessed, date = current_date(), force = false) {
 		const el = document.createElement('div');
 		el.classList.add('event');
 
-		el.style.top = `${event.startPos}px`;
+		el.style.top = `${event.startPos - 3}px`;
 		el.style.height = `${event.height}px`;
 
 		el.style.left = `calc(${percent * event.col}% ${leftOffset < 0 ? '+' : '-'} ${Math.abs(leftOffset)}px)`
@@ -138,7 +138,7 @@ setInterval(updateNowBar, 1000);
 function updateNowBar() {
 	const now = new Date().getTime() / 1000;
 	if (nowBarEl && startTime && endTime && now >= startTime && now <= endTime) {
-		nowBarEl.style.top = `${(now - startTime) / 60 * pixels_per_minute}px`;
+		nowBarEl.style.top = `${(now - startTime) / 60 * pixels_per_minute + 10}px`;
 		nowBarEl.style.display = 'block';
 	} else {
 		nowBarEl.style.display = 'none';
