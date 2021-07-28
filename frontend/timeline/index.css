@@ -2,7 +2,6 @@ html body {
 	width: 100%;
 	height: 100%;
 	overflow: hidden;
-	background-color: #afcbff;
 }
 
 body {
@@ -23,14 +22,12 @@ body {
 	position: relative;
 	left: 50%;
 	transform: translateX(-50%);
-	background-color: rgba(255, 210, 210, .6);
 }
 
 #around {
 	position: relative;
 	left: 50%;
 	transform: translateX(-50%);
-	background-color: rgba(255, 210, 210, .6);
 }
 
 #around>table {
@@ -116,6 +113,7 @@ svg {
 #boxes {
 	position: relative;
 	top: -115px;
+	color: black;
 }
 
 .timeline_rect {
@@ -128,4 +126,8 @@ svg {
 	text-overflow: ellipsis;
 	border-style: solid;
 	border-width: 1px;
+}
+
+input {
+	color: var(--foreground_text_color)
 }

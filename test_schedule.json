@@ -1,10 +1,16 @@
 {
-	"Block5": {
-		"name": "This period is a mess",
-		"url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+	"schedule": {
+		"Block5": {
+			"name": "This period is a mess",
+			"url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+		},
+		"Block6": {
+			"name": "This period is a mess",
+			"url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+		}
 	},
-	"Block6": {
-		"name": "This period is a mess",
-		"url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
-	}
+	"foreground_color": "#1a2741",
+	"background_color": "#c34614",
+	"foreground_text_color": "#ffffff",
+	"background_text_color": "#ffffff"
 }
