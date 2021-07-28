@@ -137,8 +137,10 @@ fn check_auth(_auth: Authenticated) -> &'static str {
 
 #[openapi]
 #[get("/spec")]
-fn get_spec(schedule: State<Arc<RwLock<Schedule>>>) -> Result<String, std::io::Error> {
-	Ok(serde_json::to_string(&schedule.read().unwrap().definition.clone()).unwrap())
+fn get_spec(
+	schedule: State<Arc<RwLock<Schedule>>>,
+) -> Result<Json<ScheduleDefinition>, std::io::Error> {
+	Ok(Json(schedule.read().unwrap().definition.clone()))
 }
 
 #[openapi(skip)]
