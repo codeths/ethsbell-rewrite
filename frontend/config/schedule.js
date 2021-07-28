@@ -36,6 +36,7 @@ let working_copy = JSON.parse(localStorage.getItem('schedule')) || {
 
 getel('class_id').addEventListener('change', switchClass)
 switchClass()
+populate()
 
 function switchClass() {
 	let id = getel('class_id').value

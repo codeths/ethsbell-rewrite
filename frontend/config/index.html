@@ -12,8 +12,8 @@
 	<script defer src="config/schedule.js"></script>
 </head>
 
-<body>
-	<nav class="abs">
+<body class="background-color">
+	<nav class="abs foreground-color">
 		<div class="nav-left flex" id="nav-logo">
 			<h1><a href="/">ETHSBell</a></h1>
 		</div>
@@ -35,6 +35,10 @@
 			</ul>
 		</div>
 	</nav>
+	<br>
+	<br>
+	<br>
+
 	<div class="background">
 		<h1>Upload your schedule</h1>
 		<p>A schedule file should look like this.</p>
@@ -85,6 +89,9 @@
 		<input id="url">
 		<br>
 		---
+		<br>
+		<p>Note: Attempting to build your own dark mode with these settings isn't likely to work, but the Dark Reader
+			browser extension does an excellent job when set to static mode.</p>
 		<br>
 		<label for="foreground_color">Foreground Color: </label>
 		<input type="color" id="foreground_color">

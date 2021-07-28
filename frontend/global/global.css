@@ -267,12 +267,12 @@ body {
 	--background_text_color: #ffffff;
 }
 
-.foreground {
+.foreground-color {
 	background-color: var(--foreground_color);
 	color: var(--foreground_text_color);
 }
 
-.background {
+.background-color {
 	background-color: var(--background_color);
 	color: var(--background_text_color);
 }

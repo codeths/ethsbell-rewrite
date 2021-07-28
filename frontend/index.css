@@ -39,9 +39,9 @@ body {
 	outline: 0;
 }
 
-body, #wrapper {
+/* body, #wrapper {
 	background-color: #c34614;
-}
+} */
 
 .progress_label {
 	font-size: small;
@@ -53,7 +53,6 @@ body, #wrapper {
 	border-color: rgba(0, 0, 0, 0.25);
 	border-width: 1px;
 	box-shadow: 0 0 5px 5px rgba(0, 0, 0, 0.25) inset;
-	background-color: #c34614;
 	overflow: hidden;
 }
 

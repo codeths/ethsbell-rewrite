@@ -1,10 +1,4 @@
 .background {
-	position: absolute;
-	left: 50%;
-	top: 50%;
-	transform: translate(-50%, -50%);
-	border-radius: 20px;
-	background-color: lightgray;
 	padding: 0 30px 30px 30px;
 }
 
@@ -17,4 +11,5 @@ pre {
 	background-color: white;
 	border-color: purple;
 	padding: 10px;
+	color: black;
 }
