@@ -1,5 +1,3 @@
-let all_data;
-
 let viewport_seconds = 3600 * 4; // The number of seconds the viewport should show
 let viewport_offset = 0;
 const row_height = 50; // The height of a row
@@ -209,3 +207,8 @@ function place_boxes(data_unprocessed) {
 	const right_time = new Date(Date.now() + (viewport_offset * 1000) + (viewport_seconds * 500));
 	getel('right_time').innerHTML = (right_time).toLocaleTimeString('en-US', {hour: 'numeric', minute: '2-digit', timeZone: 'America/Chicago'});
 }
+
+Object.assign(window, {
+	place_boxes,
+});
+

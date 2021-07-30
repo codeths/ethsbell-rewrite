@@ -31,7 +31,7 @@ function display(data) {
 	update_progress(data);
 }
 
-go();
+go(display);
 
 // Full screen button
 const fullScreenButton = document.querySelector('#fullscreen');

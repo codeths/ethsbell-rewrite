@@ -13,3 +13,5 @@ function update_progress(data) {
 		progress_parent.append(progress);
 	}
 }
+
+window.update_progress = update_progress;

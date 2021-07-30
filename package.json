@@ -1,11 +1,17 @@
 {
 	"scripts": {
-		"lint": "xo"
+		"lint": "xo",
+		"build": "parcel build $(find frontend -name \\*.html) -d frontend-dist",
+		"dev": "cargo watch -i frontend-dist -s 'parcel build $(find frontend -name \\*.html) -d frontend-dist'"
 	},
 	"dependencies": {},
 	"devDependencies": {
 		"eslint-config-xo": "^0.37.0",
-		"xo": "^0.42.0"
+		"parcel-bundler": "^1.12.5",
+		"parcel-plugin-svelte": "^4.0.8",
+		"posthtml-include": "^1.7.1",
+		"svelte": "3.31.2",
+		"xo": "0.39.0"
 	},
 	"xo": {
 		"envs": [
@@ -44,10 +50,12 @@
 			"unicorn/filename-case": 0,
 			"no-global-assign": 0,
 			"no-alert": 0,
-			"complexity": 0
+			"complexity": 0,
+			"unicorn/numeric-separators-style": 0
 		},
 		"ignores": [
-			"/tests/"
+			"/tests/",
+			"/posthtml.config.js"
 		]
 	}
 }
