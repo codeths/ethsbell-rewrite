@@ -6,7 +6,7 @@ nav {
 	padding: 20px 20px;
 }
 
-nav>div {
+nav > div {
 	margin: auto;
 	padding: 0px;
 }
@@ -121,7 +121,8 @@ nav a:hover {
 	color: var(--foreground_text_color);
 }
 
-html, body {
+html,
+body {
 	height: 100%;
 	margin: 0;
 	padding: 0;
@@ -162,6 +163,15 @@ body {
 
 .float.right {
 	float: right;
+}
+
+@-webkit-keyframes fade_in {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
 }
 
 @keyframes fade_in {
@@ -285,4 +295,11 @@ body {
 
 a {
 	color: inherit;
+}
+
+.divider {
+	width: 75px;
+	height: 3px;
+	background-color: var(--background_text_color);
+	margin: 10px auto;
 }
