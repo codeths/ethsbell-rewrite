@@ -13,6 +13,7 @@
 		"bigish",
 		"camelcase",
 		"chrono",
+		"clippy",
 		"datelike",
 		"datetime",
 		"deserialization",
