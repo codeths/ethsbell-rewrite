@@ -109,13 +109,13 @@ function current_date() {
 
 function date_from_api(time, now = current_date()) {
 	const [h, m, s] = time.split(':');
-	const date = new Date(now.getFullYear(), now.getMonth(), now.getDate(), h, m, s);
+	const date = new Date(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), h, m, s);
 	return date;
 }
 
 function human_time(time) {
 	const date = date_from_api(time);
-	return date.toLocaleTimeString('en-US', {hour: 'numeric', minute: '2-digit', timeZone: 'America/Chicago'});
+	return date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', timeZone: 'America/Chicago' });
 }
 
 // Gets a human readable duration from an epoch timestamp
@@ -141,8 +141,8 @@ function human_time_left(endTime, startTime = null, short = false) {
 }
 
 // Convert date object to YYYY-MM-DD
-function date_to_string(date) {
-	return `${date.getFullYear()}-${('0' + (date.getMonth() + 1)).slice(-2)}-${('0' + date.getDate()).slice(-2)}`;
+function date_to_string(date = current_date()) {
+	return `${date.getUTCFullYear()}-${('0' + (date.getUTCMonth() + 1)).slice(-2)}-${('0' + date.getUTCDate()).slice(-2)}`;
 }
 
 // Helper functions for full screen
@@ -210,6 +210,17 @@ function black_or_white(color) {
 	const b = Number.parseInt(color.slice(5, 7), 16);
 	const luma = (0.2126 * r) + (0.7152 * g) + (0.0722 * b);
 	return luma > 128 ? 'black' : 'white';
+}
+
+function getUTCOffset() {
+	return parseInt(new Date(new Date().setUTCHours(0, 0, 0, 0)).toLocaleTimeString("en-US", { timeZone: "America/Chicago", hour12: false }).split(':')[0]) - 24
+}
+
+function dateStringToDate(dateString) {
+	let offset = getUTCOffset();
+	let h = Math.trunc(offset);
+	let m = Math.trunc((offset - h) * 60);
+	return new Date(`${dateString}Z${h}:${m}`)
 }
 
 // Apply user colors
