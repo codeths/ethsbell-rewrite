@@ -77,7 +77,7 @@ fn widget(schedule: State<Arc<RwLock<Schedule>>>) -> Template {
 			.0
 			.clone()
 			.map(|v| v.friendly_name)
-			.unwrap_or("None".to_string()),
+			.unwrap_or_else(|| "None".to_string()),
 		current_name: schedule
 			.1
 			.clone()
@@ -103,17 +103,17 @@ fn widget(schedule: State<Arc<RwLock<Schedule>>>) -> Template {
 			.2
 			.clone()
 			.map(|v| v.friendly_name)
-			.unwrap_or("None".to_string()),
+			.unwrap_or_else(|| "None".to_string()),
 		next_start: schedule
 			.2
 			.clone()
 			.map(|v| v.start.to_string())
-			.unwrap_or("".to_string()),
+			.unwrap_or_else(|| "".to_string()),
 		prev_end: schedule
 			.0
 			.clone()
 			.map(|v| v.end.to_string())
-			.unwrap_or("".to_string()),
+			.unwrap_or_else(|| "".to_string()),
 	};
 	Template::render("widget", &ctx)
 }
@@ -214,11 +214,11 @@ fn schedule_from_to(
 	let start: NaiveDate = NaiveDate::from_str(&start)?;
 	let end: NaiveDate = NaiveDate::from_str(&end)?;
 	assert!(start < end);
-	let mut cursor = start.clone();
+	let mut cursor = start;
 	let mut output = vec![];
 	let schedule = schedule.read().unwrap();
 	while cursor < end {
-		let that_day = schedule.on_date(cursor.clone());
+		let that_day = schedule.on_date(cursor);
 		match that_day.1 {
 			Some(v) => output.push(v),
 			None => output.push(serde_json::to_string(&that_day.0)?),
@@ -286,9 +286,8 @@ fn today_now(
 	let now_date = now.date();
 	let now_time = now.time();
 	let schedule = schedule.read().unwrap().on_date(now_date.naive_local());
-	match schedule.0.at_time(now_time).1.clone() {
-		period if period.len() > 0 => {
-			let mut period = period.clone();
+	match schedule.0.at_time(now_time).1 {
+		mut period if period.is_empty() => {
 			period.iter_mut().for_each(|v| *v = v.clone().populate(now));
 			Ok(Json(period))
 		}
@@ -333,9 +332,8 @@ fn today_at(
 	let now_date = now.date();
 	let then_time = NaiveTime::from_str(&time_string)?;
 	let schedule = schedule.read().unwrap().on_date(now_date.naive_local());
-	match schedule.0.at_time(then_time).1.clone() {
-		period if period.len() > 0 => {
-			let mut period = period.clone();
+	match schedule.0.at_time(then_time).1 {
+		mut period if period.is_empty() => {
 			period.iter_mut().for_each(|v| *v = v.clone().populate(now));
 			Ok(Some(Json(period)))
 		}
@@ -396,9 +394,8 @@ fn date_at(
 		.with_year(then_date.year())
 		.unwrap();
 	let schedule = schedule.read().unwrap().on_date(then_date);
-	match schedule.0.at_time(then_time).1.clone() {
-		period if period.len() > 0 => {
-			let mut period = period.clone();
+	match schedule.0.at_time(then_time).1 {
+		mut period if period.is_empty() => {
 			period
 				.iter_mut()
 				.for_each(|v| *v = v.clone().populate(then_));
@@ -433,7 +430,7 @@ fn coffee(schedule: State<Arc<RwLock<Schedule>>>) -> Status {
 fn license() -> Html<String> {
 	let authors = env!("CARGO_PKG_AUTHORS");
 	let authors = authors
-		.split(":")
+		.split(':')
 		.map(|v| v.trim())
 		.collect::<Vec<&str>>()
 		.join(", ");

@@ -10,9 +10,9 @@ let schedules = {};
 let currentSchedule = {};
 
 async function getDate(date = current_date(), setCurrent = false) {
-	let dateStr = date_to_string(date)
+	const dateString = date_to_string(date);
 
-	const day = await get(`/api/v1/on/${dateStr}`);
+	const day = await get(`/api/v1/on/${dateString}`);
 	if (!day) {
 		return;
 	}
@@ -36,13 +36,19 @@ async function getSchedules() {
 		return;
 	}
 
-	schedules = today.schedule_types
+	schedules = today.schedule_types;
 
 	scheduleSelect.innerHTML = '<option value="" disabled selected>Select a Schedule</option>';
 
 	for (const schedule of Object.keys(schedules).sort((a, b) => {
-		if (schedules[a].hide && !schedules[b].hide) return 1;
-		if (!schedules[a].hide && schedules[b].hide) return -1;
+		if (schedules[a].hide && !schedules[b].hide) {
+			return 1;
+		}
+
+		if (!schedules[a].hide && schedules[b].hide) {
+			return -1;
+		}
+
 		return schedules[a].friendly_name.localeCompare(schedules[b].friendly_name);
 	})) {
 		const option = document.createElement('option');
@@ -71,8 +77,9 @@ async function getScheduleList(start, end) {
 		if (!schedule) {
 			try {
 				schedule = JSON.parse(scheduleCode);
-			} catch (e) { }
+			} catch {}
 		}
+
 		const name = schedule?.friendly_name || null;
 		const backgroundColor = schedule?.color ? bytes_to_color(schedule.color) : '#FFFFFF';
 		const textColor = black_or_white(backgroundColor);
@@ -93,7 +100,6 @@ scheduleSelect.addEventListener('change', () => {
 	const selected = scheduleSelect.value;
 	if (schedules[selected]) {
 		place_boxes(schedules[selected].periods, current_date(), true);
-
 	}
 });
 

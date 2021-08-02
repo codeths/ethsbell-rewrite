@@ -16,6 +16,6 @@ pub fn rocket(schedule: Schedule) -> Rocket {
 		.attach(api::ApiFairing)
 		.attach(frontend::FrontendFairing)
 		.attach(Template::fairing())
-		.manage(schedule.clone())
+		.manage(schedule)
 		.manage(spec_lock)
 }
