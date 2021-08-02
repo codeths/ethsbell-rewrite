@@ -208,20 +208,25 @@ function black_or_white(color) {
 
 // Apply user colors
 window.addEventListener('load', () => {
-	let cfg = JSON.parse(localStorage.getItem('schedule'));
+	const cfg = JSON.parse(localStorage.getItem('schedule'));
 	if (!cfg) {
-		return
+		return;
 	}
+
 	if (cfg.background_color) {
-		document.querySelector('body').style.setProperty('--background_color', cfg.background_color)
+		document.querySelector('body').style.setProperty('--background_color', cfg.background_color);
 	}
+
 	if (cfg.background_color) {
-		document.querySelector('body').style.setProperty('--foreground_color', cfg.foreground_color)
+		document.querySelector('body').style.setProperty('--foreground_color', cfg.foreground_color);
 	}
+
 	if (cfg.background_color) {
-		document.querySelector('body').style.setProperty('--background_text_color', cfg.background_text_color)
+		document.querySelector('body').style.setProperty('--background_text_color', cfg.background_text_color);
 	}
+
 	if (cfg.background_color) {
-		document.querySelector('body').style.setProperty('--foreground_text_color', cfg.foreground_text_color)
+		document.querySelector('body').style.setProperty('--foreground_text_color', cfg.foreground_text_color);
 	}
-})
+});
+
