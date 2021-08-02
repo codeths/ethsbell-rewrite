@@ -230,3 +230,30 @@ window.addEventListener('load', () => {
 	}
 });
 
+// Writes a period to an element and its children
+function put_period_to_element(element, period) {
+	const start = element.querySelector('.start');
+	const start_in = element.querySelector('.start_in');
+	const end = element.querySelector('.end');
+	const end_in = element.querySelector('.end_in');
+	const name = element.querySelector('.name');
+	if (start) {
+		start.innerHTML = human_time(period.start);
+	}
+
+	if (start_in) {
+		start_in.innerHTML = human_time_left(period.start, undefined, true);
+	}
+
+	if (end) {
+		end.innerHTML = human_time(period.end);
+	}
+
+	if (end_in) {
+		end_in.innerHTML = human_time_left(period.end, undefined, true);
+	}
+
+	if (name) {
+		name.innerHTML = period.friendly_name;
+	}
+}
