@@ -96,7 +96,7 @@ function place_boxes(data_unprocessed, date = current_date(), force = false) {
 		}
 
 		let widthOffset = event.col == 0 ? 0 : padding * -2;
-		if (colwidth * colspan < preferred_event_min_width && colspan < num_cols) {
+		if (colwidth * colspan < preferred_event_min_width && colspan < number_cols) {
 			widthOffset = preferred_event_min_width - colwidth * colspan;
 			if (widthOffset > colwidth) widthOffset += colwidth - min_visible_width;
 		}
