@@ -7,7 +7,13 @@ async function get(endpoint = '/api/v1/today/now/near') {
 		.catch(() => null);
 }
 
-const config = JSON.parse(localStorage.getItem('schedule')) || {schedule: {}};
+const config = JSON.parse(localStorage.getItem('schedule')) || {
+	schedule: {},
+	foreground_color: '#1a2741',
+	background_color: '#c34614',
+	foreground_text_color: '#ffffff',
+	background_text_color: '#ffffff',
+};
 
 function replace_period(period) {
 	if (!period) {
