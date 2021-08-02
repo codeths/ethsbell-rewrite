@@ -287,7 +287,7 @@ fn today_now(
 	let now_time = now.time();
 	let schedule = schedule.read().unwrap().on_date(now_date.naive_local());
 	match schedule.0.at_time(now_time).1 {
-		mut period if period.is_empty() => {
+		mut period if !period.is_empty() => {
 			period.iter_mut().for_each(|v| *v = v.clone().populate(now));
 			Ok(Json(period))
 		}
@@ -333,7 +333,7 @@ fn today_at(
 	let then_time = NaiveTime::from_str(&time_string)?;
 	let schedule = schedule.read().unwrap().on_date(now_date.naive_local());
 	match schedule.0.at_time(then_time).1 {
-		mut period if period.is_empty() => {
+		mut period if !period.is_empty() => {
 			period.iter_mut().for_each(|v| *v = v.clone().populate(now));
 			Ok(Some(Json(period)))
 		}
@@ -395,7 +395,7 @@ fn date_at(
 		.unwrap();
 	let schedule = schedule.read().unwrap().on_date(then_date);
 	match schedule.0.at_time(then_time).1 {
-		mut period if period.is_empty() => {
+		mut period if !period.is_empty() => {
 			period
 				.iter_mut()
 				.for_each(|v| *v = v.clone().populate(then_));
