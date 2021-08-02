@@ -7,7 +7,7 @@ async function get(endpoint = '/api/v1/today/now/near') {
 		.catch(() => null);
 }
 
-const config = JSON.parse(localStorage.getItem('schedule')) || { schedule: {} };
+const config = JSON.parse(localStorage.getItem('schedule')) || {schedule: {}};
 
 function replace_period(period) {
 	if (!period) {
