@@ -17,7 +17,7 @@ async function getDate(date = current_date(), setCurrent = false) {
 		return;
 	}
 
-	place_boxes(day.periods, date, true);
+	place_boxes(day.periods, date, true, setCurrent || dateString == date_to_string());
 
 	if (setCurrent) {
 		currentSchedule = day;
@@ -77,7 +77,7 @@ async function getScheduleList(start, end) {
 		if (!schedule) {
 			try {
 				schedule = JSON.parse(scheduleCode);
-			} catch {}
+			} catch { }
 		}
 
 		const name = schedule?.friendly_name || null;
@@ -99,15 +99,14 @@ async function getScheduleList(start, end) {
 scheduleSelect.addEventListener('change', () => {
 	const selected = scheduleSelect.value;
 	if (schedules[selected]) {
-		place_boxes(schedules[selected].periods, current_date(), true);
+		place_boxes(schedules[selected].periods, current_date(), true, scheduleSelect.options[scheduleSelect.selectedIndex].text == currentSchedule.friendly_name);
 	}
 });
 
 dateSelect.valueAsDate = current_date();
 
 dateSelect.addEventListener('change', () => {
-	const date = dateSelect.valueAsDate;
-	getDate(date);
+	getDate(dateSelect.valueAsDate);
 });
 
 const startOfWeek = current_date();
@@ -138,14 +137,14 @@ endOfNextWeek.setDate(endOfNextWeek.getDate() + (CALENDAR_WEEKS * 7));
 			});
 			td.classList.add('day');
 			td.innerHTML = `<span class="day-name">${humanDate}</span><div class="day-schedule">${day.name}</div>`;
-			if (day.date.toLocaleDateString() === new Date().toLocaleDateString()) {
+			if (day.date.toLocaleDateString() === current_date().toLocaleDateString()) {
 				td.classList.add('today');
 			}
 
 			td.querySelector('.day-schedule').style.backgroundColor = day.backgroundColor;
 			td.querySelector('.day-schedule').style.color = day.textColor;
 			td.addEventListener('click', () => {
-				place_boxes(day.schedule, day.date, true);
+				place_boxes(day.schedule, day.date, true, day.date.toLocaleDateString() === current_date().toLocaleDateString());
 				scheduleSelect.value = day.code;
 				dateSelect.value = date_to_string(day.date);
 			});
