@@ -22,6 +22,7 @@ function place_boxes(data_unprocessed, date = current_date(), force = false, tod
 	if (!events || force) {
 		calendarElement.style.height = 'auto';
 		if (data_unprocessed.length === 0) {
+			updateNowBar();
 			return;
 		}
 
@@ -76,7 +77,7 @@ function place_boxes(data_unprocessed, date = current_date(), force = false, tod
 
 	const indicatorDate = new Date(Math.ceil(startDate.getTime() / 1000 / 60 / 60) * 1000 * 60 * 60);
 	while (indicatorDate.getTime() < endDate.getTime()) {
-		const time = indicatorDate.toLocaleTimeString('en-US', {timeZone: 'America/Chicago'});
+		const time = indicatorDate.toLocaleTimeString('en-US', { timeZone: 'America/Chicago' });
 		const formatted = `${time.split(':')[0]} ${time.split(' ')[1]}`;
 		const top = ((indicatorDate.getTime() / 1000) - startTime) / 60 * pixels_per_minute;
 		const span = document.createElement('span');
