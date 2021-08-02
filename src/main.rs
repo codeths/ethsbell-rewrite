@@ -29,8 +29,10 @@ fn main() {
 		let string = if cfg!(target_arch = "wasm32") {
 			include_str!("../def.json").to_string()
 		} else {
-			fs::read_to_string(env::var("SCHEDULE_DEF").unwrap_or("./def.json".to_string()))
-				.expect("Opened schedule definition")
+			fs::read_to_string(
+				env::var("SCHEDULE_DEF").unwrap_or_else(|_| "./def.json".to_string()),
+			)
+			.expect("Opened schedule definition")
 		};
 
 		// Deserialize the definition.
@@ -73,9 +75,7 @@ fn main() {
 		}
 
 		// Build the runtime schedule struct and run the first update.
-		let schedule = Schedule::from(schedule_def);
-		// Wrap the runtime schedule struct in a thread-safe container.
-		schedule
+		Schedule::from(schedule_def)
 	};
 	rocket_builder::rocket(schedule).launch();
 }

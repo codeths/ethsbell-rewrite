@@ -22,12 +22,8 @@ fn display(schedule: State<Arc<RwLock<Schedule>>>) -> Template {
 		schedule.write().unwrap().update();
 	};
 	let now = Local::now();
-	let schedule = schedule
-		.read()
-		.unwrap()
-		.on_date(now.date().naive_local())
-		.clone();
-	let period = schedule.0.at_time(now.time()).clone();
+	let schedule = schedule.read().unwrap().on_date(now.date().naive_local());
+	let period = schedule.0.at_time(now.time());
 	let friendly_name = period
 		.1
 		.iter()
@@ -42,7 +38,7 @@ fn display(schedule: State<Arc<RwLock<Schedule>>>) -> Template {
 		.2
 		.clone()
 		.map(|v| v.friendly_name)
-		.unwrap_or("No Period".to_string());
+		.unwrap_or_else(|| "No Period".to_string());
 	let start = period
 		.2
 		.iter()
@@ -50,7 +46,7 @@ fn display(schedule: State<Arc<RwLock<Schedule>>>) -> Template {
 		.max_element()
 		.map(|v| v.to_string())
 		.next()
-		.unwrap_or("No Time".to_string());
+		.unwrap_or_else(|| "No Time".to_string());
 	let end = period
 		.1
 		.iter()
@@ -58,7 +54,7 @@ fn display(schedule: State<Arc<RwLock<Schedule>>>) -> Template {
 		.max_element()
 		.map(|v| v.to_string())
 		.next()
-		.unwrap_or("No Time".to_string());
+		.unwrap_or_else(|| "No Time".to_string());
 	Template::render(
 		"legacy-display",
 		json!({
@@ -80,7 +76,6 @@ fn data(schedule: State<Arc<RwLock<Schedule>>>) -> Json<LegacySchedule> {
 			.unwrap()
 			.on_date(Local::now().date().naive_local())
 			.0
-			.clone()
 			.into(),
 	)
 }
@@ -196,14 +191,11 @@ impl From<ScheduleType> for LegacySchedule {
 			formattedTime: Local::now().time().to_legacy(),
 			scheduleCode: None,     // Unclear what this is for
 			isListingForDay: false, // Unclear what this is for
-			noSchedule: schedule.periods.len() == 0,
+			noSchedule: schedule.periods.is_empty(),
 			schoolInSession: schedule
 				.periods
 				.iter()
-				.filter(|v| match v.kind {
-					PeriodType::Class(_) => true,
-					_ => false,
-				})
+				.filter(|v| matches!(v.kind, PeriodType::Class(_)))
 				.count() > 1,
 			school_id: "1".to_string(), // Unclear what this is for
 			theNextSlot_: match context[2].clone() {
@@ -219,7 +211,7 @@ impl From<ScheduleType> for LegacySchedule {
 					_ => panic!("?!?!"),
 				}),
 			}
-			.unwrap_or("-1".to_string()),
+			.unwrap_or_else(|| "-1".to_string()),
 			timeLeftInPeriod: {
 				let now = Local::now();
 				-(now.hour() as isize * 60 + now.minute() as isize)
@@ -227,7 +219,7 @@ impl From<ScheduleType> for LegacySchedule {
 			timeSinceLastPeriod: context[0]
 				.clone()
 				.map(|v| (Local::now().time() - v.end).num_minutes())
-				.unwrap_or(0) as isize,
+				.unwrap_or_else(|| 0) as isize,
 		}
 	}
 }

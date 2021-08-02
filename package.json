@@ -37,7 +37,8 @@
 			"black_or_white",
 			"update_progress",
 			"replace_period",
-			"put_period_to_element"
+			"put_period_to_element",
+			"date_from_api"
 		],
 		"rules": {
 			"camelcase": 0,

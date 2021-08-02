@@ -11,8 +11,8 @@ pub use schedule_type::*;
 mod period;
 pub use period::*;
 
-mod schedule;
-pub use schedule::*;
+mod schedule_inner;
+pub use schedule_inner::*;
 
 mod event;
 pub use event::*;
