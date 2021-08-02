@@ -38,7 +38,7 @@
 		</div>
 	</nav>
 	<div id="wrapper" class="background-color">
-		<div class="big block text-center content" class="background-color">
+		<!-- <div class="big block text-center content" class="background-color">
 			<span id="period"></span>
 			<br />
 			<span id="end_time"></span>
@@ -47,6 +47,18 @@
 			<br />
 			<div id="progress_parent">
 
+			</div>
+		</div> -->
+		<template id="current_period_time_template">
+			The current period, <span class="name"></span>, ends at <b class="end"></b>, in <b class="end_in"></b>.
+		</template>
+		<div class="content">
+			<div class="big" id="current_parent">
+
+			</div>
+			<div class="bigish" id="next_period">
+				The next period, <span class="name"></span>, begins at <span class="start"></span>, in <span
+					class="start_in"></span>.
 			</div>
 		</div>
 		<span id="fullscreen" role="button" tabindex="0" title="Fullscreen">

@@ -64,14 +64,18 @@ nav .nav-left a {
 }
 
 .big {
-	font-size: 200%;
+	font-size: 8vw;
+}
+
+.bigish {
+	font-size: 6vw;
 }
 
 .content {
 	padding: 10px;
 }
 
-@media only screen and (min-width: 576px) {
+@media only screen and (min-aspect-ratio: 3/4) {
 	nav #nav-links {
 		display: block !important;
 		max-height: unset;
@@ -95,7 +99,10 @@ nav .nav-left a {
 		display: none;
 	}
 	.big {
-		font-size: 300%;
+		font-size: 6vh;
+	}
+	.bigish {
+		font-size: 5vh;
 	}
 }
 
