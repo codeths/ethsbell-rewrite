@@ -12,9 +12,12 @@ let startTime;
 let endDate;
 let endTime;
 let events;
+let showNowBar = true;
 
 /// Place period boxes for a list of periods.
-function place_boxes(data_unprocessed, date = current_date(), force = false) {
+function place_boxes(data_unprocessed, date = current_date(), force = false, today = true) {
+	showNowBar = today;
+
 	calendarElement.innerHTML = '';
 	if (!events || force) {
 		calendarElement.style.height = 'auto';
@@ -149,7 +152,7 @@ setInterval(updateNowBar, 1000);
 
 function updateNowBar() {
 	const now = current_date().getTime() / 1000;
-	if (nowBarElement && startTime && endTime && now >= startTime && now <= endTime) {
+	if (nowBarElement && showNowBar && startTime && endTime && now >= startTime && now <= endTime) {
 		nowBarElement.style.top = `${((now - startTime) / 60 * pixels_per_minute) + 10}px`;
 		nowBarElement.style.display = 'block';
 	} else {
