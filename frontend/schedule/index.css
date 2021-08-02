@@ -53,7 +53,7 @@ body {
 	width: 100%;
 	max-width: 1000px;
 	overflow: scroll;
-	margin: 10px 0px;
+	margin: 25px 0px;
 }
 
 #calendar-table table {
@@ -116,14 +116,14 @@ body {
 	border-radius: 5px;
 	box-sizing: border-box;
 	padding: 10px 10px 10px 60px;
-	margin: 10px 0px;
+	margin: 25px 0px;
 }
 
 #calendar-wrapper {
 	width: 100%;
 	max-width: 1000px;
 	box-sizing: border-box;
-	padding: 10px;
+	padding: 0px 10px;
 }
 
 #calendar-today .time {
