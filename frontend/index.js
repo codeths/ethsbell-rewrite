@@ -4,7 +4,7 @@ const nextText = document.querySelector('#next');
 
 // Gets data from /today/now/near
 function display(data) {
-	if (data[2]) {
+	if (data[2] && (!data[1] || !data[1][0] || data[1][0].kind !== 'BeforeSchool')) {
 		put_period_to_element(getel('next_period'), data[2]);
 		getel('next_parent').style.display = 'block';
 	} else {
@@ -14,10 +14,17 @@ function display(data) {
 	const template = getel('current_period_time_template');
 	const parent = getel('current_parent');
 	parent.innerHTML = '';
-	for (const i of data[1]) {
+	if (data[1][0]) {
+		for (const i of data[1]) {
+			const new_element = document.createElement('div');
+			new_element.innerHTML = template.innerHTML;
+			put_period_to_element(new_element, i);
+			parent.append(new_element);
+		}
+	} else {
 		const new_element = document.createElement('div');
 		new_element.innerHTML = template.innerHTML;
-		put_period_to_element(new_element, i);
+		put_period_to_element(new_element, null);
 		parent.append(new_element);
 	}
 
