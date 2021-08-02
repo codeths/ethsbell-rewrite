@@ -50,10 +50,10 @@ body {
 }
 
 #calendar-table {
-	width: 80%;
+	width: 100%;
 	max-width: 1000px;
-	margin: 50px;
 	overflow: scroll;
+	margin: 10px 0px;
 }
 
 #calendar-table table {
@@ -108,29 +108,35 @@ body {
 	border-radius: 5px;
 }
 
-#calendar {
+#calendar-today {
 	position: relative;
-	width: 80%;
-	max-width: 1000px;
-	border: 2px solid black;
-	margin: 5px;
+	width: 100%;
+	border: 1px solid black;
 	color: black;
 	border-radius: 5px;
 	box-sizing: border-box;
-	padding: 10px 10px 10px 70px;
+	padding: 10px 10px 10px 60px;
+	margin: 10px 0px;
 }
 
-#calendar .time {
+#calendar-wrapper {
+	width: 100%;
+	max-width: 1000px;
+	box-sizing: border-box;
+	padding: 10px;
+}
+
+#calendar-today .time {
 	position: absolute;
 	width: 50px;
 	text-align: right;
 	vertical-align: middle;
 	left: 0px;
 	transform: translate(-100%, -50%);
-	padding: 0px 10px;
+	padding: 0px 5px;
 }
 
-#calendar #now {
+#calendar-today #now {
 	position: absolute;
 	width: calc(100% - 20px);
 	left: 10px;
@@ -142,11 +148,11 @@ body {
 	transform: translateY(-50%);
 }
 
-#calendar #event-wrapper {
+#calendar-today #event-wrapper {
 	position: relative;
 }
 
-#calendar .event {
+#calendar-today .event {
 	position: absolute;
 	box-sizing: border-box;
 	width: 100%;
@@ -157,35 +163,41 @@ body {
 	outline: 0;
 }
 
-#calendar .event:hover {
+#calendar-today .event:hover {
 	z-index: 50 !important;
 }
 
-#calendar .event.selected {
+#calendar-today .event.selected {
 	z-index: 51 !important;
 }
 
-#calendar .event-child {
+#calendar-today .event-child {
 	border: 1px solid black;
 	border-radius: 5px;
 	background-color: white;
-	padding: 5px;
+	padding: 4px;
 	margin: 3px;
+	width: 100%;
 	display: flex;
 	flex-grow: 1;
-	flex-direction: column;
 	flex-wrap: wrap;
 	align-content: flex-start;
-	text-overflow: ellipsis;
+	flex-basis: auto;
+	min-width: 0;
 }
 
-#calendar .event-name {
+#calendar-today .event-name {
 	padding-right: 5px;
 	font-size: 14px;
 	font-weight: bold;
+	white-space: nowrap;
+	overflow: hidden;
 }
 
-#calendar .event-time {
+#calendar-today .event-time {
 	padding-right: 5px;
 	font-size: 14px;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	overflow: hidden;
 }

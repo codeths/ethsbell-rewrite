@@ -1,10 +1,10 @@
 let all_data;
 
-const calendarElement = document.querySelector('#event-wrapper');
-const nowBarElement = document.querySelector('#calendar #now');
-const preferred_event_min_width = 300;
+const calendarElement = document.getElementById('event-wrapper');
+const nowBarElement = document.querySelector('#calendar-today #now');
+const preferred_event_min_width = 200;
 const min_visible_width = 50;
-const min_event_height = 30;
+const min_event_height = 47.5;
 const padding = 5;
 const pixels_per_minute = 1.5;
 let startDate;
@@ -73,7 +73,7 @@ function place_boxes(data_unprocessed, date = current_date(), force = false) {
 
 	const indicatorDate = new Date(Math.ceil(startDate.getTime() / 1000 / 60 / 60) * 1000 * 60 * 60);
 	while (indicatorDate.getTime() < endDate.getTime()) {
-		const time = indicatorDate.toLocaleTimeString('en-US', {timeZone: 'America/Chicago'});
+		const time = indicatorDate.toLocaleTimeString('en-US', { timeZone: 'America/Chicago' });
 		const formatted = `${time.split(':')[0]} ${time.split(' ')[1]}`;
 		const top = ((indicatorDate.getTime() / 1000) - startTime) / 60 * pixels_per_minute;
 		const span = document.createElement('span');
@@ -91,16 +91,14 @@ function place_boxes(data_unprocessed, date = current_date(), force = false) {
 	for (const event of events) {
 		let colspan = 1;
 
-		while (event.col + colspan < number_cols && !events.filter(event => event.col === event.col + colspan).some(event => [event.startPos, event.endPos].some(p => p >= event.startPos && p <= event.endPos))) {
+		while (event.col + colspan < number_cols && !events.filter(e => e.col == event.col + colspan).some(e => [event.startPos, event.endPos].some(p => p >= e.startPos && p <= e.endPos))) {
 			colspan++;
 		}
 
-		let widthOffset = event.col === 0 ? 0 : padding * -2;
-		if (colwidth * colspan < preferred_event_min_width) {
-			widthOffset = preferred_event_min_width - (colwidth * colspan);
-			if (widthOffset > colwidth) {
-				widthOffset += colwidth - min_visible_width;
-			}
+		let widthOffset = event.col == 0 ? 0 : padding * -2;
+		if (colwidth * colspan < preferred_event_min_width && colspan < num_cols) {
+			widthOffset = preferred_event_min_width - colwidth * colspan;
+			if (widthOffset > colwidth) widthOffset += colwidth - min_visible_width;
 		}
 
 		const leftOffset = widthOffset * event.col;
@@ -148,7 +146,7 @@ window.addEventListener('resize', place_boxes);
 setInterval(updateNowBar, 1000);
 
 function updateNowBar() {
-	const now = Date.now() / 1000;
+	const now = current_date().getTime() / 1000;
 	if (nowBarElement && startTime && endTime && now >= startTime && now <= endTime) {
 		nowBarElement.style.top = `${((now - startTime) / (60 * pixels_per_minute)) + 10}px`;
 		nowBarElement.style.display = 'block';
