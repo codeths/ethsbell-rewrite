@@ -78,13 +78,13 @@ function update_working() {
 		url = undefined;
 	}
 
-	if (!name) {
-		delete working_copy.schedule[id];
-	} else {
+	if (name) {
 		working_copy.schedule[id] = {
 			name,
 			url,
 		};
+	} else {
+		delete working_copy.schedule[id];
 	}
 }
 
