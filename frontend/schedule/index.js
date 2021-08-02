@@ -17,7 +17,7 @@ async function getDate(date = current_date(), setCurrent = false) {
 		return;
 	}
 
-	place_boxes(day.periods, date, true, setCurrent || dateString == date_to_string());
+	place_boxes(day.periods, date, true, setCurrent || dateString === date_to_string());
 
 	if (setCurrent) {
 		currentSchedule = day;
@@ -31,7 +31,7 @@ async function getDate(date = current_date(), setCurrent = false) {
 }
 
 async function getSchedules() {
-	const today = await get('/api/v1/spec')
+	const today = await get('/api/v1/spec');
 	if (!today) {
 		return;
 	}
@@ -41,11 +41,11 @@ async function getSchedules() {
 	scheduleSelect.innerHTML = '<option value="" disabled selected>Select a Schedule</option>';
 
 	for (const schedule of Object.keys(schedules).sort((a, b) => {
-		if (schedules[a].hide && !schedules[b].hide || schedules[a].periods.length == 0) {
+		if (schedules[a].hide && !schedules[b].hide || schedules[a].periods.length === 0) {
 			return 1;
 		}
 
-		if (!schedules[a].hide && schedules[b].hide || schedules[b].periods.length == 0) {
+		if (!schedules[a].hide && schedules[b].hide || schedules[b].periods.length === 0) {
 			return -1;
 		}
 
@@ -56,7 +56,7 @@ async function getSchedules() {
 		if (currentSchedule.friendly_name === schedules[schedule].friendly_name) {
 			option.selected = true;
 		} else {
-			option.hidden = schedules[schedule].hide || schedules[schedule].periods.length == 0;
+			option.hidden = schedules[schedule].hide || schedules[schedule].periods.length === 0;
 		}
 
 		option.innerHTML = schedules[schedule].friendly_name;
@@ -77,7 +77,7 @@ async function getScheduleList(start, end) {
 		if (!schedule) {
 			try {
 				schedule = JSON.parse(scheduleCode);
-			} catch { }
+			} catch {}
 		}
 
 		const name = schedule?.friendly_name || null;
@@ -99,7 +99,7 @@ async function getScheduleList(start, end) {
 scheduleSelect.addEventListener('change', () => {
 	const selected = scheduleSelect.value;
 	if (schedules[selected]) {
-		place_boxes(schedules[selected].periods, current_date(), true, scheduleSelect.options[scheduleSelect.selectedIndex].text == currentSchedule.friendly_name);
+		place_boxes(schedules[selected].periods, current_date(), true, scheduleSelect.options[scheduleSelect.selectedIndex].text === currentSchedule.friendly_name);
 	}
 });
 
@@ -143,7 +143,7 @@ endOfNextWeek.setDate(endOfNextWeek.getDate() + (CALENDAR_WEEKS * 7));
 
 			td.querySelector('.day-schedule').style.backgroundColor = day.backgroundColor;
 			td.querySelector('.day-schedule').style.color = day.textColor;
-			if (day.schedule.length == 0) {
+			if (day.schedule.length === 0) {
 				td.classList.add('no-periods');
 			} else {
 				td.addEventListener('click', () => {
@@ -152,6 +152,7 @@ endOfNextWeek.setDate(endOfNextWeek.getDate() + (CALENDAR_WEEKS * 7));
 					dateSelect.value = date_to_string(day.date);
 				});
 			}
+
 			tr.append(td);
 			index++;
 		}

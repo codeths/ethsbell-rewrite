@@ -115,7 +115,7 @@ function date_from_api(time, now = current_date()) {
 
 function human_time(time) {
 	const date = date_from_api(time);
-	return date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', timeZone: 'America/Chicago' });
+	return date.toLocaleTimeString('en-US', {hour: 'numeric', minute: '2-digit', timeZone: 'America/Chicago'});
 }
 
 // Gets a human readable duration from an epoch timestamp
@@ -213,14 +213,14 @@ function black_or_white(color) {
 }
 
 function getUTCOffset() {
-	return parseInt(new Date(new Date().setUTCHours(0, 0, 0, 0)).toLocaleTimeString("en-US", { timeZone: "America/Chicago", hour12: false }).split(':')[0]) - 24
+	return Number.parseInt(new Date(new Date().setUTCHours(0, 0, 0, 0)).toLocaleTimeString('en-US', {timeZone: 'America/Chicago', hour12: false}).split(':')[0], 10) - 24;
 }
 
 function dateStringToDate(dateString) {
-	let offset = getUTCOffset();
-	let h = Math.trunc(offset);
-	let m = Math.trunc((offset - h) * 60);
-	return new Date(`${dateString}Z${h}:${m}`)
+	const offset = getUTCOffset();
+	const h = Math.trunc(offset);
+	const m = Math.trunc((offset - h) * 60);
+	return new Date(`${dateString}Z${h}:${m}`);
 }
 
 // Apply user colors
