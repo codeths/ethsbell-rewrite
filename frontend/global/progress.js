@@ -1,5 +1,6 @@
 function update_progress(data) {
 	const progress_parent = getel('progress_parent');
+	if (!progress_parent) return;
 	progress_parent.innerHTML = '';
 	for (const period of data[1]) {
 		const progress = document.createElement('div');
