@@ -97,7 +97,11 @@ body {
 	background-color: rgba(0, 0, 0, 0.05);
 }
 
-#calendar-table td {
+#calendar-table td.no-periods {
+	cursor: not-allowed;
+}
+
+#calendar-table td:not(.no-periods) {
 	cursor: pointer;
 }
 
