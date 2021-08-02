@@ -1,59 +1,52 @@
 <!DOCTYPE html>
 <html lang="en">
-	<head>
-		<meta charset="UTF-8" />
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<title>ETHSBell</title>
-		<link rel="stylesheet" href="index.css" />
-		<link rel="stylesheet" href="global/global.css" />
-		<script src="global/helpers.js"></script>
-		<script async defer src="index.js"></script>
-		<script defer src="global/progress.js"></script>
-		<meta http-equiv="Content-Security-Policy" content="default-src 'self';" />
-	</head>
 
-	<body>
-		<nav class="foreground-color">
-			<div class="nav-left flex" id="nav-logo">
-				<h1><a href="/">ETHSBell</a></h1>
-			</div>
-			<div id="nav-toggle">
-				<span id="nav-toggle-button" role="button">
-					<svg
-						xmlns="http://www.w3.org/2000/svg"
-						height="24px"
-						viewBox="0 0 24 24"
-						width="24px"
-						fill="#ffffff"
-					>
-						<path d="M0 0h24v24H0V0z" fill="none" />
-						<path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z" />
-					</svg>
-				</span>
-			</div>
-			<div class="nav-right flex" id="nav-links">
-				<ul>
-					<li><a href="/" class="active">Home</a></li>
-					<li><a href="/schedule">Schedule</a></li>
-					<li><a href="/timeline">Timeline</a></li>
-					<li><a href="/config">Config</a></li>
-					<li><a href="/about">About</a></li>
-				</ul>
-			</div>
-		</nav>
-		<div id="wrapper" class="background-color">
-			<!-- <div class="big block text-center content" class="background-color">
+<head>
+	<meta charset="UTF-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>ETHSBell</title>
+	<link rel="stylesheet" href="index.css" />
+	<link rel="stylesheet" href="global/global.css" />
+	<script src="global/helpers.js"></script>
+	<script async defer src="index.js"></script>
+	<script defer src="global/progress.js"></script>
+	<meta http-equiv="Content-Security-Policy" content="default-src 'self';" />
+</head>
+
+<body>
+	<nav class="foreground-color">
+		<div class="nav-left flex" id="nav-logo">
+			<h1><a href="/">ETHSBell</a></h1>
+		</div>
+		<div id="nav-toggle">
+			<span id="nav-toggle-button" role="button">
+				<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#ffffff">
+					<path d="M0 0h24v24H0V0z" fill="none" />
+					<path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z" />
+				</svg>
+			</span>
+		</div>
+		<div class="nav-right flex" id="nav-links">
+			<ul>
+				<li><a href="/" class="active">Home</a></li>
+				<li><a href="/schedule">Schedule</a></li>
+				<li><a href="/timeline">Timeline</a></li>
+				<li><a href="/config">Config</a></li>
+				<li><a href="/about">About</a></li>
+			</ul>
+		</div>
+	</nav>
+	<div id="wrapper" class="background-color">
+		<!-- <div class="big block text-center content" class="background-color">
 			<span id="period"></span>
 			<br />
 			<span id="end_time"></span>
 			<br />
 			<span id="next"></span>
 			<br />
-			<div id="progress_parent">
-
-			</div>
 		</div> -->
+		<div class="big block text-center content">
 			<template id="current_period_time_template">
 				<span class="name"></span> ends at <b class="end"></b> (in
 				<b class="end_in"></b>).
@@ -68,36 +61,24 @@
 					</div>
 				</div>
 			</div>
-			<span id="fullscreen" role="button" tabindex="0" title="Fullscreen">
-				<svg
-					id="enter_full"
-					class=""
-					xmlns="http://www.w3.org/2000/svg"
-					height="24px"
-					viewBox="0 0 24 24"
-					width="24px"
-					fill="#ffffff"
-				>
-					<path d="M0 0h24v24H0V0z" fill="none" />
-					<path
-						d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"
-					/>
-				</svg>
-				<svg
-					id="exit_full"
-					class="none"
-					xmlns="http://www.w3.org/2000/svg"
-					height="24px"
-					viewBox="0 0 24 24"
-					width="24px"
-					fill="#ffffff"
-				>
-					<path d="M0 0h24v24H0V0z" fill="none" />
-					<path
-						d="M5 16h3v3h2v-5H5v2zm3-8H5v2h5V5H8v3zm6 11h2v-3h3v-2h-5v5zm2-11V5h-2v5h5V8h-3z"
-					/>
-				</svg>
-			</span>
+
+			<div id="progress_parent">
+			</div>
+
 		</div>
-	</body>
+		<span id="fullscreen" role="button" tabindex="0" title="Fullscreen">
+			<svg id="enter_full" class="" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px"
+				fill="#ffffff">
+				<path d="M0 0h24v24H0V0z" fill="none" />
+				<path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z" />
+			</svg>
+			<svg id="exit_full" class="none" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px"
+				fill="#ffffff">
+				<path d="M0 0h24v24H0V0z" fill="none" />
+				<path d="M5 16h3v3h2v-5H5v2zm3-8H5v2h5V5H8v3zm6 11h2v-3h3v-2h-5v5zm2-11V5h-2v5h5V8h-3z" />
+			</svg>
+		</span>
+	</div>
+</body>
+
 </html>
