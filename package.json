@@ -46,7 +46,9 @@
 			"unicorn/filename-case": 0,
 			"no-global-assign": 0,
 			"no-alert": 0,
-			"complexity": 0
+			"complexity": 0,
+			"no-mixed-operators": 0,
+			"unicorn/prevent-abbreviations": 0
 		},
 		"ignores": [
 			"/tests/"

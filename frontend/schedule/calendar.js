@@ -1,6 +1,6 @@
 let all_data;
 
-const calendarElement = document.getElementById('event-wrapper');
+const calendarElement = document.querySelector('#event-wrapper');
 const nowBarElement = document.querySelector('#calendar-today #now');
 const preferred_event_min_width = 200;
 const min_visible_width = 50;
@@ -73,7 +73,7 @@ function place_boxes(data_unprocessed, date = current_date(), force = false) {
 
 	const indicatorDate = new Date(Math.ceil(startDate.getTime() / 1000 / 60 / 60) * 1000 * 60 * 60);
 	while (indicatorDate.getTime() < endDate.getTime()) {
-		const time = indicatorDate.toLocaleTimeString('en-US', { timeZone: 'America/Chicago' });
+		const time = indicatorDate.toLocaleTimeString('en-US', {timeZone: 'America/Chicago'});
 		const formatted = `${time.split(':')[0]} ${time.split(' ')[1]}`;
 		const top = ((indicatorDate.getTime() / 1000) - startTime) / 60 * pixels_per_minute;
 		const span = document.createElement('span');
@@ -91,14 +91,16 @@ function place_boxes(data_unprocessed, date = current_date(), force = false) {
 	for (const event of events) {
 		let colspan = 1;
 
-		while (event.col + colspan < number_cols && !events.filter(e => e.col == event.col + colspan).some(e => [event.startPos, event.endPos].some(p => p >= e.startPos && p <= e.endPos))) {
+		while (event.col + colspan < number_cols && !events.filter(e => e.col === event.col + colspan).some(e => [event.startPos, event.endPos].some(p => p >= e.startPos && p <= e.endPos))) {
 			colspan++;
 		}
 
-		let widthOffset = event.col == 0 ? 0 : padding * -2;
+		let widthOffset = event.col === 0 ? 0 : padding * -2;
 		if (colwidth * colspan < preferred_event_min_width && colspan < number_cols) {
 			widthOffset = preferred_event_min_width - colwidth * colspan;
-			if (widthOffset > colwidth) widthOffset += colwidth - min_visible_width;
+			if (widthOffset > colwidth) {
+				widthOffset += colwidth - min_visible_width;
+			}
 		}
 
 		const leftOffset = widthOffset * event.col;
