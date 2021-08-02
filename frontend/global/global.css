@@ -282,3 +282,7 @@ body {
 	background-color: var(--background_color);
 	color: var(--background_text_color);
 }
+
+a {
+	color: inherit;
+}
