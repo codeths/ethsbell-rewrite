@@ -27,8 +27,10 @@ function display(data) {
 	// 	endTimeText.textContent = 'No School';
 	// 	nextText.textContent = '';
 	// }
-	put_period_to_element(getel('next_period'), data[2]);
-	getel('next_parent').style.display = 'block';
+	if (data[2]) {
+		put_period_to_element(getel('next_period'), data[2]);
+		getel('next_parent').style.display = 'block';
+	}
 	const template = getel('current_period_time_template');
 	const parent = getel('current_parent');
 	parent.innerHTML = '';
