@@ -254,6 +254,6 @@ function put_period_to_element(element, period) {
 	}
 
 	if (name) {
-		name.innerHTML = period.friendly_name;
+		name.innerHTML = period.url ? period.friendly_name : `<a href="${period.url}">${period.friendly_name}</a>`;
 	}
 }
