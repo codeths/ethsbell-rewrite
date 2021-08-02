@@ -85,3 +85,7 @@ body {
 #next_period {
 	padding: 10px 0px;
 }
+
+#next_parent {
+	display: none;
+}
