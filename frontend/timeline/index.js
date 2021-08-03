@@ -21,8 +21,8 @@ async function display(data) {
 
 	getel('current_parent').innerHTML = currents.join(getel('current_separator').innerHTML);
 	getel('time_left').innerHTML = `Ending in ${human_list(ends)}${ends.length > 1 ? ', respectively.' : '.'}`;
-	all_data = await get('api/v1/today').then(v => v.periods);
+	window.all_data = await get('api/v1/today').then(v => v.periods);
 	place_boxes(all_data);
 }
 
-go();
+go(display);

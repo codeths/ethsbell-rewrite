@@ -162,3 +162,8 @@ function updateNowBar() {
 }
 
 updateNowBar();
+
+Object.assign(window, {
+	place_boxes,
+});
+

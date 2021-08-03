@@ -34,7 +34,7 @@ function display(data) {
 	update_progress(data);
 }
 
-go();
+go(display);
 
 setInterval(() => {
 	if (lastData) {
