@@ -15,8 +15,8 @@ function update_progress(data) {
 			const progress = document.createElement('div');
 			progress.classList.add('progress_bar');
 			progress.id = `progress_bar_${period.friendly_name.split(' ').join('_')}`;
-			const length = period.end_timestamp - period.start_timestamp;
-			const now = (current_date().getTime() / 1000) - period.start_timestamp;
+			const length = (date_from_api(period.end) - date_from_api(period.start)) / 1000;
+			const now = (current_date().getTime() - date_from_api(period.start)) / 1000;
 			const position = now / length;
 			progress.style.setProperty('--width', `${position * 100}%`);
 			progress.title = `${period.friendly_name} progress`;
