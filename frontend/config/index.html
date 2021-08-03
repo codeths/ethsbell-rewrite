@@ -14,15 +14,15 @@
 
 <body class="background-color">
 	<include src="include/navbar.html"></include>
-
-	<br>
-	<br>
-	<br>
+	<br />
+	<br />
+	<br />
 
 	<div class="background">
 		<h1>Configuration Helper</h1>
 		<p>
-			You can use the configuration helper to configure the software graphically.
+			You can use the configuration helper to configure the software
+			graphically.
 		</p>
 		<label for="class_id">Class ID:</label>
 		<select id="class_id">
@@ -37,35 +37,39 @@
 			<option value="Block7">Block 7</option>
 			<option value="Block8">Block 8</option>
 		</select>
-		<br>
+		<br />
 		<label for="name">Name:</label>
-		<input id="name">
-		<br>
+		<input id="name" />
+		<br />
 		<label for="url">URL:</label>
-		<input id="url">
-		<br>
+		<input id="url" />
+		<br />
 		---
-		<br>
-		<p>Note: Attempting to build your own dark mode with these settings isn't likely to work, but the Dark Reader
-			browser extension does an excellent job when set to static mode.</p>
+		<br />
+		<p>
+			Note: Attempting to build your own dark mode with these settings isn't
+			likely to work, but the Dark Reader browser extension does an excellent
+			job when set to static mode.
+		</p>
 		<label for="foreground_color">Foreground Color: </label>
-		<input type="color" id="foreground_color">
-		<br>
+		<input type="color" id="foreground_color" />
+		<br />
 		<label for="background_color">Background Color: </label>
-		<input type="color" id="background_color">
-		<br>
+		<input type="color" id="background_color" />
+		<br />
 		<label for="foreground_text_color">Foreground Text Color: </label>
-		<input type="color" id="foreground_text_color">
-		<br>
+		<input type="color" id="foreground_text_color" />
+		<br />
 		<label for="background_text_color">Background Text Color: </label>
-		<input type="color" id="background_text_color">
-		<br>
+		<input type="color" id="background_text_color" />
+		<br />
 		<button id="save">Save</button>
 		<button id="download">Download locally</button>
-		<hr>
+		<hr />
 		<h1>Write a schedule manually</h1>
 		<p>A schedule file should look like this.</p>
-		<pre>{
+		<pre>
+{
 	"schedule": {
 		"Block1": {
 			"name": "Your First Period Class",
@@ -85,11 +89,12 @@
 	"background_color": "#c34614",
 	"foreground_text_color": "#ffffff",
 	"background_text_color": "#ffffff"
-}</pre><br>
-		<input type="file" id="cfg"><br>
-		<button id="upload">Upload!</button><br>
+}</pre>
+		<br />
+		<input type="file" id="cfg" /><br />
+		<button id="upload">Upload!</button><br />
 		<span id="status"></span>
-		<hr>
+		<hr />
 	</div>
 </body>
 

@@ -10,21 +10,33 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v1
+      - uses: actions/download-artifact@v2
+        with:
+          name: target
+          path: target
       - uses: actions-rs/toolchain@v1
+        if: always()
         with:
           toolchain: nightly
           profile: minimal
           components: clippy
           override: true
       - name: Annotate commit with clippy warnings
+        if: always()
         uses: actions-rs/clippy-check@v1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           args: --all-features
       - uses: actions-rs/cargo@v1
+        if: always()
         with:
           command: test
           args: --release --features ws
+      - uses: actions/upload-artifact@v2
+        if: always()
+        with:
+          name: target
+          path: target
   test-js:
     runs-on: ubuntu-20.04
     steps:

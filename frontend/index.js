@@ -2,8 +2,11 @@ const periodText = document.querySelector('#period');
 const endTimeText = document.querySelector('#end_time');
 const nextText = document.querySelector('#next');
 
+let lastData;
 // Gets data from /today/now/near
 function display(data) {
+	lastData = data;
+
 	if (data[2] && (!data[1] || !data[1][0] || data[1][0].kind !== 'BeforeSchool')) {
 		put_period_to_element(getel('next_period'), data[2]);
 		getel('next_parent').style.display = 'block';
@@ -32,6 +35,12 @@ function display(data) {
 }
 
 go(display);
+
+setInterval(() => {
+	if (lastData) {
+		update_progress(lastData);
+	}
+}, 1000);
 
 // Full screen button
 const fullScreenButton = document.querySelector('#fullscreen');
