@@ -24,3 +24,5 @@ function update_progress(data) {
 		}
 	}
 }
+
+window.update_progress = update_progress;

@@ -54,14 +54,14 @@ function getel(id) {
 	return document.querySelector(`#${id}`);
 }
 
-async function go() {
+async function go(display) {
 	if (lastFetchedData) {
 		display(lastFetchedData);
 	}
 
 	const now = Date.now();
-	const endOfMinute = Math.ceil(now / 60_000) * 60_000;
-	setTimeout(go, endOfMinute - now);
+	const endOfMinute = Math.ceil(now / 60000) * 60000;
+	setTimeout(() => go(display), endOfMinute - now);
 	let data = await get();
 	if (!data) {
 		return;
@@ -245,6 +245,30 @@ window.addEventListener('load', () => {
 	if (cfg.background_color) {
 		document.querySelector('body').style.setProperty('--foreground_text_color', cfg.foreground_text_color);
 	}
+});
+
+Object.assign(window, {
+	black_or_white,
+	bytes_to_color,
+	canFullScreen,
+	current_date,
+	date_from_api,
+	date_to_string,
+	enterFullScreen,
+	exitFullscreen,
+	get,
+	getel,
+	go,
+	human_list,
+	human_time,
+	human_time_left,
+	isFullScreen,
+	period_html,
+	plural_suffix,
+	process,
+	replace_period,
+	toggleFullScreen,
+	put_period_to_element,
 });
 
 // Writes a period to an element and its children

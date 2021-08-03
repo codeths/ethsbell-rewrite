@@ -12,6 +12,6 @@ impl Fairing for FrontendFairing {
 	}
 
 	fn on_attach(&self, rocket: rocket::Rocket) -> Result<rocket::Rocket, rocket::Rocket> {
-		Ok(rocket.mount("/", StaticFiles::from("./frontend")))
+		Ok(rocket.mount("/", StaticFiles::from("./frontend-dist")))
 	}
 }
