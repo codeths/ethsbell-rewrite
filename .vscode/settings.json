@@ -35,6 +35,7 @@
 		"mkdir",
 		"mkschema",
 		"openapi",
+		"posthtml",
 		"reqwest",
 		"schemars",
 		"socketaddr",

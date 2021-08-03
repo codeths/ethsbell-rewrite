@@ -7,9 +7,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>ETHSBell NG</title>
 	<link rel="stylesheet" href="../timeline/index.css">
-	<link rel="stylesheet" href="../global/global.css">
-	<script src="../global/helpers.js"></script>
-	<script src="../global/timeline.js"></script>
+	<include src="include/prelude.html"></include>
 	<script defer async type="module" src="../timeline/index.js"></script>
 	<script defer src="../global/autohide_nav.js"></script>
 	<meta http-equiv="Content-Security-Policy" content="default-src 'self';">
@@ -20,39 +18,9 @@
 	<div class="portrait_warning">
 		This page doesn't work great on narrow screens, sorry!
 	</div>
-	<img class="wildkit" src="../wildkit.svg" />
 	<div id="wrapper" class="background-color">
 		<div class="bg">
-			<div id="timeline" class="foreground-color">
-				<div class="text-center">
-					<br /><br />
-					showing
-					<input type="number" id="timeline_length" step=".1" class="timeline_prop"
-						title="Length of the displayed timeline in hours" value="6" />
-					hours, offset by
-					<input type="number" id="timeline_offset" step=".1" class="timeline_prop"
-						title="Offset of the displayed timeline in hours" value="0" />
-					hours.
-					<br />
-				</div>
-				<svg height="110">
-					<g stroke="black" rx="5px" ry="5px">
-						<line x1="0" y1="5" x2="100%" y2="5" />
-						<line x1="0" y1="55" x2="100%" y2="55" stroke="#a0a0a0" />
-						<line x1="0" y1="105" x2="100%" y2="105" />
-						<line x1="50%" y1="5" x2="50%" y2="105" />
-						<line x1="49%" y1="0" x2="50%" y2="5" />
-						<line x1="51%" y1="0" x2="50%" y2="5" />
-						<line x1="49%" y1="110" x2="50%" y2="105" />
-						<line x1="51%" y1="110" x2="50%" y2="105" />
-					</g>
-				</svg>
-				<div id="boxes"></div>
-				<div class="text-center absolute" id="pointer_time"></div>
-				<div class="float left" id="left_time"></div>
-				<div class="float right" id="right_time"></div>
-				<br />
-			</div>
+			<include src="include/timeline.html"></include>
 			<div id="around" class="foreground-color">
 				<table>
 					<tr>
