@@ -7,30 +7,14 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 	<title>ETHSBell</title>
 	<link rel="stylesheet" href="../schedule/index.css" />
-	<link rel="stylesheet" href="../global/global.css" />
-	<script src="../global/helpers.js"></script>
-	<script async defer src="../schedule/calendar.js"></script>
+	<include src="include/prelude.html"></include>
 	<script async defer src="../schedule/index.js"></script>
 	<meta http-equiv="Content-Security-Policy" content="default-src 'self';" />
 </head>
 
 <body>
 	<include src="include/navbar.html"></include>
-	<div id="wrapper">
-		<div id="selects">
-			<select id="schedule-select">
-				<option value="" disabled selected>Select a Schedule</option>
-			</select>
-			<input type="date" id="date-select" />
-		</div>
-		<div id="calendar-wrapper">
-			<div id="calendar-today">
-				<div id="now"></div>
-				<div id="event-wrapper"></div>
-			</div>
-			<div id="calendar-table"></div>
-		</div>
-	</div>
+	<include src="include/schedule.html"></include>
 </body>
 
 </html>
