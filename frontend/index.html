@@ -17,16 +17,33 @@
 <body class="background-color">
 	<include src="include/navbar.html"></include>
 	<div id="wrapper" class="background-color">
-		<div class="big block text-center content" class="background-color">
+		<!-- <div class="big block text-center content" class="background-color">
 			<span id="period"></span>
 			<br />
 			<span id="end_time"></span>
 			<br />
 			<span id="next"></span>
 			<br />
-			<div id="progress_parent">
-
+		</div> -->
+		<div class="big block text-center content">
+			<template id="current_period_time_template">
+				<span class="name"></span> ends at <b class="end"></b> (in
+				<b class="end_in"></b>).
+			</template>
+			<div class="content">
+				<div class="big" id="current_parent"></div>
+				<div id="next_parent">
+					<div class="divider"></div>
+					<div class="bigish" id="next_period">
+						The next period is <span class="name"></span>, which ends at
+						<span class="end"></span>.
+					</div>
+				</div>
 			</div>
+
+			<div id="progress_parent">
+			</div>
+
 		</div>
 		<span id="fullscreen" role="button" tabindex="0" title="Fullscreen">
 			<svg id="enter_full" class="" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px"

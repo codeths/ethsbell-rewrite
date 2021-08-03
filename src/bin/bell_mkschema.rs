@@ -29,11 +29,8 @@ fn mk_schema<T: JsonSchema>(add_schema_property: bool) {
 	let mut schema_json = serde_json::to_value(&schema).unwrap();
 	if add_schema_property {
 		let object = schema_json.as_object_mut().unwrap();
-		match object.get("properties") {
-			None => {
-				object.insert("properties".to_string(), Value::Object(Map::new()));
-			}
-			_ => {}
+		if object.get("properties").is_none() {
+			object.insert("properties".to_string(), Value::Object(Map::new()));
 		};
 		let properties = object
 			.get_mut("properties")

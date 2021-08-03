@@ -17,7 +17,7 @@ async function getDate(date = current_date(), setCurrent = false) {
 		return;
 	}
 
-	place_boxes(day.periods, date, true);
+	place_boxes(day.periods, date, true, setCurrent || dateString === date_to_string());
 
 	if (setCurrent) {
 		currentSchedule = day;
@@ -41,11 +41,11 @@ async function getSchedules() {
 	scheduleSelect.innerHTML = '<option value="" disabled selected>Select a Schedule</option>';
 
 	for (const schedule of Object.keys(schedules).sort((a, b) => {
-		if (schedules[a].hide && !schedules[b].hide) {
+		if (schedules[a].hide && !schedules[b].hide || schedules[a].periods.length === 0) {
 			return 1;
 		}
 
-		if (!schedules[a].hide && schedules[b].hide) {
+		if (!schedules[a].hide && schedules[b].hide || schedules[b].periods.length === 0) {
 			return -1;
 		}
 
@@ -56,7 +56,7 @@ async function getSchedules() {
 		if (currentSchedule.friendly_name === schedules[schedule].friendly_name) {
 			option.selected = true;
 		} else {
-			option.hidden = schedules[schedule].hide;
+			option.hidden = schedules[schedule].hide || schedules[schedule].periods.length === 0;
 		}
 
 		option.innerHTML = schedules[schedule].friendly_name;
@@ -85,7 +85,7 @@ async function getScheduleList(start, end) {
 		const textColor = black_or_white(backgroundColor);
 		return {
 			code: scheduleCode,
-			schedule: schedule?.periods || null,
+			schedule: schedule?.periods || [],
 			name,
 			date,
 			backgroundColor,
@@ -99,15 +99,14 @@ async function getScheduleList(start, end) {
 scheduleSelect.addEventListener('change', () => {
 	const selected = scheduleSelect.value;
 	if (schedules[selected]) {
-		place_boxes(schedules[selected].periods, current_date(), true);
+		place_boxes(schedules[selected].periods, current_date(), true, scheduleSelect.options[scheduleSelect.selectedIndex].text === currentSchedule.friendly_name);
 	}
 });
 
 dateSelect.valueAsDate = current_date();
 
 dateSelect.addEventListener('change', () => {
-	const date = dateSelect.valueAsDate;
-	getDate(date);
+	getDate(dateSelect.valueAsDate);
 });
 
 const startOfWeek = current_date();
@@ -138,17 +137,22 @@ endOfNextWeek.setDate(endOfNextWeek.getDate() + (CALENDAR_WEEKS * 7));
 			});
 			td.classList.add('day');
 			td.innerHTML = `<span class="day-name">${humanDate}</span><div class="day-schedule">${day.name}</div>`;
-			if (day.date.toLocaleDateString() === new Date().toLocaleDateString()) {
+			if (day.date.toLocaleDateString() === current_date().toLocaleDateString()) {
 				td.classList.add('today');
 			}
 
 			td.querySelector('.day-schedule').style.backgroundColor = day.backgroundColor;
 			td.querySelector('.day-schedule').style.color = day.textColor;
-			td.addEventListener('click', () => {
-				place_boxes(day.schedule, day.date, true);
-				scheduleSelect.value = day.code;
-				dateSelect.value = date_to_string(day.date);
-			});
+			if (day.schedule.length === 0) {
+				td.classList.add('no-periods');
+			} else {
+				td.addEventListener('click', () => {
+					place_boxes(day.schedule, day.date, true, day.date.toLocaleDateString() === current_date().toLocaleDateString());
+					scheduleSelect.value = day.code;
+					dateSelect.value = date_to_string(day.date);
+				});
+			}
+
 			tr.append(td);
 			index++;
 		}

@@ -20,33 +20,9 @@
 	<br>
 
 	<div class="background">
-		<h1>Upload your schedule</h1>
-		<p>A schedule file should look like this.</p>
-		<pre>{
-	"schedule": {
-		"Block1": {
-			"name": "Your First Period Class",
-			"url": "https://meet.google.com/whatever"
-		},
-		"Block2": {
-			"name": "Class With No Teleconferencing Link",
-			"url": undefined
-		}
-		...
-	},
-	"foreground_color": "#1a2741",
-	"background_color": "#c34614",
-	"foreground_text_color": "#ffffff",
-	"background_text_color": "#ffffff"
-}</pre>
-		<input type="file" id="cfg"><br>
-		<button id="upload">Upload!</button><br>
-		<span id="status"></span>
-		<hr>
-		<h1>Schedule Helper</h1>
+		<h1>Configuration Helper</h1>
 		<p>
-			You can use the schedule helper to configure the software graphically if you aren't willing or able to write a
-			file yourself. Some functionality may have been omitted to keep things simple, however.
+			You can use the configuration helper to configure the software graphically.
 		</p>
 		<label for="class_id">Class ID:</label>
 		<select id="class_id">
@@ -86,6 +62,34 @@
 		<br>
 		<button id="save">Save</button>
 		<button id="download">Download locally</button>
+		<hr>
+		<h1>Write a schedule manually</h1>
+		<p>A schedule file should look like this.</p>
+		<pre>{
+	"schedule": {
+		"Block1": {
+			"name": "Your First Period Class",
+			"url": "https://meet.google.com/whatever"
+		},
+		"Block3": {
+			"name": "Second Period Class",
+			"url": "https://classroom.google.com/whatever"
+		}
+		"Block3": {
+			"name": "Class With No Teleconferencing or Classroom Link",
+			"url": undefined
+		}
+		...
+	},
+	"foreground_color": "#1a2741",
+	"background_color": "#c34614",
+	"foreground_text_color": "#ffffff",
+	"background_text_color": "#ffffff"
+}</pre><br>
+		<input type="file" id="cfg"><br>
+		<button id="upload">Upload!</button><br>
+		<span id="status"></span>
+		<hr>
 	</div>
 </body>
 

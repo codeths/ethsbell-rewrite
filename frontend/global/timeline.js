@@ -46,7 +46,8 @@ function place_boxes(data_unprocessed) {
 		};
 
 		getel('timeline')?.addEventListener('wheel', event => {
-			scrolled_distance += event.deltaX * 3;
+			const deltaX = event.shiftKey ? event.deltaY : event.deltaX;
+			scrolled_distance += deltaX * 3;
 			if (!scroll_timeout) {
 				setTimeout(scroll, 10);
 				scroll_timeout = true;

@@ -16,11 +16,11 @@ impl<'a, 'r> FromRequest<'a, 'r> for Authenticated {
 		match auth {
 			Some(auth) if auth.starts_with("Basic") => {
 				let auth = match base64::decode(auth.chars().skip(6).collect::<String>()) {
-					Ok(bytes) => String::from_utf8(bytes).unwrap_or("ERROR".to_string()),
+					Ok(bytes) => String::from_utf8(bytes).unwrap_or_else(|_| "ERROR".to_string()),
 					Err(_) => "ERROR".to_string(),
 				};
 				let (username, password) = {
-					let mut split = auth.split(":");
+					let mut split = auth.split(':');
 					(split.next().unwrap(), split.next().unwrap())
 				};
 				if username == env::var("BELL_USERNAME").expect("Set BELL_USERNAME please")

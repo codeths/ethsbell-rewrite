@@ -54,6 +54,7 @@ body {
 	border-width: 1px;
 	box-shadow: 0 0 5px 5px rgba(0, 0, 0, 0.25) inset;
 	overflow: hidden;
+	display: none;
 }
 
 .progress_bar {
@@ -76,7 +77,16 @@ body {
 	background-color: var(--background_text_color);
 	display: block;
 	height: 100%;
-	content: '';
+	content: "";
 	width: var(--width);
 	/* border-radius: 10px; */
+}
+
+#current_parent div,
+#next_period {
+	padding: 10px 0px;
+}
+
+#next_parent {
+	display: none;
 }

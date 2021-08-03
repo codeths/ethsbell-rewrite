@@ -27,7 +27,7 @@ pub struct ScheduleType {
 impl ScheduleType {
 	/// Returns a tuple of the previous Period, a Vec<Period> of the current periods, and the next Period.
 	pub fn at_time(&self, time: NaiveTime) -> (Option<Period>, Vec<Period>, Option<Period>) {
-		if self.periods.len() == 0 {
+		if self.periods.is_empty() {
 			(None, vec![], None)
 		} else {
 			let mut before: Option<Period> = None;
@@ -51,7 +51,7 @@ impl ScheduleType {
 				}
 			});
 			match (&before, &current, &next) {
-				(Some(before), v, Some(next)) if v.len() == 0 => {
+				(Some(before), v, Some(next)) if v.is_empty() => {
 					current = vec![Period {
 						friendly_name: "Passing Period".to_string(),
 						start: before.end,
@@ -61,7 +61,7 @@ impl ScheduleType {
 						kind: PeriodType::Passing,
 					}]
 				}
-				(None, v, Some(next)) if v.len() == 0 => {
+				(None, v, Some(next)) if v.is_empty() => {
 					current = vec![Period {
 						friendly_name: "Before School".to_string(),
 						start: NaiveTime::from_hms(0, 0, 0),
@@ -71,7 +71,7 @@ impl ScheduleType {
 						kind: PeriodType::BeforeSchool,
 					}]
 				}
-				(Some(before), v, None) if v.len() == 0 => {
+				(Some(before), v, None) if v.is_empty() => {
 					current = vec![Period {
 						friendly_name: "After School".to_string(),
 						start: before.end,
@@ -98,11 +98,8 @@ impl ScheduleType {
 	pub fn first_class(&self) -> Option<Period> {
 		self.periods
 			.iter()
-			.filter(|v| match v.kind {
-				PeriodType::Class(_) => true,
-				_ => false,
-			})
-			.map(|v| v.clone())
+			.filter(|v| matches!(v.kind, PeriodType::Class(_)))
+			.cloned()
 			.next()
 	}
 }

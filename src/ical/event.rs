@@ -16,11 +16,11 @@ pub struct IcalEvent {
 }
 impl IcalEvent {
 	#[cfg(feature = "pull")]
-	pub fn get(url: &String) -> Vec<IcalEvent> {
+	pub fn get(url: &str) -> Vec<IcalEvent> {
 		let data = get(url).unwrap().text().unwrap();
 		IcalEvent::from_string(&data)
 	}
-	pub fn from_string(data: &String) -> Vec<IcalEvent> {
+	pub fn from_string(data: &str) -> Vec<IcalEvent> {
 		data.split("BEGIN:VEVENT")
 			.map(|v| v.trim())
 			.map(|vevent| {
@@ -31,7 +31,7 @@ impl IcalEvent {
 					end: None,
 				};
 				for (number, line) in vevent.lines().enumerate() {
-					let mut split = line.split(":");
+					let mut split = line.split(':');
 					let kind = split.next();
 					match kind {
 						Some(kind) if kind.starts_with("DTSTART") => {
@@ -90,7 +90,7 @@ impl IcalEvent {
 							let other_lines = vevent
 								.lines()
 								.skip(number + 1)
-								.take_while(|v| v.starts_with(" "))
+								.take_while(|v| v.starts_with('\t'))
 								.map(|v| v.trim_start())
 								.collect::<String>();
 							let text = (split.collect::<Vec<&str>>().join(":") + &other_lines)
@@ -121,7 +121,7 @@ PRODID:ETHSBell Rewrite
 				continue;
 			}
 			// Populate the day's schedule
-			if {
+			let is_special = {
 				let mut output = true;
 				for event in events {
 					match event {
@@ -131,11 +131,12 @@ PRODID:ETHSBell Rewrite
 					}
 				}
 				output
-			} {
+			};
+			if is_special {
 				continue;
 			}
-			exception_days.push(date.clone());
-			let day = schedule.on_date(date.clone());
+			exception_days.push(*date);
+			let day = schedule.on_date(*date);
 			for period in day.0.periods {
 				result += &format!(
 					"BEGIN:VEVENT

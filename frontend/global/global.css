@@ -6,7 +6,7 @@ nav {
 	padding: 20px 20px;
 }
 
-nav>div {
+nav > div {
 	margin: auto;
 	padding: 0px;
 }
@@ -64,14 +64,18 @@ nav .nav-left a {
 }
 
 .big {
-	font-size: 200%;
+	font-size: 8vw;
+}
+
+.bigish {
+	font-size: 6vw;
 }
 
 .content {
 	padding: 10px;
 }
 
-@media only screen and (min-width: 576px) {
+@media only screen and (min-aspect-ratio: 3/4) {
 	nav #nav-links {
 		display: block !important;
 		max-height: unset;
@@ -95,7 +99,10 @@ nav .nav-left a {
 		display: none;
 	}
 	.big {
-		font-size: 300%;
+		font-size: 6vh;
+	}
+	.bigish {
+		font-size: 5vh;
 	}
 }
 
@@ -114,7 +121,8 @@ nav a:hover {
 	color: var(--foreground_text_color);
 }
 
-html, body {
+html,
+body {
 	height: 100%;
 	margin: 0;
 	padding: 0;
@@ -155,6 +163,15 @@ body {
 
 .float.right {
 	float: right;
+}
+
+@-webkit-keyframes fade_in {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
 }
 
 @keyframes fade_in {
@@ -274,4 +291,15 @@ body {
 .background-color {
 	background-color: var(--background_color);
 	color: var(--background_text_color);
+}
+
+a {
+	color: inherit;
+}
+
+.divider {
+	width: 75px;
+	height: 3px;
+	background-color: var(--background_text_color);
+	margin: 10px auto;
 }

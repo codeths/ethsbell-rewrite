@@ -7,7 +7,13 @@ async function get(endpoint = '/api/v1/today/now/near') {
 		.catch(() => null);
 }
 
-const config = JSON.parse(localStorage.getItem('schedule')) || {};
+const config = JSON.parse(localStorage.getItem('schedule')) || {
+	schedule: {},
+	foreground_color: '#1a2741',
+	background_color: '#c34614',
+	foreground_text_color: '#ffffff',
+	background_text_color: '#ffffff',
+};
 
 function replace_period(period) {
 	if (!period) {
@@ -20,7 +26,7 @@ function replace_period(period) {
 
 	if (period.kind?.Class || period.kind?.ClassOrLunch) {
 		const class_id = period.kind.Class || period.kind.ClassOrLunch;
-		const class_cfg = config[class_id];
+		const class_cfg = config.schedule[class_id];
 		if (class_cfg) {
 			period.friendly_name = class_cfg.name;
 			period.url = class_cfg.url;
@@ -103,7 +109,7 @@ function current_date() {
 
 function date_from_api(time, now = current_date()) {
 	const [h, m, s] = time.split(':');
-	const date = new Date(now.getFullYear(), now.getMonth(), now.getDate(), h, m, s);
+	const date = new Date(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), h, m, s);
 	return date;
 }
 
@@ -135,8 +141,8 @@ function human_time_left(endTime, startTime = null, short = false) {
 }
 
 // Convert date object to YYYY-MM-DD
-function date_to_string(date) {
-	return `${date.getFullYear()}-${('0' + (date.getMonth() + 1)).slice(-2)}-${('0' + date.getDate()).slice(-2)}`;
+function date_to_string(date = current_date()) {
+	return `${date.getUTCFullYear()}-${('0' + (date.getUTCMonth() + 1)).slice(-2)}-${('0' + date.getUTCDate()).slice(-2)}`;
 }
 
 // Helper functions for full screen
@@ -206,6 +212,17 @@ function black_or_white(color) {
 	return luma > 128 ? 'black' : 'white';
 }
 
+function getUTCOffset() {
+	return Number.parseInt(new Date(new Date().setUTCHours(0, 0, 0, 0)).toLocaleTimeString('en-US', {timeZone: 'America/Chicago', hour12: false}).split(':')[0], 10) - 24;
+}
+
+function dateStringToDate(dateString) {
+	const offset = getUTCOffset();
+	const h = Math.trunc(offset);
+	const m = Math.trunc((offset - h) * 60);
+	return new Date(`${dateString}Z${h}:${m}`);
+}
+
 // Apply user colors
 window.addEventListener('load', () => {
 	const cfg = JSON.parse(localStorage.getItem('schedule'));
@@ -251,5 +268,44 @@ Object.assign(window, {
 	process,
 	replace_period,
 	toggleFullScreen,
+	put_period_to_element,
 });
 
+// Writes a period to an element and its children
+function put_period_to_element(element, period) {
+	if (period) {
+		if (period.kind === 'BeforeSchool') {
+			element.innerHTML = 'School hasn\'t started yet!';
+		} else if (period.kind === 'AfterSchool') {
+			element.innerHTML = 'School\'s out!';
+		} else {
+			const start = element.querySelector('.start');
+			const start_in = element.querySelector('.start_in');
+			const end = element.querySelector('.end');
+			const end_in = element.querySelector('.end_in');
+			const name = element.querySelector('.name');
+
+			if (start) {
+				start.innerHTML = human_time(period.start);
+			}
+
+			if (start_in) {
+				start_in.innerHTML = human_time_left(period.start, undefined, true);
+			}
+
+			if (end) {
+				end.innerHTML = human_time(period.end);
+			}
+
+			if (end_in) {
+				end_in.innerHTML = human_time_left(period.end, undefined, true);
+			}
+
+			if (name) {
+				name.innerHTML = period.url ? `<a href="${period.url}">${period.friendly_name}</a>` : period.friendly_name;
+			}
+		}
+	} else {
+		element.innerHTML = 'No School';
+	}
+}

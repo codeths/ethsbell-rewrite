@@ -3,12 +3,15 @@ use chrono::{Local, NaiveDate, NaiveDateTime};
 use serde::Serialize;
 use std::collections::HashMap;
 use std::convert::TryInto;
+#[cfg(feature = "pull")]
 use std::{
 	sync::{Arc, RwLock},
 	thread,
 };
 
-use super::{ical_to_ours, Event, IcalEvent, ScheduleDefinition, ScheduleType};
+#[cfg(feature = "pull")]
+use super::{ical_to_ours, IcalEvent};
+use super::{Event, ScheduleDefinition, ScheduleType};
 
 /// A structure containing all of the information we need to operate.
 #[cfg_attr(feature = "ws", derive(JsonSchema))]
@@ -68,7 +71,7 @@ impl Schedule {
 			.definition
 			.calendar_urls
 			.iter()
-			.map(|v| IcalEvent::get(&v))
+			.map(|v| IcalEvent::get(v))
 			.collect::<Vec<Vec<IcalEvent>>>();
 		for cal in calendars {
 			ical_to_ours(&mut schedule.write().unwrap(), &cal)
@@ -115,7 +118,7 @@ impl Schedule {
 							return Some(s);
 						}
 						Event::ScheduleLiteral(s) => {
-							literal = Some(serde_json::from_str(&s).unwrap());
+							literal = Some(serde_json::from_str(s).unwrap());
 							return None;
 						}
 						_ => {}

@@ -42,7 +42,9 @@
 			"bytes_to_color",
 			"black_or_white",
 			"update_progress",
-			"replace_period"
+			"replace_period",
+			"put_period_to_element",
+			"date_from_api"
 		],
 		"rules": {
 			"camelcase": 0,
@@ -51,7 +53,9 @@
 			"no-global-assign": 0,
 			"no-alert": 0,
 			"complexity": 0,
-			"unicorn/numeric-separators-style": 0
+			"unicorn/numeric-separators-style": 0,
+			"no-mixed-operators": 0,
+			"unicorn/prevent-abbreviations": 0
 		},
 		"ignores": [
 			"/tests/",

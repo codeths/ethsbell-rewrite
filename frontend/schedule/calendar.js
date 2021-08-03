@@ -1,8 +1,10 @@
+let all_data;
+
 const calendarElement = document.querySelector('#event-wrapper');
-const nowBarElement = document.querySelector('#calendar #now');
-const preferred_event_min_width = 300;
+const nowBarElement = document.querySelector('#calendar-today #now');
+const preferred_event_min_width = 200;
 const min_visible_width = 50;
-const min_event_height = 30;
+const min_event_height = 47.5;
 const padding = 5;
 const pixels_per_minute = 1.5;
 let startDate;
@@ -10,13 +12,17 @@ let startTime;
 let endDate;
 let endTime;
 let events;
+let showNowBar = true;
 
 /// Place period boxes for a list of periods.
-function place_boxes(data_unprocessed, date = current_date(), force = false) {
+function place_boxes(data_unprocessed, date = current_date(), force = false, today = true) {
+	showNowBar = today;
+
 	calendarElement.innerHTML = '';
 	if (!events || force) {
 		calendarElement.style.height = 'auto';
 		if (data_unprocessed.length === 0) {
+			updateNowBar();
 			return;
 		}
 
@@ -50,7 +56,7 @@ function place_boxes(data_unprocessed, date = current_date(), force = false) {
 
 			let col = 0;
 
-			while (events.filter(e => e.col == col).some(e => startPos < e.endPos || endPos < e.startPos)) {
+			while (events.filter(event => event.col === col).some(event => startPos < event.endPos || endPos < event.startPos)) {
 				col++;
 			}
 
@@ -73,28 +79,28 @@ function place_boxes(data_unprocessed, date = current_date(), force = false) {
 	while (indicatorDate.getTime() < endDate.getTime()) {
 		const time = indicatorDate.toLocaleTimeString('en-US', {timeZone: 'America/Chicago'});
 		const formatted = `${time.split(':')[0]} ${time.split(' ')[1]}`;
-		const top = (indicatorDate.getTime() / 1000 - startTime) / 60 * pixels_per_minute;
+		const top = ((indicatorDate.getTime() / 1000) - startTime) / 60 * pixels_per_minute;
 		const span = document.createElement('span');
 		span.classList.add('time');
 		span.textContent = formatted;
 		span.style.top = `${top}px`;
 		calendarElement.append(span);
-		indicatorDate.setTime(indicatorDate.getTime() + 60 * 60 * 1000);
+		indicatorDate.setTime(indicatorDate.getTime() + (60 * 60 * 1000));
 	}
 
-	const number_cols = Math.max(...events.map(e => e.col)) + 1;
+	const number_cols = Math.max(...events.map(event => event.col)) + 1;
 	const colwidth = calendarElement.clientWidth / number_cols;
 	const percent = 1 / number_cols * 100;
 
 	for (const event of events) {
 		let colspan = 1;
 
-		while (event.col + colspan < number_cols && !events.filter(e => e.col == event.col + colspan).some(e => [event.startPos, event.endPos].some(p => p >= e.startPos && p <= e.endPos))) {
+		while (event.col + colspan < number_cols && !events.filter(e => e.col === event.col + colspan).some(e => [event.startPos, event.endPos].some(p => p >= e.startPos && p <= e.endPos))) {
 			colspan++;
 		}
 
-		let widthOffset = event.col == 0 ? 0 : padding * -2;
-		if (colwidth * colspan < preferred_event_min_width) {
+		let widthOffset = event.col === 0 ? 0 : padding * -2;
+		if (colwidth * colspan < preferred_event_min_width && colspan < number_cols) {
 			widthOffset = preferred_event_min_width - colwidth * colspan;
 			if (widthOffset > colwidth) {
 				widthOffset += colwidth - min_visible_width;
@@ -146,9 +152,9 @@ window.addEventListener('resize', place_boxes);
 setInterval(updateNowBar, 1000);
 
 function updateNowBar() {
-	const now = Date.now() / 1000;
-	if (nowBarElement && startTime && endTime && now >= startTime && now <= endTime) {
-		nowBarElement.style.top = `${(now - startTime) / 60 * pixels_per_minute + 10}px`;
+	const now = current_date().getTime() / 1000;
+	if (nowBarElement && showNowBar && startTime && endTime && now >= startTime && now <= endTime) {
+		nowBarElement.style.top = `${((now - startTime) / 60 * pixels_per_minute) + 10}px`;
 		nowBarElement.style.display = 'block';
 	} else {
 		nowBarElement.style.display = 'none';
