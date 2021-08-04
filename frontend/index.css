@@ -92,11 +92,16 @@ body {
 }
 
 #current_parent div .text-wrapper {
-	display: flex;
 	justify-content: center;
 	align-content: center;
 }
 
+#current_parent .progress {
+	margin: 0px 0px;
+	padding: 0px !important;
+}
+
 #current_parent .progress-ring {
-	padding: 0px 10px;
+	border: 1px solid white;
+	border-radius: 50%;
 }

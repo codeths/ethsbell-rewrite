@@ -304,9 +304,14 @@ a {
 	margin: 10px auto;
 }
 
+.progress {
+	display: inline-block;
+	vertical-align: bottom;
+}
+
 .progress-ring {
-	display: flex;
-	justify-content: center;
+	display: inline;
+	vertical-align: bottom;
 }
 
 .progress-ring__circle {
