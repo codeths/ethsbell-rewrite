@@ -1,5 +1,8 @@
 #![feature(decl_macro)]
+#![warn(missing_docs)]
+#![forbid(unsafe_code)]
 
+//! A library for running ETHSBell's logic client-side.
 #[cfg(feature = "ws")]
 #[macro_use]
 extern crate rocket;

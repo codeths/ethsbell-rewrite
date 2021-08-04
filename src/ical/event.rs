@@ -9,17 +9,23 @@ use crate::schedule::Schedule;
 /// An event in iCal
 #[derive(Deserialize)]
 pub struct IcalEvent {
+	/// The event's summary.
 	pub summary: Option<String>,
+	/// The event's description.
 	pub description: Option<String>,
+	/// The start of the event.
 	pub start: Option<NaiveDate>,
+	/// The end of the event.
 	pub end: Option<NaiveDate>,
 }
 impl IcalEvent {
+	/// Download a Vec<IcalEvent> from the provided URL.
 	#[cfg(feature = "pull")]
 	pub fn get(url: &str) -> Vec<IcalEvent> {
 		let data = get(url).unwrap().text().unwrap();
 		IcalEvent::from_string(&data)
 	}
+	/// Parse a Vec<IcalEvent> from the provided string.
 	pub fn from_string(data: &str) -> Vec<IcalEvent> {
 		data.split("BEGIN:VEVENT")
 			.map(|v| v.trim())
@@ -107,6 +113,7 @@ impl IcalEvent {
 			.filter(|v| (v.description != None || v.summary != None) && v.start != None)
 			.collect()
 	}
+	/// Generate a semi-valid ICal file from a Schedule for the given date range.
 	pub fn generate(schedule: &Schedule, start: NaiveDate, end: NaiveDate) -> String {
 		let mut rng = rand::thread_rng();
 		let mut result = String::new();

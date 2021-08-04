@@ -1,5 +1,4 @@
-use std::sync::{Arc, RwLock};
-
+#![allow(missing_docs)]
 use crate::impls::MaxElement;
 use crate::schedule::{Period, PeriodType, Schedule, ScheduleType};
 use chrono::{Datelike, Local, NaiveDate, NaiveTime, Timelike, Weekday};
@@ -9,7 +8,9 @@ use rocket_contrib::templates::Template;
 use rocket_okapi::{openapi, routes_with_openapi};
 use serde::Serialize;
 use serde_json::json;
+use std::sync::{Arc, RwLock};
 
+/// Returns a list of all our routes for Rocket.
 pub fn routes() -> Vec<Route> {
 	routes_with_openapi![display, data]
 }
@@ -80,6 +81,7 @@ fn data(schedule: State<Arc<RwLock<Schedule>>>) -> Json<LegacySchedule> {
 	)
 }
 
+/// A hopefully-compatible replica of the original's response.
 #[derive(Serialize, JsonSchema)]
 #[allow(non_snake_case)]
 struct LegacySchedule {
@@ -120,14 +122,15 @@ struct LegacySchedule {
 	pub timeSinceLastPeriod: isize,
 }
 
+/// A container for the schedule's name and the list of its periods.
 #[derive(Serialize, JsonSchema)]
 #[allow(non_snake_case)]
-/// A container for the schedule's name and the list of its periods.
 struct LegacyScheduleKey {
 	name: String,
 	period_array: Vec<LegacyPeriod>,
 }
 
+/// A replica of the original's period representation.
 #[derive(Serialize, JsonSchema)]
 #[allow(non_snake_case)]
 struct LegacyPeriod {

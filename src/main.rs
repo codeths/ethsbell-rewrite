@@ -1,11 +1,14 @@
 #![feature(decl_macro)]
+#![warn(missing_docs)]
+#![forbid(unsafe_code)]
 
+//! ETHSBell is a web-based bell schedule tracker.
+pub use locks::SpecLock;
+use schedule::{Schedule, ScheduleDefinition, ScheduleType};
+use serde_json::Value;
 use std::collections::HashMap;
 #[cfg(feature = "ws")]
 use std::{env, fs};
-
-use schedule::{Schedule, ScheduleDefinition, ScheduleType};
-
 mod api;
 mod frontend;
 mod ical;
@@ -14,8 +17,6 @@ mod locks;
 mod login;
 pub mod rocket_builder;
 mod schedule;
-pub use locks::SpecLock;
-use serde_json::Value;
 
 #[macro_use]
 extern crate rocket;

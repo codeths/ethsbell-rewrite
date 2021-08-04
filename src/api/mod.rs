@@ -1,3 +1,5 @@
+//! Defines backend behavior.
+
 use rocket::{
 	fairing::{Fairing, Info, Kind},
 	http::Status,
@@ -10,9 +12,10 @@ use rocket_okapi::{
 };
 
 use crate::login::WantsBasicAuth;
-pub mod v1;
 pub mod legacy;
+pub mod v1;
 
+/// This struct is used as a Rocket Fairing and adds our API endpoints.
 pub struct ApiFairing;
 
 impl Fairing for ApiFairing {
@@ -50,8 +53,9 @@ fn wants_auth() -> WantsBasicAuth {
 	WantsBasicAuth
 }
 
-// This shows an error in rust-analyzer but it doesn't actually fail to compile?
+/// This defines how we convert Errors into Responses
 #[derive(thiserror::Error, Debug, JsonSchema)]
+#[allow(missing_docs)]
 pub enum OurError {
 	#[error("Error trying to interpret date/time string; try YYYY-MM-DD or HH:MM:SS")]
 	#[schemars(skip)]

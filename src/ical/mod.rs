@@ -15,6 +15,7 @@ pub use event::*;
 #[cfg_attr(feature = "ws", derive(Responder))]
 #[cfg_attr(feature = "ws", response(content_type = "text/calendar"))]
 pub struct IcalResponder {
+	/// The inner String containing ICal data.
 	pub inner: String,
 }
 #[cfg(feature = "ws")]

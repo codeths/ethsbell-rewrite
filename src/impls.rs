@@ -1,6 +1,10 @@
-pub trait MaxElement {
-	type Iter;
+//! Contains simple trait implementations.
 
+/// This is only used in the legacy section, and will soon be deprecated.
+pub trait MaxElement {
+	/// The type of the element to be sorted.
+	type Iter;
+	/// Consume the iterator and return its largest element.
 	fn max_element(self) -> Self::Iter;
 }
 

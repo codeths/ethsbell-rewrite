@@ -1,9 +1,9 @@
-use std::env;
-use std::io::Cursor;
-
+//! This file defines our authentication behavior for the admin editor.
 use rocket::response::Response;
 use rocket::{http::Status, request::FromRequest, response::Responder, Outcome};
-
+use std::env;
+use std::io::Cursor;
+/// This struct is used as a request guard to require authentication.
 pub struct Authenticated;
 
 impl<'a, 'r> FromRequest<'a, 'r> for Authenticated {
@@ -35,7 +35,7 @@ impl<'a, 'r> FromRequest<'a, 'r> for Authenticated {
 		}
 	}
 }
-
+/// This struct defines an error type which returns the corresponding HTTP error code.
 #[derive(Debug)]
 pub struct WantsBasicAuth;
 

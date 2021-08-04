@@ -1,3 +1,5 @@
+#![allow(missing_docs)]
+
 use super::OurError;
 use crate::{
 	ical,
@@ -18,6 +20,7 @@ use std::{
 	sync::{Arc, Mutex, RwLock},
 };
 
+/// Generates a list of Routes for Rocket
 pub fn routes() -> Vec<Route> {
 	routes_with_openapi![
 		get_schedule,
@@ -129,12 +132,14 @@ fn check_version() -> Json<(String, Option<String>, Option<String>)> {
 	))
 }
 
+/// Returns "ok" if the authentication data is valid.
 #[openapi]
 #[get("/check-auth")]
 fn check_auth(_auth: Authenticated) -> &'static str {
 	"ok"
 }
 
+/// Fetches the contents of the schedule specification in memory.
 #[openapi]
 #[get("/spec")]
 fn get_spec(
@@ -143,6 +148,7 @@ fn get_spec(
 	Ok(Json(schedule.read().unwrap().definition.clone()))
 }
 
+/// Uploads a new schedule specification file. Broken.
 #[openapi(skip)]
 #[post("/spec", data = "<body>")]
 fn post_spec(body: Data, _auth: Authenticated) -> Result<(), OurError> {
@@ -160,6 +166,7 @@ fn post_spec(body: Data, _auth: Authenticated) -> Result<(), OurError> {
 	Ok(())
 }
 
+/// Acquires a lock on the schedule specification. Broken.
 #[openapi]
 #[get("/lock")]
 fn get_lock(
@@ -176,6 +183,7 @@ fn get_lock(
 	}
 }
 
+/// Unlocks the schedule specification. Broken.
 #[openapi]
 #[get("/force-unlock")]
 fn force_unlock(lock: State<Arc<Mutex<SpecLock>>>, _auth: Authenticated) {
@@ -183,6 +191,7 @@ fn force_unlock(lock: State<Arc<Mutex<SpecLock>>>, _auth: Authenticated) {
 	lock.0 = None
 }
 
+/// Returns the time.
 #[openapi]
 #[get("/what-time-is-it?<timestamp>")]
 fn what_time(timestamp: Option<i64>) -> String {
@@ -195,6 +204,7 @@ fn what_time(timestamp: Option<i64>) -> String {
 	now.to_rfc2822()
 }
 
+/// Returns the entire schedule struct.
 #[openapi]
 #[get("/schedule")]
 fn get_schedule(schedule: State<Arc<RwLock<Schedule>>>) -> Json<Schedule> {
@@ -203,6 +213,7 @@ fn get_schedule(schedule: State<Arc<RwLock<Schedule>>>) -> Json<Schedule> {
 	Json(schedule.clone())
 }
 
+/// Returns the schedule type IDs for each day in the range.
 #[openapi]
 #[get("/schedule/from/<start>/to/<end>")]
 fn schedule_from_to(
@@ -228,6 +239,7 @@ fn schedule_from_to(
 	Ok(Json(output))
 }
 
+/// Returns today's schedule type.
 #[openapi]
 #[get("/today?<timestamp>")]
 fn today(schedule: State<Arc<RwLock<Schedule>>>, timestamp: Option<i64>) -> Json<ScheduleType> {
@@ -250,6 +262,7 @@ fn today(schedule: State<Arc<RwLock<Schedule>>>, timestamp: Option<i64>) -> Json
 	Json(schedule.0)
 }
 
+/// Returns today's schedule type ID.
 #[openapi]
 #[get("/today/code?<timestamp>")]
 fn today_code(
@@ -270,6 +283,7 @@ fn today_code(
 	Json(schedule.1)
 }
 
+/// Returns the current period type.
 #[openapi]
 #[get("/today/now?<timestamp>")]
 fn today_now(
@@ -295,6 +309,7 @@ fn today_now(
 	}
 }
 
+/// Returns the current period type and its neighbors.
 #[openapi]
 #[get("/today/now/near?<timestamp>")]
 fn today_around_now(
@@ -315,6 +330,7 @@ fn today_around_now(
 	Json(schedule)
 }
 
+/// Returns today's period type at the provided time.
 #[openapi]
 #[get("/today/at/<time_string>?<timestamp>")]
 fn today_at(
@@ -341,6 +357,7 @@ fn today_at(
 	}
 }
 
+/// Returns the schedule type on the given date.
 #[openapi]
 #[get("/on/<date_string>")]
 fn date(
@@ -364,6 +381,8 @@ fn date(
 		.for_each(|v| *v = v.clone().populate(then_));
 	Ok(Json(schedule.0))
 }
+
+/// Returns the schedule type ID on the given date.
 #[openapi]
 #[get("/on/<date_string>/code")]
 fn date_code(
@@ -376,6 +395,7 @@ fn date_code(
 	Ok(Json(schedule.1))
 }
 
+/// Returns the period type at the given date and time.
 #[openapi]
 #[get("/on/<date_string>/at/<time_string>")]
 fn date_at(
@@ -405,6 +425,7 @@ fn date_at(
 	}
 }
 
+/// Returns an ICalendar file containing periods as events.
 #[openapi]
 #[get("/ical?<backward>&<forward>")]
 fn ical(backward: i64, forward: i64, schedule: State<Arc<RwLock<Schedule>>>) -> IcalResponder {
@@ -425,6 +446,7 @@ fn coffee(schedule: State<Arc<RwLock<Schedule>>>) -> Status {
 	Status::ImATeapot
 }
 
+/// Returns the license.
 #[openapi]
 #[get("/license")]
 fn license() -> Html<String> {

@@ -1,6 +1,9 @@
+//! Defines frontend behavior.
+
 use rocket::fairing::{Fairing, Info, Kind};
 use rocket_contrib::serve::StaticFiles;
 
+/// A struct that is used as a Rocket Fairing to load the frontend from disk.
 pub struct FrontendFairing;
 
 impl Fairing for FrontendFairing {
