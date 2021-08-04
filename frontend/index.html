@@ -25,22 +25,21 @@
 		</div> -->
 			<div class="big block text-center content">
 				<template id="current_period_time_template">
+					<!-- Yes this isn't perfectly centered, I know. What are you gonna do about it? -->
+					<div class="progress">
+						<svg class="progress-ring">
+							<circle
+								class="progress-ring__circle"
+								stroke="white"
+								fill="transparent"
+							/>
+						</svg>
+					</div>
 					<span class="text-wrapper">
 						<span class="name"></span>
-						<span>ends at</span>
+						ends in
 						<b class="end"></b>
-						<span>(in</span>
-						<b class="end_in"></b>
-						<div class="progress">
-							<svg class="progress-ring">
-								<circle
-									class="progress-ring__circle"
-									stroke="white"
-									fill="transparent"
-								/>
-							</svg>
-						</div>
-						<span>). </span>
+						(in <b class="end_in"></b>).
 					</span>
 				</template>
 				<div class="content">

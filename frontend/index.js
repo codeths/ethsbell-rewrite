@@ -36,13 +36,13 @@ function display(data) {
 
 			const size = Number.parseFloat(document.defaultView.getComputedStyle(new_element, null).fontSize.slice(0, -2));
 			const svg = new_element.querySelector('.progress-ring');
-			svg.setAttribute('width', size);
-			svg.setAttribute('height', size);
+			svg.setAttribute('width', size + 2);
+			svg.setAttribute('height', size + 2);
 			const circle = new_element.querySelector('.progress-ring__circle');
-			circle.setAttribute('cx', size / 2);
-			circle.setAttribute('cy', size / 2);
-			circle.setAttribute('r', size / 4);
-			circle.setAttribute('stroke-width', size / 2);
+			circle.setAttribute('cx', size / 2 + 1);
+			circle.setAttribute('cy', size / 2 + 1);
+			circle.setAttribute('r', size / 4 + 1);
+			circle.setAttribute('stroke-width', size / 2 + 2);
 
 			progressIntervals.push(setInterval(() => {
 				update_progress_circular(i, new_element);

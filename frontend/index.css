@@ -92,16 +92,21 @@ body {
 }
 
 #current_parent div .text-wrapper {
-	justify-content: center;
-	align-content: center;
+	vertical-align: middle;
+	display: inline;
 }
 
 #current_parent .progress {
-	margin: 0px 0px;
+	display: inline-flex;
 	padding: 0px !important;
+	vertical-align: middle;
+	border: 1px solid white;
+	border-radius: 50%;
+	box-sizing: border-box;
 }
 
 #current_parent .progress-ring {
-	border: 1px solid white;
-	border-radius: 50%;
+	display: inline;
+	padding: 0px !important;
+	vertical-align: middle;
 }

@@ -304,16 +304,6 @@ a {
 	margin: 10px auto;
 }
 
-.progress {
-	display: inline-block;
-	vertical-align: bottom;
-}
-
-.progress-ring {
-	display: inline;
-	vertical-align: bottom;
-}
-
 .progress-ring__circle {
 	transform: rotate(-90deg);
 	transform-origin: 50% 50%;
