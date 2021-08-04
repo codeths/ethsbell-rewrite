@@ -4,7 +4,16 @@ const nextText = document.querySelector('#next');
 
 let lastData;
 // Gets data from /today/now/near
+
+let progressIntervals = [];
+
 function display(data) {
+	for (const interval of progressIntervals) {
+		clearInterval(interval);
+	}
+
+	progressIntervals = [];
+
 	lastData = data;
 
 	if (data[2] && (!data[1] || !data[1][0] || data[1][0].kind !== 'BeforeSchool')) {
@@ -22,7 +31,23 @@ function display(data) {
 			const new_element = document.createElement('div');
 			new_element.innerHTML = template.innerHTML;
 			put_period_to_element(new_element, i);
+
 			parent.append(new_element);
+
+			const size = Number.parseFloat(document.defaultView.getComputedStyle(new_element, null).fontSize.slice(0, -2));
+			const svg = new_element.querySelector('.progress-ring');
+			svg.setAttribute('width', size + 2);
+			svg.setAttribute('height', size + 2);
+			const circle = new_element.querySelector('.progress-ring__circle');
+			circle.setAttribute('cx', size / 2 + 1);
+			circle.setAttribute('cy', size / 2 + 1);
+			circle.setAttribute('r', size / 4 + 1);
+			circle.setAttribute('stroke-width', size / 2 + 2);
+
+			progressIntervals.push(setInterval(() => {
+				update_progress_circular(i, new_element);
+			}, 1000));
+			update_progress_circular(i, new_element);
 		}
 	} else {
 		const new_element = document.createElement('div');
@@ -30,17 +55,9 @@ function display(data) {
 		put_period_to_element(new_element, null);
 		parent.append(new_element);
 	}
-
-	update_progress(data);
 }
 
 go(display);
-
-setInterval(() => {
-	if (lastData) {
-		update_progress(lastData);
-	}
-}, 1000);
 
 // Full screen button
 const fullScreenButton = document.querySelector('#fullscreen');
@@ -95,9 +112,9 @@ function fadeOut() {
 		return;
 	}
 
+	document.body.classList.add('hidecursor');
 	fullScreenButton.classList.remove('fadein');
 	fullScreenButton.classList.add('fadeout');
-	setTimeout(() => document.body.classList.add('hidecursor'), 500);
 }
 
 // Reset idle timer

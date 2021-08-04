@@ -21,7 +21,7 @@ function place_boxes(data_unprocessed, date = current_date(), force = false, tod
 	calendarElement.innerHTML = '';
 	if (!events || force) {
 		calendarElement.style.height = 'auto';
-		if (data_unprocessed.length === 0) {
+		if (!data_unprocessed[0]) {
 			updateNowBar();
 			return;
 		}

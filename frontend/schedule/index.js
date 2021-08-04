@@ -9,6 +9,21 @@ const calendarTable = document.querySelector('#calendar-table');
 let schedules = {};
 let currentSchedule = {};
 
+getel('today').addEventListener('click', () => {
+	dateSelect.valueAsDate = current_date();
+	getDate(dateSelect.valueAsDate);
+});
+
+getel('previous').addEventListener('click', () => {
+	dateSelect.valueAsDate = new Date(dateSelect.valueAsDate.getTime() - 1000 * 60 * 60 * 24);
+	getDate(dateSelect.valueAsDate);
+});
+
+getel('next').addEventListener('click', () => {
+	dateSelect.valueAsDate = new Date(dateSelect.valueAsDate.getTime() + 1000 * 60 * 60 * 24);
+	getDate(dateSelect.valueAsDate);
+});
+
 async function getDate(date = current_date(), setCurrent = false) {
 	const dateString = date_to_string(date);
 

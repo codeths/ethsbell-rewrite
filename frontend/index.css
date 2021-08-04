@@ -90,3 +90,23 @@ body {
 #next_parent {
 	display: none;
 }
+
+#current_parent div .text-wrapper {
+	vertical-align: middle;
+	display: inline;
+}
+
+#current_parent .progress {
+	display: inline-flex;
+	padding: 0px !important;
+	vertical-align: middle;
+	border: 1px solid white;
+	border-radius: 50%;
+	box-sizing: border-box;
+}
+
+#current_parent .progress-ring {
+	display: inline;
+	padding: 0px !important;
+	vertical-align: middle;
+}
