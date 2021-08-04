@@ -42,6 +42,7 @@
 			"bytes_to_color",
 			"black_or_white",
 			"update_progress",
+			"update_progress_circular",
 			"replace_period",
 			"put_period_to_element",
 			"date_from_api"

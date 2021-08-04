@@ -25,8 +25,21 @@
 		</div> -->
 			<div class="big block text-center content">
 				<template id="current_period_time_template">
-					<span class="name"></span> ends at <b class="end"></b> (in
-					<b class="end_in"></b>).
+					<span class="text-wrapper">
+						<span class="name"></span>
+						<span>&nbsp;ends at&nbsp;</span>
+						<b class="end"></b>
+						<span>&nbsp;(in&nbsp;</span>
+						<b class="end_in"></b>
+						<svg class="progress-ring">
+							<circle
+								class="progress-ring__circle"
+								stroke="white"
+								fill="transparent"
+							/>
+						</svg>
+						<span>).</span>
+					</span>
 				</template>
 				<div class="content">
 					<div class="big" id="current_parent"></div>

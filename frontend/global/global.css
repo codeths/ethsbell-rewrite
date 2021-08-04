@@ -303,3 +303,13 @@ a {
 	background-color: var(--background_text_color);
 	margin: 10px auto;
 }
+
+.progress-ring {
+	display: flex;
+	justify-content: center;
+}
+
+.progress-ring__circle {
+	transform: rotate(-90deg);
+	transform-origin: 50% 50%;
+}

@@ -90,3 +90,13 @@ body {
 #next_parent {
 	display: none;
 }
+
+#current_parent div .text-wrapper {
+	display: flex;
+	justify-content: center;
+	align-content: center;
+}
+
+#current_parent .progress-ring {
+	padding: 0px 10px;
+}
