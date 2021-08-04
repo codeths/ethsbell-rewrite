@@ -112,9 +112,9 @@ function fadeOut() {
 		return;
 	}
 
+	document.body.classList.add('hidecursor');
 	fullScreenButton.classList.remove('fadein');
 	fullScreenButton.classList.add('fadeout');
-	setTimeout(() => document.body.classList.add('hidecursor'), 500);
 }
 
 // Reset idle timer
