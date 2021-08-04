@@ -25,6 +25,7 @@ RUN update-ca-certificates
 COPY --from=builder /app/def.json /app/target/release/ethsbell-rewrite ./
 COPY --from=builder /app/def.d/* ./def.d/
 COPY --from=builder /app/frontend-dist ./frontend-dist
+COPY --from=builder /app/frontend/favicon.ico /app/frontend-dist/favicon.ico
 COPY --from=builder /app/templates ./templates
 CMD ["./ethsbell-rewrite"]
 HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 CMD curl -o /dev/null -w "%{http_code}\n" http://localhost:8000/api/v1/coffee | grep 418
