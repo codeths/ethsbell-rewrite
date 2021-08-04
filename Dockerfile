@@ -1,10 +1,12 @@
 FROM rustlang/rust:nightly AS builder
+RUN apt update && apt install -y npm && rm -rf /var/apt/lists
 ARG GITHUB_SHA
 ENV GITHUB_SHA=$GITHUB_SHA
 ARG GITHUB_REPOSITORY
 ENV GITHUB_REPOSITORY=$GITHUB_REPOSITORY
 WORKDIR /app
-COPY Cargo.toml Cargo.lock ./
+COPY Cargo.toml Cargo.lock package.json ./
+RUN npm i
 RUN mkdir src && echo "fn main(){println!(\"dummy\");}" > ./src/main.rs && touch src/lib.rs
 RUN mkdir src/bin && echo "fn main(){println!(\"dummy\");}" > ./src/bin/bell_mkschema.rs
 RUN cargo build --release --bin ethsbell-rewrite --features=ws
@@ -12,7 +14,8 @@ RUN rm ./src/main.rs && rm ./src/lib.rs
 COPY . .
 RUN touch src/main.rs && touch src/lib.rs
 # This is here so the build fails if the tests do.
-RUN cargo test --release --features=ws 
+RUN cargo test --release --features=ws
+RUN npm run build
 RUN cargo build --release --bin ethsbell-rewrite --features=ws
 
 FROM ubuntu
