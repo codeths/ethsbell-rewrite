@@ -1,0 +1,107 @@
+{
+	"$schema": "../schema/Map_of_ScheduleType.json",
+	"late_start": {
+		"friendly_name": "Late Start",
+		"hide": false,
+		"periods": [
+			{
+				"friendly_name": "Block 1",
+				"start": "9:35:00",
+				"end": "10:45:00",
+				"kind": {
+					"Class": "Block1"
+				}
+			},
+			{
+				"friendly_name": "Block 2",
+				"start": "9:35:00",
+				"end": "10:45:00",
+				"kind": {
+					"Class": "Block2"
+				}
+			},
+			{
+				"friendly_name": "Block 3",
+				"start": "10:55:00",
+				"end": "12:05:00",
+				"kind": {
+					"Class": "Block3"
+				}
+			},
+			{
+				"friendly_name": "Block 4",
+				"start": "10:55:00",
+				"end": "12:05:00",
+				"kind": {
+					"Class": "Block4"
+				}
+			},
+			{
+				"friendly_name": "Lunch 1",
+				"start": "12:15:00",
+				"end": "13:00:00",
+				"kind": "Lunch"
+			},
+			{
+				"friendly_name": "Block 5A",
+				"start": "12:15:00",
+				"end": "13:25:00",
+				"kind": {
+					"Class": "Block5"
+				}
+			},
+			{
+				"friendly_name": "Block 6A",
+				"start": "12:15:00",
+				"end": "13:25:00",
+				"kind": {
+					"Class": "Block6"
+				}
+			},
+			{
+				"friendly_name": "Block 5B",
+				"start": "13:05:00",
+				"end": "14:15:00",
+				"kind": {
+					"Class": "Block5"
+				}
+			},
+			{
+				"friendly_name": "Block 6B",
+				"start": "13:05:00",
+				"end": "14:15:00",
+				"kind": {
+					"Class": "Block6"
+				}
+			},
+			{
+				"friendly_name": "Lunch B",
+				"start": "13:30:00",
+				"end": "14:15:00",
+				"kind": "Lunch"
+			},
+			{
+				"friendly_name": "Block 7",
+				"start": "14:25:00",
+				"end": "15:35:00",
+				"kind": {
+					"Class": "Block7"
+				}
+			},
+			{
+				"friendly_name": "Block 8",
+				"start": "14:25:00",
+				"end": "15:35:00",
+				"kind": {
+					"Class": "Block8"
+				}
+			}
+		],
+		"color": [
+			31,
+			30,
+			35
+		],
+		"regex": "Late Start"
+	}
+}
