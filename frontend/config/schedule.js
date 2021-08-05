@@ -76,7 +76,7 @@ function update_working() {
 	let url = getel('url').value;
 	if (url.length === 0) {
 		url = undefined;
-	} else if (url.indexOf('://') == -1 {
+	} else if (!url.includes('://')) {
 		url = 'https://' + url;
 	}
 
