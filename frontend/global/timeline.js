@@ -39,7 +39,7 @@ function place_boxes(data_unprocessed) {
 		// Scroll behaviour
 		const scroll = () => {
 			scroll_timeout = false;
-			viewport_offset += scrolled_distance * 2;
+			viewport_offset += scrolled_distance * (navigator.userAgent.includes('Chrom') ? -2 : 2);
 			scrolled_distance = 0;
 			place_boxes(all_data);
 			getel('timeline_offset').value = Math.round(viewport_offset / 360) / 10;
