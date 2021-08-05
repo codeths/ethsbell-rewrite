@@ -1,11 +1,13 @@
 # ETHSBell Rewrite
 
 - [ETHSBell Rewrite](#ethsbell-rewrite)
-  - [About](#about)
-  - [Development](#development)
-  - [Deployment](#deployment)
-    - [x86 with Docker](#x86-with-docker)
-    - [Non-x86 or without Docker](#non-x86-or-without-docker)
+	- [About](#about)
+	- [Development](#development)
+	- [Deployment](#deployment)
+		- [x86 with Docker](#x86-with-docker)
+		- [Non-x86 or without Docker](#non-x86-or-without-docker)
+	- [Known Issues](#known-issues)
+
 
 ## About
 
@@ -21,8 +23,8 @@ This is a rewrite of ETHSBell in Rust. It features...
   * `GET /api/v1/today/now` returns the current period.
   * `GET /api/v1/today/at` returns the period for an arbitrary time of day formatted like `HH:MM:SS`.
   * `GET /api/v1/on/<date>` returns the schedule for an arbitrary date formatted like `YYYY-MM-DD`.
-  * `GET /api/v1/on/<date>/at/<time>` returns the period for an arbitrary date and time formatted like `YYYY-MM-DD` and `HH:MM:SS`.
-* In-memory caching.
+		* `GET /api/v1/on/<date>/at/<time>` returns the period for an arbitrary date and time formatted like `YYYY-MM-DD` and `HH:MM:SS`.
+			* In-memory caching.
   * You can expect 3-4MB of memory usage when idle.
 * Stateless design.
 * Runtime-less deployment.
@@ -70,3 +72,7 @@ cd ethsbell-rewrite
 cargo build
 # The resulting binary will be placed at ./target/release/ethsbell-rewrite
 ```
+
+## Known Issues
+
+* On some (non-Safari) Webkit-based browsers, using the zoom feature causes the progress wheels to render incorrectly. Browsers based on Blink and Gecko do not have this issue, and the small market share of these malfunctioning browsers means this issue is unlikely to be fixed.
