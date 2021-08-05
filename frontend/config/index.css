@@ -16,3 +16,11 @@ pre {
 	color: black;
 	tab-size: 2;
 }
+
+.collapsible>.collapse+.content {
+	display: none;
+}
+
+.collapsible>.collapse:checked+.content {
+	display: block;
+}

@@ -83,10 +83,15 @@
 		<button id="save">Save</button>
 		<button id="download">Download locally</button>
 		<hr />
-		<h1>Write a schedule manually (Advanced!)</h1>
-		<p>You can make your own schedule file with a standard text editor. A schedule file should look like this, omitting
-			content after "//".</p>
-		<pre>
+		<div class="collapsible">
+			<label for="collapse">Click to display advanced uploader...</label>
+			<input id="collapse" class="collapse" type="checkbox">
+			<div class="content">
+				<h1>Write a schedule manually (Advanced!)</h1>
+				<p>You can make your own schedule file with a standard text editor. A schedule file should look like this,
+					omitting
+					content after "//".</p>
+				<pre>
 {
 	"schedule": {
 		"Block1": {
@@ -109,10 +114,12 @@
 	"background_text_color": "#ffffff",
 	"default_page": "/timeline" // This can be set to any URL, but ideally it will point to a path under our domain.
 }</pre>
-		<br />
-		<input type="file" id="cfg" /><br />
-		<button id="upload">Upload!</button><br />
-		<span id="status"></span>
+				<br />
+				<input type="file" id="cfg" /><br />
+				<button id="upload">Upload!</button><br />
+				<span id="status"></span>
+			</div>
+		</div>
 		<hr />
 	</div>
 </body>
