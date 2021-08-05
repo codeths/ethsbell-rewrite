@@ -101,6 +101,7 @@ document.addEventListener('fullscreenchange', () => {
 // Hide full screen button and cursor if full screen when idle
 let idleCursorTimeout = setTimeout(fadeOut, 5000);
 let doNotHideButton = false;
+let doNotIdleTimer = false;
 
 // Run fade in animation
 function fadeIn() {
@@ -122,9 +123,13 @@ function fadeOut() {
 		return;
 	}
 
+	doNotIdleTimer = true;
+
 	document.body.classList.add('hidecursor');
 	fullScreenButton.classList.remove('fadein');
 	fullScreenButton.classList.add('fadeout');
+
+	setImmediate(() => doNotIdleTimer = false);
 }
 
 // Reset idle timer
@@ -135,8 +140,10 @@ function idleTimer() {
 
 // Reset idle timer when mouse moved
 document.addEventListener('mousemove', () => {
-	fadeIn();
-	idleTimer();
+	if (!doNotIdleTimer) {
+		fadeIn();
+		idleTimer();
+	}
 });
 
 // Block fade out when hovering full screen button
