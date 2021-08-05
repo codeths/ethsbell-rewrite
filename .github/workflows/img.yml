@@ -5,6 +5,8 @@ on:
     # Publish `v1.2.3` tags as releases.
     tags:
       - v*
+      - stable
+      - devel
   workflow_dispatch:
 
 env:
@@ -40,6 +42,6 @@ jobs:
           echo IMAGE_ID=$IMAGE_ID
           echo VERSION=$VERSION
           docker tag $IMAGE_NAME $IMAGE_ID:$VERSION
-          docker tag $IMAGE_NAME $IMAGE_ID:$GITHUB_REF
+          docker tag $IMAGE_NAME $IMAGE_ID:latest
           docker push $IMAGE_ID:$VERSION
-          docker push $IMAGE_ID:$GITHUB_REF
+          docker push $IMAGE_ID:latest
