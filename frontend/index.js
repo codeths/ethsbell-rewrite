@@ -129,7 +129,9 @@ function fadeOut() {
 	fullScreenButton.classList.remove('fadein');
 	fullScreenButton.classList.add('fadeout');
 
-	setImmediate(() => doNotIdleTimer = false);
+	setTimeout(() => {
+		doNotIdleTimer = false;
+	}, 50);
 }
 
 // Reset idle timer
