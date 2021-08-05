@@ -100,8 +100,6 @@ body {
 	display: inline-flex;
 	padding: 0px !important;
 	vertical-align: middle;
-	border: 1px solid white;
-	border-radius: 50%;
 	box-sizing: border-box;
 }
 

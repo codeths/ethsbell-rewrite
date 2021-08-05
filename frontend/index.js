@@ -8,6 +8,10 @@ let lastData;
 let progressIntervals = [];
 
 function display(data) {
+	if (!data) {
+		return;
+	}
+
 	for (const interval of progressIntervals) {
 		clearInterval(interval);
 	}
@@ -36,13 +40,17 @@ function display(data) {
 
 			const size = Number.parseFloat(document.defaultView.getComputedStyle(new_element, null).fontSize.slice(0, -2));
 			const svg = new_element.querySelector('.progress-ring');
-			svg.setAttribute('width', size + 2);
-			svg.setAttribute('height', size + 2);
+			svg.setAttribute('width', size);
+			svg.setAttribute('height', size);
 			const circle = new_element.querySelector('.progress-ring__circle');
-			circle.setAttribute('cx', size / 2 + 1);
-			circle.setAttribute('cy', size / 2 + 1);
-			circle.setAttribute('r', size / 4 + 1);
-			circle.setAttribute('stroke-width', size / 2 + 2);
+			const border = new_element.querySelector('.progress-ring__border');
+			circle.setAttribute('cx', size / 2);
+			circle.setAttribute('cy', size / 2);
+			circle.setAttribute('r', size / 4 - 1);
+			circle.setAttribute('stroke-width', size / 2 - 2);
+			border.setAttribute('cx', size / 2);
+			border.setAttribute('cy', size / 2);
+			border.setAttribute('r', size / 2 - 2);
 
 			progressIntervals.push(setInterval(() => {
 				update_progress_circular(i, new_element);
@@ -56,6 +64,8 @@ function display(data) {
 		parent.append(new_element);
 	}
 }
+
+window.addEventListener('resize', () => display(lastData));
 
 go(display);
 
