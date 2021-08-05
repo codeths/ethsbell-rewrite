@@ -96,3 +96,8 @@ getel('save').addEventListener('click', () => {
 getel('download').addEventListener('click', () => {
 	alert('doesn\'t work yet');
 });
+
+getel('default-page').addEventListener('change', event => {
+	working_copy.default_page = event.target.value;
+})
+;

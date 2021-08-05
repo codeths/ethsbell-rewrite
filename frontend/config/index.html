@@ -45,6 +45,20 @@
 		<br />
 		---
 		<br />
+		<label for="default-page">Default Page:</label>
+		<select name="Default Page" id="default-page">
+			<option value="/">Disable</option>
+			<option value="/schedule">Schedule</option>
+			<option value="/timeline">Timeline</option>
+		</select>
+		<div>
+			When you visit ETHSBell at its default page (<a href="/">the root</a>) you will be redirected to the page you
+			select here. If you want to override this behavior, add "?no_default=true" to your link.
+			<br>
+			This behavior will not occur when you arrive through a link on ETHSBell.
+		</div>
+		---
+		<br />
 		<p>
 			Note: Attempting to build your own dark mode with these settings isn't
 			likely to work, but the Dark Reader browser extension does an excellent
@@ -66,7 +80,8 @@
 		<button id="download">Download locally</button>
 		<hr />
 		<h1>Write a schedule manually (Advanced!)</h1>
-		<p>You can make your own schedule file with a standard text editor. A schedule file should look like this.</p>
+		<p>You can make your own schedule file with a standard text editor. A schedule file should look like this, omitting
+			content after "//".</p>
 		<pre>
 {
 	"schedule": {
@@ -87,7 +102,8 @@
 	"foreground_color": "#1a2741",
 	"background_color": "#c34614",
 	"foreground_text_color": "#ffffff",
-	"background_text_color": "#ffffff"
+	"background_text_color": "#ffffff",
+	"default_page": "/timeline" // This can be set to any URL, but ideally it will point to a path under our domain.
 }</pre>
 		<br />
 		<input type="file" id="cfg" /><br />
