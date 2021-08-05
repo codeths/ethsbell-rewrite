@@ -91,8 +91,23 @@ function update_working() {
 getel('save').addEventListener('click', () => {
 	update_working();
 	localStorage.setItem('schedule', JSON.stringify(working_copy));
+	window.open(window.location);
 });
 
 getel('download').addEventListener('click', () => {
 	alert('doesn\'t work yet');
 });
+
+getel('reset-colors').addEventListener('click', () => {
+	Object.assign(working_copy, {
+		foreground_color: '#1a2741',
+		background_color: '#c34614',
+		foreground_text_color: '#ffffff',
+		background_text_color: '#ffffff',
+	});
+});
+
+getel('reset-schedule').addEventListener('click', () => {
+	working_copy.schedule = {};
+});
+
