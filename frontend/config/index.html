@@ -1,97 +1,98 @@
 <!DOCTYPE html>
 <html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Schedule Uploader</title>
+		<link rel="stylesheet" href="../config/index.css" />
+		<include src="include/prelude.html"></include>
+		<script defer src="../config/schedule.js"></script>
+	</head>
 
-<head>
-	<meta charset="UTF-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Schedule Uploader</title>
-	<link rel="stylesheet" href="../config/index.css">
-	<include src="include/prelude.html"></include>
-	<script defer src="../config/schedule.js"></script>
-</head>
+	<body class="background-color">
+		<include src="include/navbar.html"></include>
+		<br />
+		<br />
+		<br />
 
-<body class="background-color">
-	<include src="include/navbar.html"></include>
-	<br />
-	<br />
-	<br />
-
-	<div class="background">
-		<h1>Configuration Helper (Simple.)</h1>
-		<p>
-			You can use the configuration helper to configure the software
-			graphically.
-		</p>
-		<label for="class_id">Class ID:</label>
-		<select id="class_id">
-			<option value="">Select...</option>
-			<option value="EarlyBird">Early Bird</option>
-			<option value="Block1">Block 1</option>
-			<option value="Block2">Block 2</option>
-			<option value="Block3">Block 3</option>
-			<option value="Block4">Block 4</option>
-			<option value="Block5">Block 5</option>
-			<option value="Block6">Block 6</option>
-			<option value="Block7">Block 7</option>
-			<option value="Block8">Block 8</option>
-		</select>
-		<br />
-		<label for="name">Name:</label>
-		<input id="name" />
-		<br />
-		<label for="url">URL:</label>
-		<input id="url" />
-		<br />
-		<button id="reset-schedule">Reset Schedule</button>
-		<br>
-		---
-		<br />
-		<label for="default-page">Default Page:</label>
-		<select name="Default Page" id="default-page">
-			<option value="/home">Disable</option>
-			<option value="/schedule">Schedule</option>
-			<option value="/timeline">Timeline</option>
-		</select>
-		<div>
-			When you visit ETHSBell at its default page (<a href="/">the root</a>) you will be redirected to the page you
-			select here. If you want to override this behavior, add "?no_default=true" to your link.
-			<br>
-			This behavior will not occur when you arrive through a link on ETHSBell.
-		</div>
-		---
-		<br />
-		<p>
-			Note: Attempting to build your own dark mode with these settings isn't
-			likely to work, but the Dark Reader browser extension does an excellent
-			job when set to static mode.
-		</p>
-		<label for="foreground_color">Foreground Color: </label>
-		<input type="color" id="foreground_color" />
-		<br />
-		<label for="background_color">Background Color: </label>
-		<input type="color" id="background_color" />
-		<br />
-		<label for="foreground_text_color">Foreground Text Color: </label>
-		<input type="color" id="foreground_text_color" />
-		<br />
-		<label for="background_text_color">Background Text Color: </label>
-		<input type="color" id="background_text_color" />
-		<br>
-		<button id="reset-colors">Reset Colors to Default</button>
-		<br />
-		<button id="save">Save</button>
-		<button id="download">Download locally</button>
-		<hr />
-		<div class="collapsible">
-			<label for="collapse">Click to display advanced uploader...</label>
-			<input id="collapse" class="collapse" type="checkbox">
-			<div class="content">
-				<h1>Write a schedule manually (Advanced!)</h1>
-				<p>You can make your own schedule file with a standard text editor. A schedule file should look like this,
-					omitting
-					content after "//".</p>
-				<pre>
+		<div class="background">
+			<h1>Configuration Helper (Simple.)</h1>
+			<p>
+				You can use the configuration helper to configure the software
+				graphically.
+			</p>
+			<label for="class_id">Class ID:</label>
+			<select id="class_id">
+				<option value="">Select...</option>
+				<option value="EarlyBird">Early Bird</option>
+				<option value="Block1">Block 1</option>
+				<option value="Block2">Block 2</option>
+				<option value="Block3">Block 3</option>
+				<option value="Block4">Block 4</option>
+				<option value="Block5">Block 5</option>
+				<option value="Block6">Block 6</option>
+				<option value="Block7">Block 7</option>
+				<option value="Block8">Block 8</option>
+			</select>
+			<br />
+			<label for="name">Name:</label>
+			<input id="name" />
+			<br />
+			<label for="url">URL:</label>
+			<input id="url" />
+			<br />
+			<button id="reset-schedule">Reset Schedule</button>
+			<br />
+			---
+			<br />
+			<label for="default-page">Default Page:</label>
+			<select name="Default Page" id="default-page">
+				<option value="/">Home</option>
+				<option value="/schedule">Schedule</option>
+				<option value="/timeline">Timeline</option>
+			</select>
+			<div>
+				When you visit ETHSBell at its default page (<a href="/">the root</a>)
+				you will be redirected to the page you select here. If you want to
+				override this behavior, add "?no_default=true" to your link.
+				<br />
+				This behavior will not occur when you arrive through a link on ETHSBell.
+			</div>
+			---
+			<br />
+			<p>
+				Note: Attempting to build your own dark mode with these settings isn't
+				likely to work, but the Dark Reader browser extension does an excellent
+				job when set to static mode.
+			</p>
+			<label for="foreground_color">Foreground Color: </label>
+			<input type="color" id="foreground_color" />
+			<br />
+			<label for="background_color">Background Color: </label>
+			<input type="color" id="background_color" />
+			<br />
+			<label for="foreground_text_color">Foreground Text Color: </label>
+			<input type="color" id="foreground_text_color" />
+			<br />
+			<label for="background_text_color">Background Text Color: </label>
+			<input type="color" id="background_text_color" />
+			<br />
+			<button id="reset-colors">Reset Colors to Default</button>
+			<br />
+			<button id="save">Save</button>
+			<button id="download">Download locally</button>
+			<hr />
+			<div class="collapsible">
+				<label for="collapse">Click to display advanced uploader...</label>
+				<input id="collapse" class="collapse" type="checkbox" />
+				<div class="content">
+					<h1>Write a schedule manually (Advanced!)</h1>
+					<p>
+						You can make your own schedule file with a standard text editor. A
+						schedule file should look like this, omitting content after "//".
+					</p>
+					<pre>
 {
 	"schedule": {
 		"Block1": {
@@ -113,15 +114,15 @@
 	"foreground_text_color": "#ffffff",
 	"background_text_color": "#ffffff",
 	"default_page": "/timeline" // This can be set to any URL, but ideally it will point to a path under our domain.
-}</pre>
-				<br />
-				<input type="file" id="cfg" /><br />
-				<button id="upload">Upload!</button><br />
-				<span id="status"></span>
+}</pre
+					>
+					<br />
+					<input type="file" id="cfg" /><br />
+					<button id="upload">Upload!</button><br />
+					<span id="status"></span>
+				</div>
 			</div>
+			<hr />
 		</div>
-		<hr />
-	</div>
-</body>
-
+	</body>
 </html>

@@ -60,7 +60,7 @@ function populate() {
 	getel('background_color').value = working_copy.background_color;
 	getel('foreground_text_color').value = working_copy.foreground_text_color;
 	getel('background_text_color').value = working_copy.background_text_color;
-	getel('default-page').value = working_copy.default_page;
+	getel('default-page').value = working_copy.default_page || '/';
 }
 
 function update_working() {
