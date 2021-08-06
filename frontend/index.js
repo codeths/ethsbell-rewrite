@@ -34,28 +34,28 @@ function display(data) {
 		for (const i of data[1]) {
 			const new_element = document.createElement('div');
 			new_element.innerHTML = template.innerHTML;
-			put_period_to_element(new_element, i);
-
+			const didPutProgress = put_period_to_element(new_element, i);
 			parent.append(new_element);
+			if (didPutProgress) {
+				const size = Number.parseFloat(document.defaultView.getComputedStyle(new_element, null).fontSize.slice(0, -2));
+				const svg = new_element.querySelector('.progress-ring');
+				svg.setAttribute('width', size);
+				svg.setAttribute('height', size);
+				const circle = new_element.querySelector('.progress-ring__circle');
+				const border = new_element.querySelector('.progress-ring__border');
+				circle.setAttribute('cx', size / 2);
+				circle.setAttribute('cy', size / 2);
+				circle.setAttribute('r', size / 4 - 1);
+				circle.setAttribute('stroke-width', size / 2 - 2);
+				border.setAttribute('cx', size / 2);
+				border.setAttribute('cy', size / 2);
+				border.setAttribute('r', size / 2 - 2);
 
-			const size = Number.parseFloat(document.defaultView.getComputedStyle(new_element, null).fontSize.slice(0, -2));
-			const svg = new_element.querySelector('.progress-ring');
-			svg.setAttribute('width', size);
-			svg.setAttribute('height', size);
-			const circle = new_element.querySelector('.progress-ring__circle');
-			const border = new_element.querySelector('.progress-ring__border');
-			circle.setAttribute('cx', size / 2);
-			circle.setAttribute('cy', size / 2);
-			circle.setAttribute('r', size / 4 - 1);
-			circle.setAttribute('stroke-width', size / 2 - 2);
-			border.setAttribute('cx', size / 2);
-			border.setAttribute('cy', size / 2);
-			border.setAttribute('r', size / 2 - 2);
-
-			progressIntervals.push(setInterval(() => {
+				progressIntervals.push(setInterval(() => {
+					update_progress_circular(i, new_element);
+				}, 1000));
 				update_progress_circular(i, new_element);
-			}, 1000));
-			update_progress_circular(i, new_element);
+			}
 		}
 	} else {
 		const new_element = document.createElement('div');
