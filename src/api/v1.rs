@@ -326,7 +326,13 @@ fn today_around_now(
 	let now_date = now.date();
 	let now_time = now.time();
 	let schedule = schedule.read().unwrap().on_date(now_date.naive_local());
-	let schedule = schedule.0.at_time(now_time);
+	let mut schedule = schedule.0.at_time(now_time);
+	schedule.0 = schedule.0.map(|v| v.populate(now));
+	schedule
+		.1
+		.iter_mut()
+		.for_each(|v| *v = v.clone().populate(now));
+	schedule.2 = schedule.2.map(|v| v.populate(now));
 	Json(schedule)
 }
 
