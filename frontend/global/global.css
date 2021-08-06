@@ -308,3 +308,13 @@ a {
 	transform: rotate(-90deg);
 	transform-origin: 50% 50%;
 }
+
+#fullscreen {
+	display: none;
+	position: absolute;
+	right: 25px;
+	bottom: 25px;
+	top: unset;
+	cursor: pointer;
+	outline: 0;
+}
