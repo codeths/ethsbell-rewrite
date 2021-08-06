@@ -29,16 +29,6 @@ body {
 	font-weight: bold;
 }
 
-#fullscreen {
-	display: none;
-	position: absolute;
-	right: 25px;
-	bottom: 25px;
-	top: unset;
-	cursor: pointer;
-	outline: 0;
-}
-
 /* body, #wrapper {
 	background-color: #c34614;
 } */
