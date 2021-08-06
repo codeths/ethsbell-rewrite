@@ -1,0 +1,23 @@
+name: JS Lint
+
+on:
+  push:
+    paths:
+      - "frontend"
+      - "package.json"
+  pull_request:
+    paths:
+      - "frontend"
+      - "package.json"
+  workflow_dispatch:
+
+jobs:
+  test-js:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v1
+      - uses: actions/setup-node@v2
+        with:
+          node-version: "14"
+      - run: npm install
+      - run: npm run lint
