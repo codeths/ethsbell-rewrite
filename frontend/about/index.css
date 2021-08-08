@@ -1,0 +1,14 @@
+body {
+	display: flex;
+	flex-direction: column;
+}
+
+nav.abs {
+	position: unset !important;
+}
+
+.content {
+	display: flex;
+	flex-grow: 1;
+	padding: 0 30px 30px 30px;
+}
