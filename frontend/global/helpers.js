@@ -243,15 +243,15 @@ window.addEventListener('load', () => {
 		document.querySelector('body').style.setProperty('--background_color', cfg.background_color);
 	}
 
-	if (cfg.background_color) {
+	if (cfg.foreground_color) {
 		document.querySelector('body').style.setProperty('--foreground_color', cfg.foreground_color);
 	}
 
-	if (cfg.background_color) {
+	if (cfg.background_text_color) {
 		document.querySelector('body').style.setProperty('--background_text_color', cfg.background_text_color);
 	}
 
-	if (cfg.background_color) {
+	if (cfg.foreground_text_color) {
 		document.querySelector('body').style.setProperty('--foreground_text_color', cfg.foreground_text_color);
 	}
 });
