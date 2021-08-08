@@ -235,6 +235,9 @@ function dateStringToDate(dateString) {
 // Apply user colors
 window.addEventListener('load', () => {
 	const cfg = JSON.parse(localStorage.getItem('schedule'));
+
+	document.querySelector('meta[name=theme-color]').setAttribute('content', (cfg || {}).foreground_color || '#1a2741');
+
 	if (!cfg) {
 		return;
 	}
