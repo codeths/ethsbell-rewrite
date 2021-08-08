@@ -30,12 +30,5 @@ nav.abs {
 }
 
 .background {
-	display: flex;
-	flex-grow: 1;
 	padding: 0 30px 30px 30px;
-}
-
-body {
-	display: flex;
-	flex-direction: column;
 }
