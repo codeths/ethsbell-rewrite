@@ -115,7 +115,7 @@ function date_from_api(time, now = current_date()) {
 
 function human_time(time) {
 	const date = date_from_api(time);
-	return date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', timeZone: 'America/Chicago' });
+	return date.toLocaleTimeString('en-US', {hour: 'numeric', minute: '2-digit', timeZone: 'America/Chicago'});
 }
 
 // Gets a human readable duration from an epoch timestamp
@@ -188,16 +188,11 @@ function toggleFullScreen(element) {
 	}
 }
 
-
 window.addEventListener('load', () => {
 	const nav_links = document.querySelector('#nav-links');
 	document.querySelector('#nav-toggle-button').addEventListener('click', () => {
 		nav_links.classList.toggle('show');
-		if (nav_links.classList.contains('show')) {
-			nav_links.style.maxHeight = nav_links.querySelector('ul').clientHeight + 'px';
-		} else {
-			nav_links.style.maxHeight = '';
-		}
+		nav_links.style.maxHeight = nav_links.classList.contains('show') ? nav_links.querySelector('ul').clientHeight + 'px' : '';
 	});
 });
 
@@ -227,7 +222,7 @@ function black_or_white(color) {
 }
 
 function getUTCOffset() {
-	return Number.parseInt(new Date(new Date().setUTCHours(0, 0, 0, 0)).toLocaleTimeString('en-US', { timeZone: 'America/Chicago', hour12: false }).split(':')[0], 10) - 24;
+	return Number.parseInt(new Date(new Date().setUTCHours(0, 0, 0, 0)).toLocaleTimeString('en-US', {timeZone: 'America/Chicago', hour12: false}).split(':')[0], 10) - 24;
 }
 
 function dateStringToDate(dateString) {
