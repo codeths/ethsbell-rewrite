@@ -57,12 +57,8 @@
 				}
 			}
 		],
-		"color": [
-			31,
-			30,
-			35
-		],
-		"regex": "Late Start"
+		"color": [31, 30, 35],
+		"regex": "Late Start Blue"
 	},
 	"late_start_orange": {
 		"friendly_name": "Late Start Orange",
@@ -121,11 +117,7 @@
 				}
 			}
 		],
-		"color": [
-			31,
-			30,
-			35
-		],
-		"regex": "Late Start"
+		"color": [31, 30, 35],
+		"regex": "Late Start Orange"
 	}
 }
