@@ -13,7 +13,7 @@ use rocket::{http::Status, response::content::Html, Data, Route, State};
 use rocket_contrib::{json::Json, templates::Template};
 use rocket_okapi::{openapi, routes_with_openapi};
 use serde::Serialize;
-use std::{fs::{File, OpenOptions}, io::Write, ptr::null, str::FromStr, sync::{Arc, Mutex, RwLock}};
+use std::{fs::{File, OpenOptions}, io::Write, str::FromStr, sync::{Arc, Mutex, RwLock}};
 
 /// Generates a list of Routes for Rocket
 pub fn routes() -> Vec<Route> {
