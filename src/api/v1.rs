@@ -13,7 +13,12 @@ use rocket::{http::Status, response::content::Html, Data, Route, State};
 use rocket_contrib::{json::Json, templates::Template};
 use rocket_okapi::{openapi, routes_with_openapi};
 use serde::Serialize;
-use std::{fs::{File, OpenOptions}, io::Write, str::FromStr, sync::{Arc, Mutex, RwLock}};
+use std::{
+	fs::{File, OpenOptions},
+	io::Write,
+	str::FromStr,
+	sync::{Arc, Mutex, RwLock},
+};
 
 /// Generates a list of Routes for Rocket
 pub fn routes() -> Vec<Route> {
@@ -284,7 +289,7 @@ fn today_code(
 fn today_now(
 	schedule: State<Arc<RwLock<Schedule>>>,
 	timestamp: Option<i64>,
-) -> Result<Json<Vec<Period>>, String> {
+) -> Option<Json<Vec<Period>>> {
 	Schedule::update_if_needed_async(schedule.clone());
 	let now = match timestamp {
 		None => Local::now(),
@@ -298,9 +303,9 @@ fn today_now(
 	match schedule.0.at_time(now_time).1 {
 		mut period if !period.is_empty() => {
 			period.iter_mut().for_each(|v| *v = v.clone().populate(now));
-			Ok(Json(period))
+			Some(Json(period))
 		}
-		_ => Err(String::from("null")),
+		_ => None,
 	}
 }
 
