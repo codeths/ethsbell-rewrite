@@ -141,8 +141,12 @@ function human_time_left(endTime, startTime = null, short = false) {
 }
 
 // Convert date object to YYYY-MM-DD
-function date_to_string(date = current_date()) {
-	return `${date.getUTCFullYear()}-${('0' + (date.getUTCMonth() + 1)).slice(-2)}-${('0' + date.getUTCDate()).slice(-2)}`;
+function date_to_string(date = current_date(), utc = true) {
+	if (utc) {
+		return `${date.getUTCFullYear()}-${('0' + (date.getUTCMonth() + 1)).slice(-2)}-${('0' + date.getUTCDate()).slice(-2)}`;
+	}
+
+	return `${date.getFullYear()}-${('0' + (date.getMonth() + 1)).slice(-2)}-${('0' + date.getDate()).slice(-2)}`;
 }
 
 // Helper functions for full screen

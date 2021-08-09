@@ -10,7 +10,7 @@ let schedules = {};
 let currentSchedule = {};
 
 getel('today').addEventListener('click', () => {
-	dateSelect.valueAsDate = current_date();
+	dateSelect.value = date_to_string(current_date(), false);
 	getDate(dateSelect.valueAsDate);
 });
 
@@ -25,14 +25,14 @@ getel('next').addEventListener('click', () => {
 });
 
 async function getDate(date = current_date(), setCurrent = false) {
-	const dateString = date_to_string(date);
+	const dateString = date_to_string(date, false);
 
 	const day = await get(`/api/v1/on/${dateString}`);
 	if (!day) {
 		return;
 	}
 
-	place_boxes(day.periods, date, true, setCurrent || dateString === date_to_string());
+	place_boxes(day.periods, date, true, setCurrent || dateString === date_to_string(current_date(), false));
 
 	if (setCurrent) {
 		currentSchedule = day;
@@ -80,7 +80,7 @@ async function getSchedules() {
 }
 
 async function getScheduleList(start, end) {
-	const scheduleList = await get(`/api/v1/schedule/from/${date_to_string(start)}/to/${date_to_string(end)}`);
+	const scheduleList = await get(`/api/v1/schedule/from/${date_to_string(start, false)}/to/${date_to_string(end, false)}`);
 	if (!schedules) {
 		return;
 	}
@@ -118,7 +118,7 @@ scheduleSelect.addEventListener('change', () => {
 	}
 });
 
-dateSelect.valueAsDate = current_date();
+dateSelect.value = date_to_string(current_date(), false);
 
 dateSelect.addEventListener('change', () => {
 	getDate(dateSelect.valueAsDate);
