@@ -213,7 +213,7 @@ function bytes_to_color(bytes) {
 }
 
 // Detect whether text should be black or white based on the background color
-function black_or_white(color) {
+function black_or_white(color, opacity = 1) {
 	if (!color.startsWith('#')) {
 		color = `#${color}`;
 	}
@@ -222,7 +222,7 @@ function black_or_white(color) {
 	const g = Number.parseInt(color.slice(3, 5), 16);
 	const b = Number.parseInt(color.slice(5, 7), 16);
 	const luma = (0.2126 * r) + (0.7152 * g) + (0.0722 * b);
-	return luma > 128 ? 'black' : 'white';
+	return luma > 128 ? `rgba(0, 0, 0, ${opacity})` : `rgba(255, 255, 255, ${opacity})`;
 }
 
 function getUTCOffset() {

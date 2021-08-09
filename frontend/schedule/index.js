@@ -32,7 +32,7 @@ async function getDate(date = current_date(), setCurrent = false) {
 		return;
 	}
 
-	place_boxes(day.periods, date, true, setCurrent || dateString === date_to_string(current_date(), false));
+	place_boxes(day, date, true, setCurrent || dateString === date_to_string(current_date(), false));
 
 	if (setCurrent) {
 		currentSchedule = day;
@@ -100,7 +100,7 @@ async function getScheduleList(start, end) {
 		const textColor = black_or_white(backgroundColor);
 		return {
 			code: scheduleCode,
-			schedule: schedule?.periods || [],
+			data: schedule,
 			name,
 			date,
 			backgroundColor,
@@ -114,7 +114,7 @@ async function getScheduleList(start, end) {
 scheduleSelect.addEventListener('change', () => {
 	const selected = scheduleSelect.value;
 	if (schedules[selected]) {
-		place_boxes(schedules[selected].periods, current_date(), true, scheduleSelect.options[scheduleSelect.selectedIndex].text === currentSchedule.friendly_name);
+		place_boxes(schedules[selected], current_date(), true, scheduleSelect.options[scheduleSelect.selectedIndex].text === currentSchedule.friendly_name);
 	}
 });
 
@@ -158,11 +158,11 @@ endOfNextWeek.setDate(endOfNextWeek.getDate() + (CALENDAR_WEEKS * 7));
 
 			td.querySelector('.day-schedule').style.backgroundColor = day.backgroundColor;
 			td.querySelector('.day-schedule').style.color = day.textColor;
-			if (day.schedule.length === 0) {
+			if (day.data.periods.length === 0) {
 				td.classList.add('no-periods');
 			} else {
 				td.addEventListener('click', () => {
-					place_boxes(day.schedule, day.date, true, day.date.toLocaleDateString() === current_date().toLocaleDateString());
+					place_boxes(day.data, day.date, true, day.date.toLocaleDateString() === current_date().toLocaleDateString());
 					scheduleSelect.value = day.code;
 					dateSelect.value = date_to_string(day.date);
 				});

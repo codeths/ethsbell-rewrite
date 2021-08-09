@@ -68,7 +68,8 @@ body {
 	vertical-align: top;
 }
 
-#calendar-table table th, #calendar-table table td {
+#calendar-table table th,
+#calendar-table table td {
 	padding: 15px 10px;
 	text-align: left;
 }
@@ -84,7 +85,8 @@ body {
 	font-family: sans-serif;
 }
 
-#schedule-select, #date-select {
+#schedule-select,
+#date-select {
 	width: 250px;
 	height: 25px;
 	margin: 10px;
@@ -174,8 +176,8 @@ body {
 }
 
 #calendar-today .event-child {
-	border: 1px solid black;
 	border-radius: 5px;
+	box-shadow: 3px 3px 10px 2px rgba(0, 0, 0, 0.2);
 	background-color: white;
 	padding: 4px;
 	margin: 3px;
