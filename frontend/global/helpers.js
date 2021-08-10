@@ -121,7 +121,7 @@ function date_string_to_date(dateString) {
 
 function human_time(time) {
 	const date = date_from_api(time);
-	return date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', timeZone: 'America/Chicago' });
+	return date.toLocaleTimeString('en-US', {hour: 'numeric', minute: '2-digit', timeZone: 'America/Chicago'});
 }
 
 // Gets a human readable duration from an epoch timestamp
@@ -232,7 +232,7 @@ function black_or_white(color, opacity = 1) {
 }
 
 function getUTCOffset() {
-	return Number.parseInt(new Date(new Date().setUTCHours(0, 0, 0, 0)).toLocaleTimeString('en-US', { timeZone: 'America/Chicago', hour12: false }).split(':')[0], 10) - 24;
+	return Number.parseInt(new Date(new Date().setUTCHours(0, 0, 0, 0)).toLocaleTimeString('en-US', {timeZone: 'America/Chicago', hour12: false}).split(':')[0], 10) - 24;
 }
 
 function dateStringToDate(dateString) {
