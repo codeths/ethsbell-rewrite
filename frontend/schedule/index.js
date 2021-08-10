@@ -11,28 +11,28 @@ let currentSchedule = {};
 
 getel('today').addEventListener('click', () => {
 	dateSelect.value = date_to_string(current_date(), false);
-	getDate(dateSelect.valueAsDate);
+	getDate(dateSelect.value);
 });
 
 getel('previous').addEventListener('click', () => {
 	dateSelect.valueAsDate = new Date(dateSelect.valueAsDate.getTime() - 1000 * 60 * 60 * 24);
-	getDate(dateSelect.valueAsDate);
+	getDate(dateSelect.value);
 });
 
 getel('next').addEventListener('click', () => {
 	dateSelect.valueAsDate = new Date(dateSelect.valueAsDate.getTime() + 1000 * 60 * 60 * 24);
-	getDate(dateSelect.valueAsDate);
+	getDate(dateSelect.value);
 });
 
 async function getDate(date = current_date(), setCurrent = false) {
-	const dateString = date_to_string(date, false);
+	const dateString = typeof date === 'string' ? date : date_to_string(date, false);
 
 	const day = await get(`/api/v1/on/${dateString}`);
 	if (!day) {
 		return;
 	}
 
-	place_boxes(day, date, true, setCurrent || dateString === date_to_string(current_date(), false));
+	place_boxes(day, typeof date === 'string' ? date_string_to_date(date, true) : date, true, setCurrent || dateString === date_to_string(current_date(), false));
 
 	if (setCurrent) {
 		currentSchedule = day;
@@ -121,7 +121,7 @@ scheduleSelect.addEventListener('change', () => {
 dateSelect.value = date_to_string(current_date(), false);
 
 dateSelect.addEventListener('change', () => {
-	getDate(dateSelect.valueAsDate);
+	getDate(dateSelect.value);
 });
 
 const startOfWeek = current_date();
