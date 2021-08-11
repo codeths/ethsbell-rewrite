@@ -1,7 +1,7 @@
 {
 	"$schema": "../schema/Map_of_ScheduleType.json",
 	"monday": {
-		"friendly_name": "PD Monday",
+		"friendly_name": "Wildkit Monday",
 		"periods": [
 			{
 				"friendly_name": "Early Bird",
