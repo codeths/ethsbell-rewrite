@@ -98,7 +98,16 @@ getel('save').addEventListener('click', () => {
 });
 
 getel('download').addEventListener('click', () => {
-	alert('doesn\'t work yet');
+	const blob = new Blob([JSON.stringify(working_copy)], {
+		type: 'application/json',
+	});
+	
+	const url = URL.createObjectURL(blob);
+	const a = document.createElement('a');
+	a.href = url;
+	a.download = 'ethsbell.json';
+	a.click();
+	URL.revokeObjectURL(url);
 });
 
 getel('default-page').addEventListener('input', event => {
