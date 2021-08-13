@@ -13,7 +13,7 @@ const config = JSON.parse(localStorage.getItem('schedule')) || {
 	background_color: '#c34614',
 	foreground_text_color: '#ffffff',
 	background_text_color: '#ffffff',
-	include_period_name: true
+	include_period_name: true,
 };
 
 function replace_period(period) {
@@ -29,8 +29,13 @@ function replace_period(period) {
 		const class_id = period.kind.Class || period.kind.ClassOrLunch;
 		const class_cfg = config.schedule[class_id];
 		if (class_cfg) {
-			if (class_cfg.name) period.friendly_name = config.include_period_name || config.include_period_name == undefined ? `${period.friendly_name} - ${class_cfg.name}` : class_cfg.name;
-			if (class_cfg.url) period.url = class_cfg.url;
+			if (class_cfg.name) {
+				period.friendly_name = config.include_period_name || config.include_period_name === undefined ? `${period.friendly_name} - ${class_cfg.name}` : class_cfg.name;
+			}
+
+			if (class_cfg.url) {
+				period.url = class_cfg.url;
+			}
 		}
 
 		return period;

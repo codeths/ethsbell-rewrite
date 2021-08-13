@@ -16,13 +16,14 @@ getel('upload').addEventListener('click', async () => {
 	}
 
 	localStorage.setItem('schedule', text);
+	broadcastConfigToExtension();
 	populate();
 	setTheme();
 	alert('Settings imported.');
 });
 
 getel('cfg').addEventListener('change', () => {
-	getel('upload').disabled = getel('cfg').files.length != 1
+	getel('upload').disabled = getel('cfg').files.length !== 1;
 });
 
 function getel(id) {
@@ -58,7 +59,7 @@ function populate() {
 		{name: 'Block 7', code: 'Block7'},
 		{name: 'Block 8', code: 'Block8'},
 	].map(x => `<tr><td>${x.name}</td><td><input data-for="name" data-period="${x.code}" value="${initial.schedule[x.code]?.name || ''}"}></td><td><input type="url" data-for="url" data-period="${x.code}" value="${initial.schedule[x.code]?.url || ''}"}></td></tr>`).join('\n');
-	getel('include_period_name').checked = initial.include_period_name || initial.include_period_name == undefined;
+	getel('include_period_name').checked = initial.include_period_name || initial.include_period_name === undefined;
 }
 
 populate();
@@ -89,6 +90,7 @@ getel('save-schedule').addEventListener('click', () => {
 	data.include_period_name = getel('include_period_name').checked;
 
 	localStorage.setItem('schedule', JSON.stringify(data));
+	broadcastConfigToExtension();
 	alert('Saved.');
 });
 
@@ -98,6 +100,7 @@ getel('save-default').addEventListener('click', () => {
 	data.default_page = getel('default-page').value;
 
 	localStorage.setItem('schedule', JSON.stringify(data));
+	broadcastConfigToExtension();
 	alert('Saved.');
 });
 
@@ -110,6 +113,7 @@ getel('save-colors').addEventListener('click', () => {
 	data.background_text_color = getel('background_text_color').value;
 
 	localStorage.setItem('schedule', JSON.stringify(data));
+	broadcastConfigToExtension();
 	setTheme();
 	alert('Saved.');
 });
@@ -140,6 +144,7 @@ getel('reset-colors').addEventListener('click', () => {
 	data.background_text_color = '#ffffff';
 
 	localStorage.setItem('schedule', JSON.stringify(data));
+	broadcastConfigToExtension();
 	setTheme();
 	populate();
 });
@@ -154,6 +159,12 @@ getel('reset-schedule').addEventListener('click', () => {
 	data.schedule = {};
 
 	localStorage.setItem('schedule', JSON.stringify(data));
+	broadcastConfigToExtension();
 	populate();
 });
 
+function broadcastConfigToExtension() {
+	if (chrome && chrome.runtime) {
+		chrome.runtime.sendMessage('gbkjjbecehodfeijbdmoieepgmfdlgle', {message: 'schedule', data: localStorage.getItem('schedule')});
+	}
+}

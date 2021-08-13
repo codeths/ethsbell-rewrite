@@ -47,7 +47,8 @@
 			"put_period_to_element",
 			"date_from_api",
 			"date_string_to_date",
-			"setTheme"
+			"setTheme",
+			"chrome"
 		],
 		"rules": {
 			"camelcase": 0,
