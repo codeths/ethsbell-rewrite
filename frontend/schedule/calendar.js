@@ -147,12 +147,12 @@ function place_boxes(data_unprocessed, date = current_date(), force = false, tod
 
 		const nameElement = document.createElement('span');
 		nameElement.classList.add('event-name');
-		nameElement.textContent = event.period.friendly_name;
+		nameElement.innerHTML = period_html(event.period);
 		childElement.append(nameElement);
 
 		const timeElement = document.createElement('span');
 		timeElement.classList.add('event-time');
-		timeElement.textContent = `${human_time(event.period.start)} - ${human_time(event.period.end)} (${human_time_left(event.period.end, event.period.start, true)})`;
+		timeElement.innerHTML = `${human_time(event.period.start)} - ${human_time(event.period.end)} (${human_time_left(event.period.end, event.period.start, true)})`;
 		childElement.append(timeElement);
 
 		element.append(childElement);
