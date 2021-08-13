@@ -48,8 +48,8 @@ function populate() {
 	getel('default-page').value = initial.default_page || '/';
 	getel('cfg_body').innerHTML = [
 		{name: 'Early Bird', code: 'EarlyBird'},
-		{name: 'Lunch 1', code: 'Lunch1'},
-		{name: 'Lunch 2', code: 'Lunch2'},
+		{name: 'Lunch 1', code: 'Lunch 1'},
+		{name: 'Lunch 2', code: 'Lunch 2'},
 		{name: 'Block 1', code: 'Block1'},
 		{name: 'Block 2', code: 'Block2'},
 		{name: 'Block 3', code: 'Block3'},
