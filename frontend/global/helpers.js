@@ -49,7 +49,7 @@ function process(data) {
 }
 
 function period_html(period) {
-	return period ? (period.url ? `<a href=${period.url}>${period.friendly_name}</a>` : period.friendly_name) : 'None';
+	return period ? (period.url ? `<a href=${period.url}>${period.friendly_name.replaceAll('<', '&gt;').replaceAll('>', '&lt;')}</a>` : period.friendly_name.replaceAll('<', '&gt;').replaceAll('>', '&lt;')) : 'None';
 }
 
 function getel(id) {
