@@ -1,7 +1,7 @@
 getel('upload').addEventListener('click', async () => {
 	const file = (getel('cfg')).files[0];
 	if (!file) {
-		getel('status').innerHTML = 'No file provided';
+		alert('Please select a file');
 		return;
 	}
 
@@ -11,13 +11,18 @@ getel('upload').addEventListener('click', async () => {
 	try {
 		data = JSON.parse(text);
 	} catch {
-		getel('status').innerHTML = 'Invalid json';
+		alert('Invalid file contents');
 		return;
 	}
 
 	localStorage.setItem('schedule', text);
-	update_working();
-	getel('status').innerHTML = 'OK';
+	populate();
+	setTheme();
+	alert('Settings imported.');
+});
+
+getel('cfg').addEventListener('change', () => {
+	getel('upload').disabled = getel('cfg').files.length != 1
 });
 
 function getel(id) {
@@ -25,83 +30,95 @@ function getel(id) {
 	return document.querySelector(selector);
 }
 
-let working_copy = JSON.parse(localStorage.getItem('schedule')) || {
-	schedule: {},
-	foreground_color: '#1a2741',
-	background_color: '#c34614',
-	foreground_text_color: '#ffffff',
-	background_text_color: '#ffffff',
-};
+function populate() {
+	const initial = JSON.parse(localStorage.getItem('schedule')) || {
+		schedule: {},
+		foreground_color: '#1a2741',
+		background_color: '#c34614',
+		foreground_text_color: '#ffffff',
+		background_text_color: '#ffffff',
+		include_period_name: true,
+	};
 
-getel('class_id').addEventListener('change', switchClass);
-switchClass();
+	getel('foreground_color').value = initial.foreground_color;
+	getel('background_color').value = initial.background_color;
+	getel('foreground_text_color').value = initial.foreground_text_color;
+	getel('background_text_color').value = initial.background_text_color;
+	getel('default-page').value = initial.default_page || '/';
+	getel('cfg_body').innerHTML = [
+		{name: 'Early Bird', code: 'EarlyBird'},
+		{name: 'Lunch 1', code: 'Lunch1'},
+		{name: 'Lunch 2', code: 'Lunch2'},
+		{name: 'Block 1', code: 'Block1'},
+		{name: 'Block 2', code: 'Block2'},
+		{name: 'Block 3', code: 'Block3'},
+		{name: 'Block 4', code: 'Block4'},
+		{name: 'Block 5', code: 'Block5'},
+		{name: 'Block 6', code: 'Block6'},
+		{name: 'Block 7', code: 'Block7'},
+		{name: 'Block 8', code: 'Block8'},
+	].map(x => `<tr><td>${x.name}</td><td><input data-for="name" data-period="${x.code}" value="${initial.schedule[x.code]?.name || ''}"}></td><td><input type="url" data-for="url" data-period="${x.code}" value="${initial.schedule[x.code]?.url || ''}"}></td></tr>`).join('\n');
+	getel('include_period_name').checked = initial.include_period_name || initial.include_period_name == undefined;
+}
+
 populate();
 
-function switchClass() {
-	const id = getel('class_id').value;
-	if (id === '') {
-		return;
+getel('save-schedule').addEventListener('click', () => {
+	const schedule = {};
+	for (const x of [...document.querySelectorAll('input[data-for=name]')]) {
+		const period = x.getAttribute('data-period');
+		if (!schedule[period]) {
+			schedule[period] = {};
+		}
+
+		schedule[period].name = x.value || null;
 	}
 
-	const data = working_copy.schedule[id];
-	getel('name').value = data ? data.name : id;
-	getel('url').value = data ? data.url || '' : '';
-}
+	for (const x of [...document.querySelectorAll('input[data-for=url]')]) {
+		const period = x.getAttribute('data-period');
+		if (!schedule[period]) {
+			schedule[period] = {};
+		}
 
-getel('name').addEventListener('input', update_working);
-getel('url').addEventListener('input', update_working);
-getel('foreground_color').addEventListener('input', update_working);
-getel('background_color').addEventListener('input', update_working);
-getel('foreground_text_color').addEventListener('input', update_working);
-getel('background_text_color').addEventListener('input', update_working);
-
-function populate() {
-	getel('foreground_color').value = working_copy.foreground_color;
-	getel('background_color').value = working_copy.background_color;
-	getel('foreground_text_color').value = working_copy.foreground_text_color;
-	getel('background_text_color').value = working_copy.background_text_color;
-	getel('default-page').value = working_copy.default_page || '/';
-}
-
-function update_working() {
-	working_copy.foreground_color = getel('foreground_color').value;
-	working_copy.background_color = getel('background_color').value;
-	working_copy.foreground_text_color = getel('foreground_text_color').value;
-	working_copy.background_text_color = getel('background_text_color').value;
-	const id = getel('class_id').value;
-	let name = getel('name').value;
-	if (name.length === 0) {
-		name = undefined;
+		schedule[period].url = x.value || null;
 	}
 
-	let url = getel('url').value;
-	if (url.length === 0) {
-		url = undefined;
-	} else if (!url.includes('://')) {
-		url = 'https://' + url;
-	}
+	const data = JSON.parse(localStorage.getItem('schedule') || '{}');
 
-	if (name) {
-		working_copy.schedule[id] = {
-			name,
-			url,
-		};
-	} else {
-		delete working_copy.schedule[id];
-	}
-}
+	data.schedule = schedule;
+	data.include_period_name = getel('include_period_name').checked;
 
-getel('save').addEventListener('click', () => {
-	update_working();
-	localStorage.setItem('schedule', JSON.stringify(working_copy));
-	window.location.replace(window.location);
+	localStorage.setItem('schedule', JSON.stringify(data));
+	alert('Saved.');
+});
+
+getel('save-default').addEventListener('click', () => {
+	const data = JSON.parse(localStorage.getItem('schedule') || '{}');
+
+	data.default_page = getel('default-page').value;
+
+	localStorage.setItem('schedule', JSON.stringify(data));
+	alert('Saved.');
+});
+
+getel('save-colors').addEventListener('click', () => {
+	const data = JSON.parse(localStorage.getItem('schedule') || '{}');
+
+	data.foreground_color = getel('foreground_color').value;
+	data.background_color = getel('background_color').value;
+	data.foreground_text_color = getel('foreground_text_color').value;
+	data.background_text_color = getel('background_text_color').value;
+
+	localStorage.setItem('schedule', JSON.stringify(data));
+	setTheme();
+	alert('Saved.');
 });
 
 getel('download').addEventListener('click', () => {
-	const blob = new Blob([JSON.stringify(working_copy)], {
+	const blob = new Blob([localStorage.getItem('schedule')], {
 		type: 'application/json',
 	});
-	
+
 	const url = URL.createObjectURL(blob);
 	const a = document.createElement('a');
 	a.href = url;
@@ -110,26 +127,33 @@ getel('download').addEventListener('click', () => {
 	URL.revokeObjectURL(url);
 });
 
-getel('default-page').addEventListener('input', event => {
-	working_copy.default_page = event.target.value;
-});
-
 getel('reset-colors').addEventListener('click', () => {
-	working_copy = Object.assign(working_copy, {
-		foreground_color: '#1a2741',
-		background_color: '#c34614',
-		foreground_text_color: '#ffffff',
-		background_text_color: '#ffffff',
-	});
+	if (!confirm('Are you sure you want to reset?')) {
+		return;
+	}
+
+	const data = JSON.parse(localStorage.getItem('schedule') || '{}');
+
+	data.foreground_color = '#1a2741';
+	data.background_color = '#c34614';
+	data.foreground_text_color = '#ffffff';
+	data.background_text_color = '#ffffff';
+
+	localStorage.setItem('schedule', JSON.stringify(data));
+	setTheme();
 	populate();
-	localStorage.setItem('schedule', JSON.stringify(working_copy));
-	window.location.replace(window.location);
 });
 
 getel('reset-schedule').addEventListener('click', () => {
-	working_copy.schedule = {};
-	update_working();
-	localStorage.setItem('schedule', JSON.stringify(working_copy));
-	window.location.replace(window.location);
+	if (!confirm('Are you sure you want to reset?')) {
+		return;
+	}
+
+	const data = JSON.parse(localStorage.getItem('schedule') || '{}');
+
+	data.schedule = {};
+
+	localStorage.setItem('schedule', JSON.stringify(data));
+	populate();
 });
 
