@@ -13,6 +13,7 @@ const config = JSON.parse(localStorage.getItem('schedule')) || {
 	background_color: '#c34614',
 	foreground_text_color: '#ffffff',
 	background_text_color: '#ffffff',
+	include_period_name: true
 };
 
 function replace_period(period) {
@@ -28,8 +29,8 @@ function replace_period(period) {
 		const class_id = period.kind.Class || period.kind.ClassOrLunch;
 		const class_cfg = config.schedule[class_id];
 		if (class_cfg) {
-			period.friendly_name = class_cfg.name;
-			period.url = class_cfg.url;
+			if (class_cfg.name) period.friendly_name = config.include_period_name || config.include_period_name == undefined ? `${period.friendly_name} - ${class_cfg.name}` : class_cfg.name;
+			if (class_cfg.url) period.url = class_cfg.url;
 		}
 
 		return period;
@@ -244,6 +245,10 @@ function dateStringToDate(dateString) {
 
 // Apply user colors
 window.addEventListener('load', () => {
+	setTheme();
+});
+
+function setTheme() {
 	const cfg = JSON.parse(localStorage.getItem('schedule'));
 
 	document.querySelector('meta[name=theme-color]').setAttribute('content', (cfg || {}).foreground_color || '#1a2741');
@@ -267,7 +272,7 @@ window.addEventListener('load', () => {
 	if (cfg.foreground_text_color) {
 		document.querySelector('body').style.setProperty('--foreground_text_color', cfg.foreground_text_color);
 	}
-});
+}
 
 Object.assign(window, {
 	black_or_white,
@@ -292,6 +297,7 @@ Object.assign(window, {
 	replace_period,
 	toggleFullScreen,
 	put_period_to_element,
+	setTheme,
 });
 
 // Writes a period to an element and its children

@@ -46,7 +46,8 @@
 			"replace_period",
 			"put_period_to_element",
 			"date_from_api",
-			"date_string_to_date"
+			"date_string_to_date",
+			"setTheme"
 		],
 		"rules": {
 			"camelcase": 0,
