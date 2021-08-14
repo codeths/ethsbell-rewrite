@@ -277,7 +277,7 @@ function setTheme() {
 
 function broadcastConfigToExtension() {
 	if (chrome && chrome.runtime) {
-		chrome.runtime.sendMessage('mjlibnbeekioideecjkkmiflkhpohepm', {message: 'schedule', data: localStorage.getItem('schedule')});
+		chrome.runtime.sendMessage('gbkjjbecehodfeijbdmoieepgmfdlgle', {message: 'schedule', data: localStorage.getItem('schedule')});
 	}
 }
 
