@@ -172,9 +172,3 @@ getel('reset-schedule').addEventListener('click', () => {
 	broadcastConfigToExtension();
 	populate();
 });
-
-function broadcastConfigToExtension() {
-	if (chrome && chrome.runtime) {
-		chrome.runtime.sendMessage('gbkjjbecehodfeijbdmoieepgmfdlgle', {message: 'schedule', data: localStorage.getItem('schedule')});
-	}
-}

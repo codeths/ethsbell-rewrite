@@ -48,7 +48,8 @@
 			"date_from_api",
 			"date_string_to_date",
 			"setTheme",
-			"chrome"
+			"chrome",
+			"broadcastConfigToExtension"
 		],
 		"rules": {
 			"camelcase": 0,

@@ -275,6 +275,14 @@ function setTheme() {
 	}
 }
 
+function broadcastConfigToExtension() {
+	if (chrome && chrome.runtime) {
+		chrome.runtime.sendMessage('mjlibnbeekioideecjkkmiflkhpohepm', {message: 'schedule', data: localStorage.getItem('schedule')});
+	}
+}
+
+broadcastConfigToExtension();
+
 Object.assign(window, {
 	black_or_white,
 	bytes_to_color,
@@ -299,6 +307,7 @@ Object.assign(window, {
 	toggleFullScreen,
 	put_period_to_element,
 	setTheme,
+	broadcastConfigToExtension,
 });
 
 // Writes a period to an element and its children
