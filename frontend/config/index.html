@@ -66,6 +66,44 @@
 			<input type="file" id="cfg" />
 			<br />
 			<button id="upload" disabled>Import</button>
+			<br><br>
+			<div class="collapsible">
+				<label for="collapse">Click to display format documentation...</label>
+				<input id="collapse" class="collapse" type="checkbox" />
+				<div class="content">
+					<p>
+						You can make your own schedule file with a standard text editor. A
+						schedule file should look like this, omitting content after "//".
+					</p>
+					<pre>
+{
+	"schedule": {
+		"Block1": {
+			"name": "Your First Period Class",
+			"url": "https://meet.google.com/whatever"
+		},
+		"Block3": {
+			"name": "Second Period Class",
+			"url": "https://classroom.google.com/whatever"
+		}
+		"Block3": {
+			"name": "Class With No Teleconferencing or Classroom Link",
+			"url": undefined
+		}
+		...
+		// You can also define classes that aren't present in the above menu,
+		// if a special schedule is added in the future that uses them.
+	},
+	"foreground_color": "#1a2741",
+	"background_color": "#c34614",
+	"foreground_text_color": "#ffffff",
+	"background_text_color": "#ffffff",
+	// This can be set to any URL, but ideally it should point to a path under our domain.
+	"default_page": "/timeline",
+	"include_period_name": false,
+}</pre>
+				</div>
+			</div>
 		</div>
 	</body>
 </html>
