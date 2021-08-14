@@ -172,3 +172,7 @@ getel('reset-schedule').addEventListener('click', () => {
 	broadcastConfigToExtension();
 	populate();
 });
+
+getel('instructions_toggle').addEventListener('click', () => {
+	getel('instructions').classList.toggle('show');
+});
