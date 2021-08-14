@@ -67,10 +67,8 @@
 			<br />
 			<button id="upload" disabled>Import</button>
 			<br><br>
-			<div class="collapsible">
-				<label for="collapse">Click to display format documentation...</label>
-				<input id="collapse" class="collapse" type="checkbox" />
-				<div class="content">
+			<div id="instructions_toggle">[Advanced] Click here for instructions to manually write a config file</div>
+			<div id="instructions">
 					<p>
 						You can make your own schedule file with a standard text editor. A
 						schedule file should look like this, omitting content after "//".
@@ -81,11 +79,23 @@
 					<pre>
 {
 	"schedule": {
+		"Early Bird": {
+			"name": "Early Bird Class",
+			"url": "https://meet.google.com/whatever"
+		},
+		"Lunch 1": {
+			"name": "Your Lunch 1",
+			"url": "https://meet.google.com/whatever"
+		},
+		"Lunch 2": {
+			"name": "Your Lunch 2",
+			"url": "https://meet.google.com/whatever"
+		},
 		"Block1": {
 			"name": "Your First Period Class",
 			"url": "https://meet.google.com/whatever"
 		},
-		"Block3": {
+		"Block2": {
 			"name": "Second Period Class",
 			"url": "https://classroom.google.com/whatever"
 		}
@@ -105,7 +115,6 @@
 	"default_page": "/timeline",
 	"include_period_name": false,
 }</pre>
-				</div>
 			</div>
 		</div>
 	</body>

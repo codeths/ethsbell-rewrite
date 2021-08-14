@@ -17,12 +17,13 @@ pre {
 	tab-size: 2;
 }
 
-.collapsible > .collapse + .content {
+#instructions:not(.show) {
 	display: none;
 }
 
-.collapsible > .collapse:checked + .content {
-	display: block;
+#instructions_toggle {
+	cursor: pointer;
+	text-decoration: underline;
 }
 
 nav.abs {
