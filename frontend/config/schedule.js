@@ -27,7 +27,7 @@ getel('cfg').addEventListener('change', () => {
 });
 
 getel('include_period_name').addEventListener('change', () => {
-	populate();
+	editPeriodExample();
 });
 
 function getel(id) {
@@ -64,6 +64,10 @@ function populate() {
 		{name: 'Block 8', code: 'Block8'},
 	].map(x => `<tr><td>${x.name}</td><td><input data-for="name" data-period="${x.code}" value="${initial.schedule[x.code]?.name || ''}"}></td><td><input type="url" data-for="url" data-period="${x.code}" value="${initial.schedule[x.code]?.url || ''}"}></td></tr>`).join('\n');
 	getel('include_period_name').checked = initial.include_period_name || initial.include_period_name === undefined;
+	editPeriodExample();
+}
+
+function editPeriodExample() {
 	// Sometimes I just like to watch the world burn.
 	getel('example_name').innerHTML = `<a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ">${getel('include_period_name').checked ? 'Block 1 - Custom Name' : 'Custom Name'}</a>`;
 }
