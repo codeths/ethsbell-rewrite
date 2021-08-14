@@ -276,8 +276,10 @@ function setTheme() {
 }
 
 function broadcastConfigToExtension() {
-	if (chrome && chrome.runtime) {
+	try {
 		chrome.runtime.sendMessage('gbkjjbecehodfeijbdmoieepgmfdlgle', {message: 'schedule', data: localStorage.getItem('schedule')});
+	} catch (error) {
+		console.warn('Failed to write new extension config; probably not Chrome. No action is required.', error);
 	}
 }
 
