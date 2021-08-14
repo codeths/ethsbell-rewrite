@@ -410,7 +410,7 @@ dependencies = [
 
 [[package]]
 name = "ethsbell-rewrite"
-version = "1.5.2"
+version = "1.6.0"
 dependencies = [
  "base64 0.13.0",
  "chrono",
@@ -1605,7 +1605,7 @@ dependencies = [
 [[package]]
 name = "rocket_prometheus"
 version = "0.8.1"
-source = "git+https://github.com/chromezoneeths/rocket_prometheus#0d0d18640581ad14416498fecad0ff5217c13b2f"
+source = "git+https://github.com/chromezoneeths/rocket_prometheus#9fc101dc95c75803b1ff18b50a17bbc789cc4ceb"
 dependencies = [
  "prometheus",
  "rocket",
