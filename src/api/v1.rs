@@ -289,7 +289,7 @@ fn today_code(
 fn today_now(
 	schedule: State<Arc<RwLock<Schedule>>>,
 	timestamp: Option<i64>,
-) -> Option<Json<Vec<Period>>> {
+) -> Json<Vec<Period>> {
 	Schedule::update_if_needed_async(schedule.clone());
 	let now = match timestamp {
 		None => Local::now(),
@@ -300,13 +300,9 @@ fn today_now(
 	let now_date = now.date();
 	let now_time = now.time();
 	let schedule = schedule.read().unwrap().on_date(now_date.naive_local());
-	match schedule.0.at_time(now_time).1 {
-		mut period if !period.is_empty() => {
-			period.iter_mut().for_each(|v| *v = v.clone().populate(now));
-			Some(Json(period))
-		}
-		_ => None,
-	}
+	let mut period = schedule.0.at_time(now_time).1;
+	period.iter_mut().for_each(|v| *v = v.clone().populate(now));
+	Json(period)
 }
 
 /// Returns the current period type and its neighbors.
