@@ -1,3 +1,7 @@
+getel('reset').addEventListener('click', () => {
+	localStorage.clear();
+});
+
 getel('upload').addEventListener('click', async () => {
 	const file = (getel('cfg')).files[0];
 	if (!file) {
