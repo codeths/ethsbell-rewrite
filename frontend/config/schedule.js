@@ -1,6 +1,15 @@
-getel('reset').addEventListener('click', () => {
-	localStorage.clear();
-});
+const defaultConfig = {
+	schedule: {},
+	foreground_color: '#1a2741',
+	background_color: '#c34614',
+	foreground_text_color: '#ffffff',
+	background_text_color: '#ffffff',
+	include_period_name: true,
+}
+
+function getConfig() {
+	return Object.assign(defaultConfig, JSON.parse(localStorage.getItem('schedule')) || "{}");
+}
 
 getel('upload').addEventListener('click', async () => {
 	const file = (getel('cfg')).files[0];
@@ -40,14 +49,7 @@ function getel(id) {
 }
 
 function populate() {
-	const initial = JSON.parse(localStorage.getItem('schedule')) || {
-		schedule: {},
-		foreground_color: '#1a2741',
-		background_color: '#c34614',
-		foreground_text_color: '#ffffff',
-		background_text_color: '#ffffff',
-		include_period_name: true,
-	};
+	const initial = getConfig();
 
 	getel('foreground_color').value = initial.foreground_color;
 	getel('background_color').value = initial.background_color;
@@ -98,7 +100,7 @@ getel('save-schedule').addEventListener('click', () => {
 		schedule[period].url = x.value || null;
 	}
 
-	const data = JSON.parse(localStorage.getItem('schedule') || '{}');
+	const data = getConfig();
 
 	data.schedule = schedule;
 	data.include_period_name = getel('include_period_name').checked;
@@ -109,7 +111,7 @@ getel('save-schedule').addEventListener('click', () => {
 });
 
 getel('save-default').addEventListener('click', () => {
-	const data = JSON.parse(localStorage.getItem('schedule') || '{}');
+	const data = getConfig();
 
 	data.default_page = getel('default-page').value;
 
@@ -119,7 +121,7 @@ getel('save-default').addEventListener('click', () => {
 });
 
 getel('save-colors').addEventListener('click', () => {
-	const data = JSON.parse(localStorage.getItem('schedule') || '{}');
+	const data = getConfig();
 
 	data.foreground_color = getel('foreground_color').value;
 	data.background_color = getel('background_color').value;
@@ -150,7 +152,7 @@ getel('reset-colors').addEventListener('click', () => {
 		return;
 	}
 
-	const data = JSON.parse(localStorage.getItem('schedule') || '{}');
+	const data = getConfig();
 
 	data.foreground_color = '#1a2741';
 	data.background_color = '#c34614';
@@ -168,7 +170,7 @@ getel('reset-schedule').addEventListener('click', () => {
 		return;
 	}
 
-	const data = JSON.parse(localStorage.getItem('schedule') || '{}');
+	const data = getConfig();
 
 	data.schedule = {};
 
