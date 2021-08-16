@@ -14,7 +14,7 @@ const config = Object.assign({
 	foreground_text_color: '#ffffff',
 	background_text_color: '#ffffff',
 	include_period_name: true,
-}, JSON.parse(localStorage.getItem('schedule')) || "{}")
+}, JSON.parse(localStorage.getItem('schedule')) || '{}');
 
 function replace_period(period) {
 	if (!period) {

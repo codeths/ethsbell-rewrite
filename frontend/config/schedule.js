@@ -5,10 +5,10 @@ const defaultConfig = {
 	foreground_text_color: '#ffffff',
 	background_text_color: '#ffffff',
 	include_period_name: true,
-}
+};
 
 function getConfig() {
-	return Object.assign(defaultConfig, JSON.parse(localStorage.getItem('schedule')) || "{}");
+	return Object.assign(defaultConfig, JSON.parse(localStorage.getItem('schedule')) || '{}');
 }
 
 getel('upload').addEventListener('click', async () => {
