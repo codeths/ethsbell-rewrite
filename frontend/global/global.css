@@ -325,4 +325,6 @@ a {
 	border-radius: 10px;
 	color: white;
 	font-weight: bold;
+	opacity: 0.5;
+	pointer-events: none;
 }
