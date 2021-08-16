@@ -1605,8 +1605,10 @@ dependencies = [
 [[package]]
 name = "rocket_prometheus"
 version = "0.8.1"
-source = "git+https://github.com/chromezoneeths/rocket_prometheus#9fc101dc95c75803b1ff18b50a17bbc789cc4ceb"
+source = "git+https://github.com/chromezoneeths/rocket_prometheus#168bec7a4475d2b7759826510cc8b7f277a42d5c"
 dependencies = [
+ "chrono",
+ "lazy_static",
  "prometheus",
  "rocket",
 ]
