@@ -17,13 +17,17 @@ pre {
 	tab-size: 2;
 }
 
-#instructions:not(.show) {
+label[for="instructions_toggle"] {
+	text-decoration: underline;
+	cursor: pointer;
+}
+
+#instructions_toggle, #instructions_toggle+#instructions {
 	display: none;
 }
 
-#instructions_toggle {
-	cursor: pointer;
-	text-decoration: underline;
+#instructions_toggle:checked+#instructions {
+	display: block;
 }
 
 nav.abs {
