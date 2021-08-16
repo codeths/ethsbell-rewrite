@@ -7,14 +7,14 @@ async function get(endpoint = '/api/v1/today/now/near') {
 		.catch(() => null);
 }
 
-const config = JSON.parse(localStorage.getItem('schedule')) || {
+const config = Object.assign({
 	schedule: {},
 	foreground_color: '#1a2741',
 	background_color: '#c34614',
 	foreground_text_color: '#ffffff',
 	background_text_color: '#ffffff',
 	include_period_name: true,
-};
+}, JSON.parse(localStorage.getItem('schedule')) || "{}")
 
 function replace_period(period) {
 	if (!period) {
@@ -250,7 +250,7 @@ window.addEventListener('load', () => {
 });
 
 function setTheme() {
-	const cfg = JSON.parse(localStorage.getItem('schedule'));
+	const cfg = config;
 
 	document.querySelector('meta[name=theme-color]').setAttribute('content', (cfg || {}).foreground_color || '#1a2741');
 
@@ -277,7 +277,7 @@ function setTheme() {
 
 function broadcastConfigToExtension() {
 	if (typeof chrome !== 'undefined' && typeof chrome.runtime !== 'undefined') {
-		chrome.runtime.sendMessage('gbkjjbecehodfeijbdmoieepgmfdlgle', {message: 'schedule', data: localStorage.getItem('schedule')});
+		chrome.runtime.sendMessage('gbkjjbecehodfeijbdmoieepgmfdlgle', {message: 'schedule', data: JSON.stringify(config)});
 	}
 }
 
