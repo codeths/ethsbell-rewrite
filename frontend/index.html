@@ -1,22 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
-	<head>
-		<meta charset="UTF-8" />
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<title>ETHSBell</title>
-		<link rel="stylesheet" href="index.css" />
-		<include src="include/prelude.html"></include>
-		<script async defer src="index.js"></script>
-		<script src="redirect.js"></script>
-		<script defer src="/global/progress.js"></script>
-		<meta http-equiv="Content-Security-Policy" content="default-src 'self';" />
-	</head>
 
-	<body class="background-color">
-		<include src="include/navbar.html"></include>
-		<div id="wrapper" class="background-color">
-			<!-- <div class="big block text-center content" class="background-color">
+<head>
+	<meta charset="UTF-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>ETHSBell</title>
+	<link rel="stylesheet" href="index.css" />
+	<include src="include/prelude.html"></include>
+	<script async defer src="index.js"></script>
+	<script src="redirect.js"></script>
+	<script defer src="/global/progress.js"></script>
+	<meta http-equiv="Content-Security-Policy" content="default-src 'self';" />
+</head>
+
+<body class="background-color">
+	<include src="include/navbar.html"></include>
+	<div id="wrapper" class="background-color">
+		<!-- <div class="big block text-center content" class="background-color">
 			<span id="period"></span>
 			<br />
 			<span id="end_time"></span>
@@ -24,45 +25,38 @@
 			<span id="next"></span>
 			<br />
 		</div> -->
-			<div class="big block text-center content">
-				<template id="current_period_time_template">
-					<!-- Yes this isn't perfectly centered, I know. What are you gonna do about it? -->
-					<div class="progress">
-						<svg class="progress-ring">
-							<circle
-								class="progress-ring__circle"
-								stroke="white"
-								fill="transparent"
-							/>
-							<circle
-								class="progress-ring__border"
-								stroke="white"
-								fill="transparent"
-								strokewidth="4"
-							/>
-						</svg>
-					</div>
-					<span class="text-wrapper">
-						<span class="name"></span>
-						ends at
-						<b class="end"></b>
-						(in <b class="end_in"></b>).
-					</span>
-				</template>
-				<div class="content">
-					<div class="big" id="current_parent"></div>
-					<div id="next_parent">
-						<div class="divider"></div>
-						<div class="bigish" id="next_period">
-							The next period is <span class="name"></span>, which ends at
-							<span class="end"></span>.
-						</div>
+		<div class="big block text-center content">
+			<template id="current_period_time_template">
+				<!-- Yes this isn't perfectly centered, I know. What are you gonna do about it? -->
+				<div class="progress">
+					<svg class="progress-ring">
+						<circle class="progress-ring__circle" stroke="white" fill="transparent" />
+						<circle class="progress-ring__border" stroke="white" fill="transparent" strokewidth="4" />
+					</svg>
+				</div>
+				<span class="text-wrapper">
+					<span class="name"></span>
+					ends at
+					<b class="end"></b>
+					(in <b class="end_in"></b>).
+				</span>
+			</template>
+			<div class="content">
+				<div class="big" id="current_parent"></div>
+				<div id="next_parent">
+					<div class="divider"></div>
+					<div class="bigish" id="next_period">
+						The next period is <span class="name"></span>, which ends at
+						<span class="end"></span>.
 					</div>
 				</div>
-
-				<div id="progress_parent"></div>
 			</div>
-			<include src="include/fullscreen.html"></include>
+
+			<div id="progress_parent"></div>
 		</div>
-	</body>
+		<include src="include/advisory.html"></include>
+		<include src="include/fullscreen.html"></include>
+	</div>
+</body>
+
 </html>

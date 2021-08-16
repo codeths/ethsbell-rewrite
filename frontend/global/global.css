@@ -6,7 +6,7 @@ nav {
 	padding: 20px 20px;
 }
 
-nav > div {
+nav>div {
 	margin: auto;
 	padding: 0px;
 }
@@ -117,8 +117,7 @@ nav a:hover {
 	color: var(--foreground_text_color);
 }
 
-html,
-body {
+html, body {
 	height: 100%;
 	margin: 0;
 	padding: 0;
@@ -314,4 +313,16 @@ a {
 	top: unset;
 	cursor: pointer;
 	outline: 0;
+}
+
+.advisory:not(:empty) {
+	display: inline-block;
+	position: fixed;
+	bottom: 10px;
+	left: 10px;
+	background-color: red;
+	padding: 10px;
+	border-radius: 10px;
+	color: white;
+	font-weight: bold;
 }
