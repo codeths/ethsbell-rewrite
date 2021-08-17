@@ -167,7 +167,7 @@ setInterval(updateNowBar, 1000);
 function updateNowBar() {
 	const now = current_date().getTime() / 1000;
 	if (nowBarElement && showNowBar && startTime && endTime && now >= startTime && now <= endTime) {
-		nowBarElement.style.top = `${((now - startTime) / 60 * pixels_per_minute) + 10}px`;
+		nowBarElement.style.top = `${((now - startTime) / 60 * pixels_per_minute) + 3}px`;
 		nowBarElement.style.display = 'block';
 	} else {
 		nowBarElement.style.display = 'none';
