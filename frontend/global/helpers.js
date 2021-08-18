@@ -58,16 +58,15 @@ function getel(id) {
 	return document.querySelector(`#${id}`);
 }
 
-async function go(display, shouldSetTimeout = true) {
+async function go(display, shouldSetInterval = true) {
 	if (lastFetchedData) {
 		display(lastFetchedData);
 	}
 
 	const now = Date.now();
 	const endOfMinute = Math.ceil(now / 60000) * 60000;
-	if (shouldSetTimeout) {
-		setTimeout(() => go(display, true), endOfMinute - now);
-		setTimeout(() => go(display, false), 1000);
+	if (shouldSetInterval) {
+		setTimeout(() => go(display), endOfMinute - now);
 	}
 
 	let data = await get();
