@@ -47,7 +47,7 @@ async function hasIssue() {
 		for (const element of document.querySelectorAll('.advisory')) {
 			const narrow_screen = (screen.availWidth / screen.availHeight) < (4 / 3);
 			element.innerHTML = `<span class="advisory-close">&times;</span><a href="https://ethsbell.instatus.com" target="_blank" class="advisory-text">${narrow_screen ? '!!!' : 'ETHSBell is having issues.<br>Click here for more info.'}</a>`;
-			const closebtn = element.querySelector('.close');
+			const closebtn = element.querySelector('.advisory-close');
 			if (closebtn) {
 				closebtn.addEventListener('click', () => {
 					element.innerHTML = '';
