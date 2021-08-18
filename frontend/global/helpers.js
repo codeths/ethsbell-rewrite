@@ -25,8 +25,6 @@ function replace_period(period) {
 		return period.map(v => replace_period(v));
 	}
 
-	period = Object.assign({}, period);
-
 	const class_id = period.kind.Class || period.kind.ClassOrLunch;
 	const class_cfg = config.schedule[class_id] || config.schedule[period.friendly_name];
 	if (class_cfg) {
@@ -58,17 +56,14 @@ function getel(id) {
 	return document.querySelector(`#${id}`);
 }
 
-async function go(display, shouldSetInterval = true) {
+async function go(display) {
 	if (lastFetchedData) {
 		display(lastFetchedData);
 	}
 
 	const now = Date.now();
 	const endOfMinute = Math.ceil(now / 60000) * 60000;
-	if (shouldSetInterval) {
-		setTimeout(() => go(display), endOfMinute - now);
-	}
-
+	setTimeout(() => go(display), endOfMinute - now);
 	let data = await get();
 	if (!data) {
 		return;
