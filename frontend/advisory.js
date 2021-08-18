@@ -46,7 +46,13 @@ async function hasIssue() {
 	if (await hasIssue()) {
 		for (const element of document.querySelectorAll('.advisory')) {
 			const narrow_screen = (screen.availWidth / screen.availHeight) < (4 / 3);
-			element.innerHTML = `<a href="https://ethsbell.instatus.com" target="_blank">${narrow_screen ? '!!!' : 'ETHSBell is having issues.<br>Click here for more info.'}</a>`;
+			element.innerHTML = `<span class="advisory-close">&times;</span><a href="https://ethsbell.instatus.com" target="_blank" class="advisory-text">${narrow_screen ? '!!!' : 'ETHSBell is having issues.<br>Click here for more info.'}</a>`;
+			const closebtn = element.querySelector('.close');
+			if (closebtn) {
+				closebtn.addEventListener('click', () => {
+					element.innerHTML = '';
+				});
+			}
 		}
 	}
 })();
