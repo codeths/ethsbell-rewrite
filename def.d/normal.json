@@ -64,16 +64,10 @@
 			{
 				"friendly_name": "Block 7",
 				"start": "14:05:00",
-				"end": "15:30:00",
+				"end": "15:35:00",
 				"kind": {
 					"Class": "Block7"
 				}
-			},
-			{
-				"friendly_name": "Announcements",
-				"start": "15:30:00",
-				"end": "15:35:00",
-				"kind": "Announcements"
 			}
 		],
 		"regex": "FORCE ORANGE DAY",
@@ -147,16 +141,10 @@
 			{
 				"friendly_name": "Block 8",
 				"start": "14:05:00",
-				"end": "15:30:00",
+				"end": "15:35:00",
 				"kind": {
 					"Class": "Block8"
 				}
-			},
-			{
-				"friendly_name": "Announcements",
-				"start": "15:30:00",
-				"end": "15:35:00",
-				"kind": "Announcements"
 			}
 		],
 		"regex": "FORCE BLUE DAY",
