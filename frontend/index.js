@@ -1,6 +1,7 @@
 const periodText = document.querySelector('#period');
 const endTimeText = document.querySelector('#end_time');
 const nextText = document.querySelector('#next');
+const schedulenameElement = document.querySelector('#schedulename');
 
 let lastData;
 // Gets data from /today/now/near
@@ -68,3 +69,17 @@ function display(data) {
 window.addEventListener('resize', () => display(lastData));
 
 go(display);
+
+async function schedule() {
+	const day = await get('/api/v1/today');
+	if (!day) {
+		return;
+	}
+
+	if (day.periods.length > 0) {
+		schedulenameElement.innerHTML = `${day.friendly_name}`;
+		schedulenameElement.style.display = 'inline-block';
+	}
+}
+
+schedule();

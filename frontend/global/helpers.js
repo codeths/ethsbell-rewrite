@@ -1,7 +1,7 @@
 let lastFetchedData = null;
 
 async function get(endpoint = '/api/v1/today/now/near') {
-	return fetch(`${endpoint}${window.location.search}`)
+	return fetch(`${endpoint}?timestamp=${Math.floor(current_date().getTime() / 1000)}`)
 		.then(x => x.json()
 			.catch(() => null))
 		.catch(() => null);
