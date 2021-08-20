@@ -55,11 +55,6 @@ function display(data) {
 					update_progress_circular(i, new_element);
 				}, 1000));
 				update_progress_circular(i, new_element);
-
-				const timeLeft = date_from_api(i.end).getTime() - Date.now();
-				if (timeLeft <= 0) {
-					setTimeout(() => go(display, false), 2000);
-				}
 			}
 		}
 	} else {

@@ -1,7 +1,7 @@
 let lastFetchedData = null;
 
 async function get(endpoint = '/api/v1/today/now/near') {
-	return fetch(`${endpoint}${window.location.search}`)
+	return fetch(`${endpoint}?timestamp=${Math.floor(current_date().getTime() / 1000)}`)
 		.then(x => x.json()
 			.catch(() => null))
 		.catch(() => null);
@@ -58,16 +58,14 @@ function getel(id) {
 	return document.querySelector(`#${id}`);
 }
 
-async function go(display, shouldSetInterval = true) {
+async function go(display) {
 	if (lastFetchedData) {
 		display(lastFetchedData);
 	}
 
 	const now = Date.now();
 	const endOfMinute = Math.ceil(now / 60000) * 60000;
-	if (shouldSetInterval) {
-		setTimeout(() => go(display), endOfMinute - now);
-	}
+	setTimeout(() => go(display), endOfMinute - now);
 
 	let data = await get();
 	if (!data) {
