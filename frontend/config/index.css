@@ -17,17 +17,13 @@ pre {
 	tab-size: 2;
 }
 
-label[for="instructions_toggle"] {
-	text-decoration: underline;
-	cursor: pointer;
-}
-
-#instructions_toggle, #instructions_toggle+#instructions {
+#instructions:not(.show) {
 	display: none;
 }
 
-#instructions_toggle:checked+#instructions {
-	display: block;
+#instructions_toggle {
+	cursor: pointer;
+	text-decoration: underline;
 }
 
 nav.abs {
@@ -35,5 +31,5 @@ nav.abs {
 }
 
 .background {
-	padding: 0 30px 120px 30px;
+	padding: 0 30px 30px 30px;
 }

@@ -5,7 +5,6 @@
 	align-items: center;
 	justify-content: flex-start;
 	margin-top: 90px;
-	padding-bottom: 60px;
 }
 
 body {
@@ -69,7 +68,8 @@ body {
 	vertical-align: top;
 }
 
-#calendar-table table th, #calendar-table table td {
+#calendar-table table th,
+#calendar-table table td {
 	padding: 15px 10px;
 	text-align: left;
 }
@@ -85,7 +85,8 @@ body {
 	font-family: sans-serif;
 }
 
-#schedule-select, #date-select {
+#schedule-select,
+#date-select {
 	width: 250px;
 	height: 25px;
 	margin: 10px;
