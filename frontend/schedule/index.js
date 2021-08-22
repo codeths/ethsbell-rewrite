@@ -15,34 +15,24 @@ getel('today').addEventListener('click', () => {
 });
 
 getel('previous').addEventListener('click', () => {
-	dateSelect.valueAsDate = new Date(
-		dateSelect.valueAsDate.getTime() - 1000 * 60 * 60 * 24,
-	);
+	dateSelect.valueAsDate = new Date(dateSelect.valueAsDate.getTime() - 1000 * 60 * 60 * 24);
 	getDate(dateSelect.value);
 });
 
 getel('next').addEventListener('click', () => {
-	dateSelect.valueAsDate = new Date(
-		dateSelect.valueAsDate.getTime() + 1000 * 60 * 60 * 24,
-	);
+	dateSelect.valueAsDate = new Date(dateSelect.valueAsDate.getTime() + 1000 * 60 * 60 * 24);
 	getDate(dateSelect.value);
 });
 
 async function getDate(date = current_date(), setCurrent = false) {
-	const dateString
-		= typeof date === 'string' ? date : date_to_string(date, false);
+	const dateString = typeof date === 'string' ? date : date_to_string(date, false);
 
 	const day = await get(`/api/v1/on/${dateString}`);
 	if (!day) {
 		return;
 	}
 
-	place_boxes(
-		day,
-		typeof date === 'string' ? date_string_to_date(date, true) : date,
-		true,
-		setCurrent || dateString === date_to_string(current_date(), false),
-	);
+	place_boxes(day, typeof date === 'string' ? date_string_to_date(date, true) : date, true, setCurrent || dateString === date_to_string(current_date(), false));
 
 	if (setCurrent) {
 		currentSchedule = day;
@@ -63,21 +53,14 @@ async function getSchedules() {
 
 	schedules = today.schedule_types;
 
-	scheduleSelect.innerHTML
-		= '<option value="" disabled selected>Select a Schedule</option>';
+	scheduleSelect.innerHTML = '<option value="" disabled selected>Select a Schedule</option>';
 
 	for (const schedule of Object.keys(schedules).sort((a, b) => {
-		if (
-			(schedules[a].hide && !schedules[b].hide)
-			|| schedules[a].periods.length === 0
-		) {
+		if ((schedules[a].hide && !schedules[b].hide) || schedules[a].periods.length === 0) {
 			return 1;
 		}
 
-		if (
-			(!schedules[a].hide && schedules[b].hide)
-			|| schedules[b].periods.length === 0
-		) {
+		if ((!schedules[a].hide && schedules[b].hide) || schedules[b].periods.length === 0) {
 			return -1;
 		}
 
@@ -88,8 +71,7 @@ async function getSchedules() {
 		if (currentSchedule.friendly_name === schedules[schedule].friendly_name) {
 			option.selected = true;
 		} else {
-			option.hidden
-				= schedules[schedule].hide || schedules[schedule].periods.length === 0;
+			option.hidden = schedules[schedule].hide || schedules[schedule].periods.length === 0;
 		}
 
 		option.innerHTML = schedules[schedule].friendly_name;
@@ -98,12 +80,7 @@ async function getSchedules() {
 }
 
 async function getScheduleList(start, end) {
-	const scheduleList = await get(
-		`/api/v1/schedule/from/${date_to_string(start, false)}/to/${date_to_string(
-			end,
-			false,
-		)}`,
-	);
+	const scheduleList = await get(`/api/v1/schedule/from/${date_to_string(start, false)}/to/${date_to_string(end, false)}`);
 	if (!schedules) {
 		return;
 	}
@@ -119,9 +96,7 @@ async function getScheduleList(start, end) {
 		}
 
 		const name = schedule?.friendly_name || null;
-		const backgroundColor = schedule?.color
-			? bytes_to_color(schedule.color)
-			: '#FFFFFF';
+		const backgroundColor = schedule?.color ? bytes_to_color(schedule.color) : '#FFFFFF';
 		const textColor = black_or_white(backgroundColor);
 		return {
 			code: scheduleCode,
@@ -139,13 +114,7 @@ async function getScheduleList(start, end) {
 scheduleSelect.addEventListener('change', () => {
 	const selected = scheduleSelect.value;
 	if (schedules[selected]) {
-		place_boxes(
-			schedules[selected],
-			current_date(),
-			true,
-			scheduleSelect.options[scheduleSelect.selectedIndex].text
-				=== currentSchedule.friendly_name,
-		);
+		place_boxes(schedules[selected], current_date(), true, scheduleSelect.options[scheduleSelect.selectedIndex].text === currentSchedule.friendly_name);
 	}
 });
 
@@ -162,10 +131,7 @@ const endOfNextWeek = new Date(startOfWeek);
 endOfNextWeek.setDate(endOfNextWeek.getDate() + CALENDAR_WEEKS * 7);
 
 dateSelect.min = date_to_string(startOfWeek, false);
-dateSelect.max = date_to_string(
-	new Date(endOfNextWeek.getTime() - 60 * 60 * 24),
-	false,
-);
+dateSelect.max = date_to_string(new Date(endOfNextWeek.getTime() - 60 * 60 * 24), false);
 
 (async () => {
 	await getDate(current_date(), true);
@@ -189,26 +155,17 @@ dateSelect.max = date_to_string(
 			});
 			td.classList.add('day');
 			td.innerHTML = `<span class="day-name">${humanDate}</span><div class="day-schedule">${day.name}</div>`;
-			if (
-				day.date.toLocaleDateString() === current_date().toLocaleDateString()
-			) {
+			if (day.date.toLocaleDateString() === current_date().toLocaleDateString()) {
 				td.classList.add('today');
 			}
 
-			td.querySelector('.day-schedule').style.backgroundColor
-				= day.backgroundColor;
+			td.querySelector('.day-schedule').style.backgroundColor = day.backgroundColor;
 			td.querySelector('.day-schedule').style.color = day.textColor;
 			if (day.data.periods.length === 0) {
 				td.classList.add('no-periods');
 			} else {
 				td.addEventListener('click', () => {
-					place_boxes(
-						day.data,
-						day.date,
-						true,
-						day.date.toLocaleDateString()
-							=== current_date().toLocaleDateString(),
-					);
+					place_boxes(day.data, day.date, true, day.date.toLocaleDateString() === current_date().toLocaleDateString());
 					scheduleSelect.value = day.code;
 					dateSelect.value = date_to_string(day.date);
 				});
