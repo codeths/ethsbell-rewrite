@@ -71,12 +71,8 @@
 				}
 			}
 		],
-		"color": [
-			81,
-			81,
-			81
-		],
-		"regex": "Early Bird Blue"
+		"color": [81, 81, 81],
+		"regex": "Early Dismissal Blue"
 	},
 	"early_dismissal_orange": {
 		"friendly_name": "Early Dismissal Orange",
@@ -149,11 +145,7 @@
 				}
 			}
 		],
-		"color": [
-			81,
-			81,
-			81
-		],
-		"regex": "Early Bird Orange"
+		"color": [81, 81, 81],
+		"regex": "Early Dismissal Orange"
 	}
 }
