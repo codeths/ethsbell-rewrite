@@ -56,11 +56,11 @@ async function getSchedules() {
 	scheduleSelect.innerHTML = '<option value="" disabled selected>Select a Schedule</option>';
 
 	for (const schedule of Object.keys(schedules).sort((a, b) => {
-		if (schedules[a].hide && !schedules[b].hide || schedules[a].periods.length === 0) {
+		if ((schedules[a].hide && !schedules[b].hide) || schedules[a].periods.length === 0) {
 			return 1;
 		}
 
-		if (!schedules[a].hide && schedules[b].hide || schedules[b].periods.length === 0) {
+		if ((!schedules[a].hide && schedules[b].hide) || schedules[b].periods.length === 0) {
 			return -1;
 		}
 
@@ -128,7 +128,10 @@ const startOfWeek = current_date();
 startOfWeek.setHours(0, 0, 0, 0);
 startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay());
 const endOfNextWeek = new Date(startOfWeek);
-endOfNextWeek.setDate(endOfNextWeek.getDate() + (CALENDAR_WEEKS * 7));
+endOfNextWeek.setDate(endOfNextWeek.getDate() + CALENDAR_WEEKS * 7);
+
+dateSelect.min = date_to_string(startOfWeek, false);
+dateSelect.max = date_to_string(new Date(endOfNextWeek.getTime() - 60 * 60 * 24), false);
 
 (async () => {
 	await getDate(current_date(), true);

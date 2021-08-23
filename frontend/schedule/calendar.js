@@ -35,7 +35,7 @@ function place_boxes(data_unprocessed, date = current_date(), force = false, tod
 		endTime = endDate.getTime() / 1000;
 		updateNowBar();
 		const sInDay = endTime - startTime;
-		let containerHeight = sInDay / 60 * pixels_per_minute;
+		let containerHeight = (sInDay / 60) * pixels_per_minute;
 		const lastColHeight = {};
 
 		// Resolve rows so everything is mutually non-intersecting.
@@ -52,7 +52,7 @@ function place_boxes(data_unprocessed, date = current_date(), force = false, tod
 			let height = (duration / 60) * pixels_per_minute;
 			const endPos = startPos + height;
 			if (height < min_event_height) {
-				heightChange = (min_event_height - height);
+				heightChange = min_event_height - height;
 				height = min_event_height;
 			}
 
@@ -85,18 +85,18 @@ function place_boxes(data_unprocessed, date = current_date(), force = false, tod
 	while (indicatorDate.getTime() < endDate.getTime()) {
 		const time = indicatorDate.toLocaleTimeString('en-US', {timeZone: 'America/Chicago'});
 		const formatted = `${time.split(':')[0]} ${time.split(' ')[1]}`;
-		const top = ((indicatorDate.getTime() / 1000) - startTime) / 60 * pixels_per_minute;
+		const top = ((indicatorDate.getTime() / 1000 - startTime) / 60) * pixels_per_minute;
 		const span = document.createElement('span');
 		span.classList.add('time');
 		span.textContent = formatted;
 		span.style.top = `${top}px`;
 		calendarElement.append(span);
-		indicatorDate.setTime(indicatorDate.getTime() + (60 * 60 * 1000));
+		indicatorDate.setTime(indicatorDate.getTime() + 60 * 60 * 1000);
 	}
 
 	const number_cols = Math.max(...events.map(event => event.col)) + 1;
 	const colwidth = calendarElement.clientWidth / number_cols;
-	const percent = 1 / number_cols * 100;
+	const percent = (1 / number_cols) * 100;
 
 	if (data_unprocessed) {
 		backgroundColor = data_unprocessed.color ? bytes_to_color(data_unprocessed.color) : '#FFFFFF';
@@ -167,7 +167,7 @@ setInterval(updateNowBar, 1000);
 function updateNowBar() {
 	const now = current_date().getTime() / 1000;
 	if (nowBarElement && showNowBar && startTime && endTime && now >= startTime && now <= endTime) {
-		nowBarElement.style.top = `${((now - startTime) / 60 * pixels_per_minute) + 10}px`;
+		nowBarElement.style.top = `${((now - startTime) / 60) * pixels_per_minute + 10}px`;
 		nowBarElement.style.display = 'block';
 	} else {
 		nowBarElement.style.display = 'none';
@@ -179,4 +179,3 @@ updateNowBar();
 Object.assign(window, {
 	place_boxes,
 });
-
