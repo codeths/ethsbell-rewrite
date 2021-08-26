@@ -12,7 +12,7 @@ function getConfig() {
 }
 
 getel('upload').addEventListener('click', async () => {
-	const file = (getel('cfg')).files[0];
+	const file = getel('cfg').files[0];
 	if (!file) {
 		alert('Please select a file');
 		return;
@@ -68,7 +68,14 @@ function populate() {
 		{name: 'Block 6', code: 'Block6'},
 		{name: 'Block 7', code: 'Block7'},
 		{name: 'Block 8', code: 'Block8'},
-	].map(x => `<tr><td>${x.name}</td><td><input data-for="name" data-period="${x.code}" value="${initial.schedule[x.code]?.name || ''}"}></td><td><input type="url" data-for="url" data-period="${x.code}" value="${initial.schedule[x.code]?.url || ''}"}></td></tr>`).join('\n');
+	]
+		.map(
+			x =>
+				`<tr><td>${x.name}</td><td><input data-for="name" data-period="${x.code}" value="${initial.schedule[x.code]?.name || ''}"}></td><td><input type="url" data-for="url" data-period="${
+					x.code
+				}" value="${initial.schedule[x.code]?.url || ''}"}></td></tr>`,
+		)
+		.join('\n');
 	getel('include_period_name').checked = initial.include_period_name || initial.include_period_name === undefined;
 	editPeriodExample();
 }

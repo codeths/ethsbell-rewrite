@@ -2,19 +2,21 @@ let lastFetchedData = null;
 
 async function get(endpoint = '/api/v1/today/now/near') {
 	return fetch(`${endpoint}?timestamp=${Math.floor(current_date().getTime() / 1000)}`)
-		.then(x => x.json()
-			.catch(() => null))
+		.then(x => x.json().catch(() => null))
 		.catch(() => null);
 }
 
-const config = Object.assign({
-	schedule: {},
-	foreground_color: '#1a2741',
-	background_color: '#c34614',
-	foreground_text_color: '#ffffff',
-	background_text_color: '#ffffff',
-	include_period_name: true,
-}, JSON.parse(localStorage.getItem('schedule')) || '{}');
+const config = Object.assign(
+	{
+		schedule: {},
+		foreground_color: '#1a2741',
+		background_color: '#c34614',
+		foreground_text_color: '#ffffff',
+		background_text_color: '#ffffff',
+		include_period_name: true,
+	},
+	JSON.parse(localStorage.getItem('schedule')) || '{}',
+);
 
 function replace_period(period) {
 	if (!period) {
@@ -49,7 +51,11 @@ function process(data) {
 }
 
 function period_html(period) {
-	return period ? (period.url ? `<a href=${period.url}>${period.friendly_name.replaceAll('<', '&gt;').replaceAll('>', '&lt;')}</a>` : period.friendly_name.replaceAll('<', '&gt;').replaceAll('>', '&lt;')) : 'None';
+	return period
+		? period.url
+			? `<a href=${period.url}>${period.friendly_name.replaceAll('<', '&gt;').replaceAll('>', '&lt;')}</a>`
+			: period.friendly_name.replaceAll('<', '&gt;').replaceAll('>', '&lt;')
+		: 'None';
 }
 
 function getel(id) {
@@ -132,7 +138,7 @@ function human_time_left(endTime, startTime = null, short = false) {
 	const endDate = date_from_api(endTime).getTime();
 	const timeLeft = Math.floor((endDate - startDate) / 1000);
 	const h = Math.floor(timeLeft / 60 / 60);
-	const m = Math.ceil(timeLeft / 60 % 60);
+	const m = Math.ceil((timeLeft / 60) % 60);
 	if (short) {
 		if (h > 0) {
 			return `${h}h ${m}m`;
@@ -229,7 +235,7 @@ function black_or_white(color, opacity = 1) {
 	const r = Number.parseInt(color.slice(1, 3), 16);
 	const g = Number.parseInt(color.slice(3, 5), 16);
 	const b = Number.parseInt(color.slice(5, 7), 16);
-	const luma = (0.2126 * r) + (0.7152 * g) + (0.0722 * b);
+	const luma = 0.2126 * r + 0.7152 * g + 0.0722 * b;
 	return luma > 128 ? `rgba(0, 0, 0, ${opacity})` : `rgba(255, 255, 255, ${opacity})`;
 }
 
@@ -314,12 +320,12 @@ Object.assign(window, {
 function put_period_to_element(element, period) {
 	if (period) {
 		if (period.kind === 'BeforeSchool') {
-			element.innerHTML = 'School hasn\'t started yet!';
+			element.innerHTML = "School hasn't started yet!";
 			return false;
 		}
 
 		if (period.kind === 'AfterSchool') {
-			element.innerHTML = 'School\'s out!';
+			element.innerHTML = "School's out!";
 			return false;
 		}
 
