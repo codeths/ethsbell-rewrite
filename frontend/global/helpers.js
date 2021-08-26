@@ -27,19 +27,21 @@ function replace_period(period) {
 		return period.map(v => replace_period(v));
 	}
 
-	const class_id = period.kind.Class || period.kind.ClassOrLunch;
-	const class_cfg = config.schedule[class_id] || config.schedule[period.friendly_name];
+	const period_tmp = Object.assign({}, period);
+
+	const class_id = period_tmp.kind.Class || period_tmp.kind.ClassOrLunch;
+	const class_cfg = config.schedule[class_id] || config.schedule[period_tmp.friendly_name];
 	if (class_cfg) {
 		if (class_cfg.name) {
-			period.friendly_name = config.include_period_name || config.include_period_name === undefined ? `${period.friendly_name} - ${class_cfg.name}` : class_cfg.name;
+			period_tmp.friendly_name = config.include_period_name || config.include_period_name === undefined ? `${period_tmp.friendly_name} - ${class_cfg.name}` : class_cfg.name;
 		}
 
 		if (class_cfg.url) {
-			period.url = class_cfg.url;
+			period_tmp.url = class_cfg.url;
 		}
 	}
 
-	return period;
+	return period_tmp;
 }
 
 function process(data) {
