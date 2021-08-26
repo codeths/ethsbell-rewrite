@@ -52,9 +52,9 @@ function process(data) {
 
 function period_html(period) {
 	return period
-		? period.url
+		? (period.url
 			? `<a href=${period.url}>${period.friendly_name.replaceAll('<', '&gt;').replaceAll('>', '&lt;')}</a>`
-			: period.friendly_name.replaceAll('<', '&gt;').replaceAll('>', '&lt;')
+			: period.friendly_name.replaceAll('<', '&gt;').replaceAll('>', '&lt;'))
 		: 'None';
 }
 
@@ -320,12 +320,12 @@ Object.assign(window, {
 function put_period_to_element(element, period) {
 	if (period) {
 		if (period.kind === 'BeforeSchool') {
-			element.innerHTML = "School hasn't started yet!";
+			element.innerHTML = 'School hasn\'t started yet!';
 			return false;
 		}
 
 		if (period.kind === 'AfterSchool') {
-			element.innerHTML = "School's out!";
+			element.innerHTML = 'School\'s out!';
 			return false;
 		}
 
