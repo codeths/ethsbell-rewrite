@@ -1,4 +1,3 @@
-
 // Full screen button
 const fullScreenButton = document.querySelector('#fullscreen');
 const wrapper = document.querySelector('#wrapper');

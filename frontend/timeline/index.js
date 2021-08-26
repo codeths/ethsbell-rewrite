@@ -12,10 +12,7 @@ async function display(data) {
 	const ends = [];
 	for (const current of data[1]) {
 		const new_text = getel('current').innerHTML;
-		currents.push(new_text
-			.replace('CURR_START', human_time(current.start))
-			.replace('CURR_NAME', period_html(current))
-			.replace('CURR_END', human_time(current.end)));
+		currents.push(new_text.replace('CURR_START', human_time(current.start)).replace('CURR_NAME', period_html(current)).replace('CURR_END', human_time(current.end)));
 		ends.push(human_time_left(current.end));
 	}
 

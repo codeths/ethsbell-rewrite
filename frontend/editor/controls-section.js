@@ -26,10 +26,14 @@ $('pull').addEventListener('click', async () => {
 
 $('push').addEventListener('click', async () => {
 	check_data('controls_error');
-	await req('../api/v1/spec', {
-		method: 'POST',
-		body: JSON.stringify(data),
-	}, 'controls_error');
+	await req(
+		'../api/v1/spec',
+		{
+			method: 'POST',
+			body: JSON.stringify(data),
+		},
+		'controls_error',
+	);
 });
 
 $('select_period').addEventListener('change', update_view);
