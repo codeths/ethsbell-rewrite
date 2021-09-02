@@ -66,8 +66,8 @@ function process(data) {
 function period_html(period) {
 	return period
 		? period.url
-			? `<a href=${period.url}>${period.friendly_name.replaceAll('<', '&gt;').replaceAll('>', '&lt;')}</a>`
-			: period.friendly_name.replaceAll('<', '&gt;').replaceAll('>', '&lt;')
+			? `<a href=${period.url}>${period.friendly_name.replaceAll('<', '&lt;').replaceAll('>', '&gt;')}</a>`
+			: period.friendly_name.replaceAll('<', '&lt;').replaceAll('>', '&gt;')
 		: 'None';
 }
 
