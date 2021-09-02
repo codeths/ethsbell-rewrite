@@ -20,6 +20,7 @@ function display(data) {
 	progressIntervals = [];
 
 	if (data[2] && (!data[1] || !data[1][0] || data[1][0].kind !== 'BeforeSchool')) {
+		getel('next_period').innerHTML = getel('next_period_template').innerHTML;
 		put_period_to_element(getel('next_period'), data[2]);
 		getel('next_parent').style.display = 'block';
 	} else {
