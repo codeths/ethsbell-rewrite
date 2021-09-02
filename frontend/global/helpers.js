@@ -4,7 +4,7 @@
 if (!String.prototype.replaceAll) {
 	String.prototype.replaceAll = function (search, replacement) {
 		const target = this;
-		return target.replace(new RegExp(search, 'g'), replacement);
+		return target.replace(typeof search == 'string' ? new RegExp(search, 'g') : search, replacement);
 	};
 }
 
