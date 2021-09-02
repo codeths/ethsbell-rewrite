@@ -1,3 +1,14 @@
+// Polyfills
+
+// String.prototype.replaceAll
+if (!String.prototype.replaceAll) {
+	String.prototype.replaceAll = function (search, replacement) {
+		const target = this;
+		return target.replace(typeof search == 'string' ? new RegExp(search, 'g') : search, replacement);
+	};
+}
+
+// Start helpers
 let lastFetchedData = null;
 
 async function get(endpoint = '/api/v1/today/now/near') {
@@ -54,9 +65,9 @@ function process(data) {
 
 function period_html(period) {
 	return period
-		? (period.url
-			? `<a href=${period.url}>${period.friendly_name.replaceAll('<', '&gt;').replaceAll('>', '&lt;')}</a>`
-			: period.friendly_name.replaceAll('<', '&gt;').replaceAll('>', '&lt;'))
+		? period.url
+			? `<a href=${period.url}>${period.friendly_name.replaceAll('<', '&lt;').replaceAll('>', '&gt;')}</a>`
+			: period.friendly_name.replaceAll('<', '&lt;').replaceAll('>', '&gt;')
 		: 'None';
 }
 
@@ -322,12 +333,12 @@ Object.assign(window, {
 function put_period_to_element(element, period) {
 	if (period) {
 		if (period.kind === 'BeforeSchool') {
-			element.innerHTML = 'School hasn\'t started yet!';
+			element.innerHTML = "School hasn't started yet!";
 			return false;
 		}
 
 		if (period.kind === 'AfterSchool') {
-			element.innerHTML = 'School\'s out!';
+			element.innerHTML = "School's out!";
 			return false;
 		}
 
