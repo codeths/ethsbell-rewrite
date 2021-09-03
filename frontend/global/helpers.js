@@ -17,17 +17,22 @@ async function get(endpoint = '/api/v1/today/now/near') {
 		.catch(() => null);
 }
 
-const config = Object.assign(
-	{
-		schedule: {},
-		foreground_color: '#1a2741',
-		background_color: '#c34614',
-		foreground_text_color: '#ffffff',
-		background_text_color: '#ffffff',
-		include_period_name: true,
-	},
-	JSON.parse(localStorage.getItem('schedule')) || '{}',
-);
+let config;
+function updateConfig() {
+	config = Object.assign(
+		{
+			schedule: {},
+			foreground_color: '#1a2741',
+			background_color: '#c34614',
+			foreground_text_color: '#ffffff',
+			background_text_color: '#ffffff',
+			include_period_name: true,
+		},
+		JSON.parse(localStorage.getItem('schedule') || '{}'),
+	);
+	return config;
+}
+updateConfig();
 
 function replace_period(period) {
 	if (!period) {
@@ -295,6 +300,7 @@ function setTheme() {
 }
 
 function broadcastConfigToExtension() {
+	updateConfig();
 	if (typeof chrome !== 'undefined' && typeof chrome.runtime !== 'undefined') {
 		chrome.runtime.sendMessage('gbkjjbecehodfeijbdmoieepgmfdlgle', {message: 'schedule', data: JSON.stringify(config)});
 	}
