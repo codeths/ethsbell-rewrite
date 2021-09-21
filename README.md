@@ -76,3 +76,4 @@ cargo build
 ## Known Issues
 
 * On some (non-Safari) Webkit-based browsers, using the zoom feature causes the progress wheels to render incorrectly. Browsers based on Blink and Gecko do not have this issue, and the small market share of these malfunctioning browsers means this issue is unlikely to be fixed.
+* Time zones aren't handled correctly right now. If you're in a different time zone (or your browser is reporting a different time zone) you may experience issues using the service, including incorrect schedules and nonsensical (often negative) displayed durations. If you're having issues like these, please make sure your computer is set to Chicago time and your browser isn't hiding your time zone (Firefox's `privacy.resistFingerprinting` flag is known to cause this).
