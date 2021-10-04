@@ -54,6 +54,7 @@ pub fn ical_to_ours(schedule: &mut Schedule, data: &[IcalEvent]) {
 					.as_ref()
 					.unwrap()
 					.to_string()
+					.replace("\n","")
 					.chars()
 					.skip(literal_header.len())
 					.collect::<String>();

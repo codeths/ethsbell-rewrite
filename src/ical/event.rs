@@ -96,7 +96,7 @@ impl IcalEvent {
 							let other_lines = vevent
 								.lines()
 								.skip(number + 1)
-								.take_while(|v| v.starts_with('\t'))
+								.take_while(|v| v.starts_with('\t') | v.starts_with(' '))
 								.map(|v| v.trim_start())
 								.collect::<String>();
 							let text = (split.collect::<Vec<&str>>().join(":") + &other_lines)
