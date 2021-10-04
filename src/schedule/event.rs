@@ -49,12 +49,6 @@ pub fn ical_to_ours(schedule: &mut Schedule, data: &[IcalEvent]) {
 				.unwrap_or(&"".to_string())
 				.starts_with(literal_header)
 			{
-				println!("{}", event.description
-				.as_ref()
-				.unwrap()
-				.to_string()
-				.replace("\n ",""));
-				
 				let json = event
 					.description
 					.as_ref()
