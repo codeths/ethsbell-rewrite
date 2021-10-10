@@ -52,11 +52,18 @@
 		"wasm",
 		"wildkit"
 	],
-	"rust-analyzer.cargo.features": [
-		"ws"
-	],
+	"rust-analyzer.cargo.features": ["ws"],
 	"nixEnvSelector.suggestion": false,
 	"rcover.testCommand": "cargo test --features ws",
 	"editor.detectIndentation": false,
-	"editor.insertSpaces": false
+	"editor.insertSpaces": false,
+	"xo.enable": true,
+	"xo.format.enable": true,
+	"editor.defaultFormatter": "samverschueren.linter-xo",
+	"[javascript]": {
+		"editor.defaultFormatter": "samverschueren.linter-xo"
+	},
+	"[typescript]": {
+		"editor.defaultFormatter": "samverschueren.linter-xo"
+	}
 }
