@@ -17,6 +17,7 @@
 		"hbenl.vscode-test-explorer",
 		"hbenl.vscode-test-explorer-liveshare",
 		"ms-vscode.test-adapter-converter",
-		"dtsvet.vscode-wasm"
+		"dtsvet.vscode-wasm",
+		"samverschueren.linter-xo"
 	]
 }

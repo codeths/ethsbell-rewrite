@@ -60,7 +60,9 @@
 			"complexity": 0,
 			"unicorn/numeric-separators-style": 0,
 			"no-mixed-operators": 0,
-			"unicorn/prevent-abbreviations": 0
+			"unicorn/prevent-abbreviations": 0,
+			"no-use-extend-native/no-use-extend-native": 0,
+			"no-extend-native": 0
 		},
 		"ignores": [
 			"/tests/",
