@@ -104,7 +104,7 @@ function place_boxes(data_unprocessed) {
 	}
 
 	// Determine where the boxes should be placed on-screen
-	const now = Date.now() / 1000 + viewport_offset;
+	const now = current_date().getTime() / 1000 + viewport_offset;
 	const viewport_width = getel('timeline>svg').clientWidth;
 	for (const box of boxes) {
 		const length = box.end - box.start;
@@ -201,12 +201,12 @@ function place_boxes(data_unprocessed) {
 		getel('boxes').append(element);
 	}
 
-	const pointer_time = new Date(Date.now() + viewport_offset * 1000);
-	getel('pointer_time').innerHTML = pointer_time.toLocaleTimeString('en-US', {hour: 'numeric', minute: '2-digit', timeZone: 'America/Chicago'});
-	const left_time = new Date(Date.now() + viewport_offset * 1000 - viewport_seconds * 500);
-	getel('left_time').innerHTML = left_time.toLocaleTimeString('en-US', {hour: 'numeric', minute: '2-digit', timeZone: 'America/Chicago'});
-	const right_time = new Date(Date.now() + viewport_offset * 1000 + viewport_seconds * 500);
-	getel('right_time').innerHTML = right_time.toLocaleTimeString('en-US', {hour: 'numeric', minute: '2-digit', timeZone: 'America/Chicago'});
+	const pointer_time = new Date(current_date().getTime() + viewport_offset * 1000);
+	getel('pointer_time').innerHTML = pointer_time.toLocaleTimeString('en-US', {hour: 'numeric', minute: '2-digit'});
+	const left_time = new Date(current_date().getTime() + viewport_offset * 1000 - viewport_seconds * 500);
+	getel('left_time').innerHTML = left_time.toLocaleTimeString('en-US', {hour: 'numeric', minute: '2-digit'});
+	const right_time = new Date(current_date().getTime() + viewport_offset * 1000 + viewport_seconds * 500);
+	getel('right_time').innerHTML = right_time.toLocaleTimeString('en-US', {hour: 'numeric', minute: '2-digit'});
 }
 
 Object.assign(window, {
