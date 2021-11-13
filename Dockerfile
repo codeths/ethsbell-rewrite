@@ -4,11 +4,13 @@ RUN cargo install cargo-chef
 
 # Build
 FROM chef AS planner
+WORKDIR /app
 COPY Cargo.toml Cargo.lock ./
 RUN cargo chef prepare --recipe-path recipe.json
 
 FROM chef AS builder
-COPY --from=planner recipe.json recipe.json
+WORKDIR /app
+COPY --from=planner /app/recipe.json recipe.json
 RUN cargo chef cook --release --recipe-path recipe.json
 
 # Build image and run tests
