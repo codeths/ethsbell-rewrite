@@ -89,7 +89,7 @@ populate();
 
 getel('save-schedule').addEventListener('click', () => {
 	const schedule = {};
-	for (const x of [...document.querySelectorAll('input[data-for=name]')]) {
+	for (const x of document.querySelectorAll('input[data-for=name]')) {
 		const period = x.getAttribute('data-period');
 		if (!schedule[period]) {
 			schedule[period] = {};
@@ -98,7 +98,7 @@ getel('save-schedule').addEventListener('click', () => {
 		schedule[period].name = x.value || null;
 	}
 
-	for (const x of [...document.querySelectorAll('input[data-for=url]')]) {
+	for (const x of document.querySelectorAll('input[data-for=url]')) {
 		const period = x.getAttribute('data-period');
 		if (!schedule[period]) {
 			schedule[period] = {};

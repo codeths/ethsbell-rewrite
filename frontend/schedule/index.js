@@ -38,7 +38,7 @@ async function getDate(date = current_date(), setCurrent = false) {
 		currentSchedule = day;
 	}
 
-	for (const option of [...scheduleSelect.querySelectorAll('option')]) {
+	for (const option of scheduleSelect.querySelectorAll('option')) {
 		if (option.textContent === day.friendly_name) {
 			option.selected = true;
 		}

@@ -7,6 +7,7 @@
 	"dependencies": {},
 	"devDependencies": {
 		"eslint-config-xo": "^0.37.0",
+		"eslint-plugin-promise": "^5.1.1",
 		"parcel": "^2.0.1",
 		"posthtml-include": "^1.7.2",
 		"xo": "^0.46.4"
@@ -58,7 +59,9 @@
 			"complexity": 0,
 			"unicorn/numeric-separators-style": 0,
 			"no-mixed-operators": 0,
-			"unicorn/prevent-abbreviations": 0
+			"unicorn/prevent-abbreviations": 0,
+			"no-use-extend-native/no-use-extend-native": 0,
+			"no-extend-native": 0
 		},
 		"ignores": [
 			"/tests/"
