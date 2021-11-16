@@ -1,5 +1,7 @@
 let Authorization = getCookie('Authorization');
 
+const {setCookie, getCookie, request, $} = window;
+
 $('auth_form').addEventListener('submit', event => {
 	event.preventDefault();
 	const username = $('auth_username').value;
@@ -24,4 +26,6 @@ async function authenticate(auth = Authorization) {
 	}
 }
 
-if (Authorization) authenticate();
+if (Authorization) {
+	authenticate();
+}
