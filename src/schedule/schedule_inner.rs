@@ -3,6 +3,8 @@ use chrono::{Local, NaiveDate, NaiveDateTime};
 use serde::Serialize;
 use std::collections::HashMap;
 use std::convert::TryInto;
+use std::env;
+
 #[cfg(feature = "pull")]
 use std::{
 	sync::{Arc, RwLock},
@@ -94,14 +96,14 @@ impl Schedule {
 	}
 	/// Returns whether the schedule's calendar data is out of date.
 	pub fn is_update_needed(&self) -> bool {
-		match option_env!("UPDATE_INTERVAL") {
-			None => self.last_updated.date() != Local::now().date().naive_local(),
-			Some(v) => {
+		match env::var("UPDATE_INTERVAL") {
+			Ok(v) => {
 				let seconds: u64 = v.parse().unwrap();
 				let latest_needed = Local::now().naive_local().timestamp() as u64 - seconds;
 				let last_updated = self.last_updated.timestamp() as u64;
 				latest_needed > last_updated
 			}
+			Err(_) => self.last_updated.date() != Local::now().date().naive_local(),
 		}
 	}
 	/// Returns a tuple of the schedule occurring on a target date and its key in the schedule table.
