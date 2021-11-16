@@ -2,3 +2,7 @@
 	color: red;
 	font-weight: bold;
 }
+
+#settings {
+	display: none;
+}
