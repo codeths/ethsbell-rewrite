@@ -9,7 +9,7 @@ async function request(url, request, error_span) {
 		},
 		...request,
 	};
-	const result = await fetch(url, request).catch(e => {});
+	const result = await fetch(url, request).catch(error => {});
 	if (error_span) {
 		if (!result) {
 			$(error_span).innerHTML = 'Failed to fetch';
