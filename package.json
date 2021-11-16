@@ -61,7 +61,9 @@
 			"no-mixed-operators": 0,
 			"unicorn/prevent-abbreviations": 0,
 			"no-use-extend-native/no-use-extend-native": 0,
-			"no-extend-native": 0
+			"no-extend-native": 0,
+			"unicorn/no-document-cookie": 0,
+			"unicorn/no-array-reduce": 0
 		},
 		"ignores": [
 			"/tests/"
