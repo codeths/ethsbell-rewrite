@@ -1,13 +1,19 @@
 $('lock').addEventListener('click', async () => {
-	const response = await (await req('../api/v1/lock', {}, 'controls_error')).json();
+	const response = await (
+		await fetch('../api/v1/lock', {}, 'controls_error')
+	).json();
 	if (!response.includes('OK')) {
 		const date = new Date(response);
-		$('controls_error').innerHTML = `Locked previously at ${date.toLocaleString()}`;
+		$(
+			'controls_error',
+		).innerHTML = `Locked previously at ${date.toLocaleString()}`;
 	}
 });
 
 $('unlock').addEventListener('click', async () => {
-	const response = await (await req('../api/v1/force-unlock', {}, 'controls_error')).text();
+	const response = await (
+		await fetch('../api/v1/force-unlock', {}, 'controls_error')
+	).text();
 });
 
 let data;
@@ -20,13 +26,13 @@ function check_data(error_span) {
 }
 
 $('pull').addEventListener('click', async () => {
-	data = await (await req('../api/v1/spec', {}, 'controls_error')).json();
+	data = await (await fetch('../api/v1/spec', {}, 'controls_error')).json();
 	update_view();
 });
 
 $('push').addEventListener('click', async () => {
 	check_data('controls_error');
-	await req(
+	await fetch(
 		'../api/v1/spec',
 		{
 			method: 'POST',
@@ -49,18 +55,27 @@ let period;
 
 function update_view() {
 	// Fill drop-down menus
-	schedule_name = $('select_schedule').value || Object.keys(data.schedule_types)[0];
+	schedule_name
+		= $('select_schedule').value || Object.keys(data.schedule_types)[0];
 	period_index = $('select_period').value || 0;
 	$('select_period').innerHTML = '';
 	$('select_schedule').innerHTML = '';
 	for (const schedule_type of Object.keys(data.schedule_types)) {
-		$('select_schedule').innerHTML += `<option value="${schedule_type}">${data.schedule_types[schedule_type].friendly_name}</option>`;
+		$(
+			'select_schedule',
+		).innerHTML += `<option value="${schedule_type}">${data.schedule_types[schedule_type].friendly_name}</option>`;
 	}
 
 	$('select_schedule').value = schedule_name;
-	for (let index = 0; index < data.schedule_types[schedule_name].periods.length; ++index) {
+	for (
+		let index = 0;
+		index < data.schedule_types[schedule_name].periods.length;
+		++index
+	) {
 		const period = data.schedule_types[schedule_name].periods[index];
-		$('select_period').innerHTML += `<option value="${index}">${period.friendly_name}</option>`;
+		$(
+			'select_period',
+		).innerHTML += `<option value="${index}">${period.friendly_name}</option>`;
 	}
 
 	$('select_period').value = period_index;
@@ -88,7 +103,9 @@ function update_view() {
 // Schedule add, copy, and remove
 $('add_schedule').addEventListener('click', () => {
 	check_data('controls_error');
-	const new_name = prompt('Set the internal name for the new schedule type (like no_school or orange_day)');
+	const new_name = prompt(
+		'Set the internal name for the new schedule type (like no_school or orange_day)',
+	);
 	if (new_name.length > 0) {
 		data.schedule_types[new_name] = {
 			friendly_name: new_name,
@@ -103,9 +120,13 @@ $('add_schedule').addEventListener('click', () => {
 });
 $('copy_schedule').addEventListener('click', () => {
 	check_data('controls_error');
-	const new_name = prompt('Set the internal name for the newly copied schedule (like no_school or orange_day)');
+	const new_name = prompt(
+		'Set the internal name for the newly copied schedule (like no_school or orange_day)',
+	);
 	if (new_name.length > 0) {
-		data.schedule_types[new_name] = JSON.parse(JSON.stringify(data.schedule_types[schedule_name]));
+		data.schedule_types[new_name] = JSON.parse(
+			JSON.stringify(data.schedule_types[schedule_name]),
+		);
 		data.schedule_types[new_name].friendly_name = new_name;
 	}
 
@@ -126,7 +147,9 @@ $('remove_schedule').addEventListener('click', () => {
 // Period add, copy, and remove
 $('add_period').addEventListener('click', () => {
 	check_data('controls_error');
-	const new_name = prompt('Set the name for the new period (like First Period or Lunch)');
+	const new_name = prompt(
+		'Set the name for the new period (like First Period or Lunch)',
+	);
 	if (new_name.length > 0) {
 		data.schedule_types[schedule_name].periods.push({
 			friendly_name: new_name,
@@ -137,7 +160,8 @@ $('add_period').addEventListener('click', () => {
 	}
 
 	update_view();
-	$('select_period').value = data.schedule_types[schedule_name].periods.length - 1;
+	$('select_period').value
+		= data.schedule_types[schedule_name].periods.length - 1;
 	update_view();
 });
 $('remove_period').addEventListener('click', () => {
@@ -161,15 +185,18 @@ $('schedule_regex').addEventListener('change', event => {
 });
 $('period_friendly_name').addEventListener('change', event => {
 	check_data('controls_error');
-	data.schedule_types[schedule_name].periods[period_index].friendly_name = event.target.value;
+	data.schedule_types[schedule_name].periods[period_index].friendly_name
+		= event.target.value;
 });
 $('period_start').addEventListener('change', event => {
 	check_data('controls_error');
-	data.schedule_types[schedule_name].periods[period_index].start = event.target.value;
+	data.schedule_types[schedule_name].periods[period_index].start
+		= event.target.value;
 });
 $('period_end').addEventListener('change', event => {
 	check_data('controls_error');
-	data.schedule_types[schedule_name].periods[period_index].end = event.target.value;
+	data.schedule_types[schedule_name].periods[period_index].end
+		= event.target.value;
 });
 $('period_kind').addEventListener('change', event => {
 	check_data('controls_error');
@@ -179,11 +206,13 @@ $('period_kind').addEventListener('change', event => {
 		};
 		$('period_class_index').disabled = false;
 	} else {
-		data.schedule_types[schedule_name].periods[period_index].kind = event.target.value;
+		data.schedule_types[schedule_name].periods[period_index].kind
+			= event.target.value;
 		$('period_class_index').disabled = true;
 	}
 });
 $('period_class_index').addEventListener('change', event => {
 	check_data('controls_error');
-	data.schedule_types[schedule_name].periods[period_index].kind.Class = Number.parseInt(event.target.value, 10);
+	data.schedule_types[schedule_name].periods[period_index].kind.Class
+		= Number.parseInt(event.target.value, 10);
 });
