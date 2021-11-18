@@ -14,7 +14,8 @@ COPY --from=planner /app/recipe.json recipe.json
 RUN cargo chef cook --release --recipe-path recipe.json
 
 # Build image and run tests
-COPY LICENSE.html def.json .
+COPY LICENSE.html def.json* def.example.json ./
+RUN cp -n def.example.json def.json
 COPY src src
 COPY tests tests
 COPY templates templates
@@ -45,8 +46,8 @@ ENV GITHUB_REPOSITORY=$GITHUB_REPOSITORY
 
 # Rust
 COPY --from=builder /app/target/release/ethsbell-rewrite .
-COPY def.d def.d
-COPY def.json .
+# COPY def.json* def.example.json ./
+COPY --from=builder /app/def.json ./
 
 # Frontend
 COPY --from=frontend /app/frontend-dist frontend-dist
