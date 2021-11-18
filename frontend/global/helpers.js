@@ -12,6 +12,7 @@ if (!String.prototype.replaceAll) {
 
 // Start helpers
 let lastFetchedData = null;
+const serverOffset = null;
 
 async function get(endpoint = '/api/v1/today/now/near') {
 	return fetch(
@@ -179,7 +180,6 @@ function human_time(time) {
 	return date.toLocaleTimeString('en-US', {
 		hour: 'numeric',
 		minute: '2-digit',
-		timeZone: 'America/Chicago',
 	});
 }
 
@@ -318,25 +318,16 @@ function black_or_white(color, opacity = 1) {
 		: `rgba(255, 255, 255, ${opacity})`;
 }
 
-function getUTCOffset() {
-	return (
-		Number.parseInt(
-			new Date(new Date().setUTCHours(0, 0, 0, 0))
-				.toLocaleTimeString('en-US', {
-					timeZone: 'America/Chicago',
-					hour12: false,
-				})
-				.split(':')[0],
-			10,
-		) - 24
-	);
-}
-
-function dateStringToDate(dateString) {
-	const offset = getUTCOffset();
-	const h = Math.trunc(offset);
-	const m = Math.trunc((offset - h) * 60);
-	return new Date(`${dateString}Z${h}:${m}`);
+async function getServerOffset() {
+	const response = await fetch('/api/v1/what-time-is-it');
+	const data = await response.text();
+	const offset = data.split(' ')[5];
+	const h = Number.parseInt(offset.slice(0, -2), 10);
+	const m = Number.parseInt(offset.slice(-2), 10);
+	const serverUTCOffset = h * 60 + m;
+	const utcOffset = new Date().getTimezoneOffset();
+	const serverOffset = -serverUTCOffset - utcOffset;
+	return serverOffset * 60 * 1000;
 }
 
 // Apply user colors

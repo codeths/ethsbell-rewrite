@@ -151,7 +151,6 @@ dateSelect.max = date_to_string(new Date(endOfNextWeek.getTime() - 60 * 60 * 24)
 				weekday: 'short',
 				month: 'long',
 				day: 'numeric',
-				timeZone: 'America/Chicago',
 			});
 			td.classList.add('day');
 			td.innerHTML = `<span class="day-name">${humanDate}</span><div class="day-schedule">${day.name}</div>`;
