@@ -96,8 +96,28 @@ function update_view() {
 		$('periods').innerHTML = '';
 	}
 
-	$('calendars').value = data.calendar_urls.reverse().join('\n') + '\n';
+	$('calendars').value = data.calendar_urls.slice().reverse().join('\n') + '\n';
 	$('calendars').setAttribute('rows', $('calendars').value.match(/\n/g).length + 1);
+
+	$('typical_schedule').innerHTML = '';
+
+	for (const [i, day] of ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'].entries()) {
+		const label = document.createElement('label');
+		label.innerHTML = day;
+		label.setAttribute('for', `typical_schedule_${i}`);
+		$('typical_schedule').append(label);
+
+		const select = document.createElement('select');
+		select.innerHTML = $('select_schedule').innerHTML;
+		select.value = data.typical_schedule[i];
+		select.addEventListener('change', () => {
+			data.typical_schedule[i] = select.value;
+		});
+		$('typical_schedule').append(select);
+
+		const br = document.createElement('br');
+		$('typical_schedule').append(br);
+	}
 }
 
 // Schedule add, copy, and remove
