@@ -53,6 +53,7 @@
 		"wildkit"
 	],
 	"rust-analyzer.cargo.features": ["ws"],
+	"rust-analyzer.updates.channel": "nightly",
 	"nixEnvSelector.suggestion": false,
 	"rcover.testCommand": "cargo test --features ws",
 	"editor.detectIndentation": false,
