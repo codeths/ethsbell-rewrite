@@ -7,8 +7,8 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Schedule Editor</title>
 	<script src="../editor/helpers.js"></script>
-	<script src="../editor/auth-section.js" defer></script>
 	<script src="../editor/controls-section.js" defer></script>
+	<script src="../editor/auth-section.js" defer></script>
 	<link rel="stylesheet" href="../editor/index.css">
 </head>
 
@@ -31,25 +31,36 @@
 		</p>
 	</div>
 	<div id="settings">
-		<button id="pull">Pull</button>
-		<button id="push">Push</button>
-		<button id="update">Force Schedule Update</button>
+		<button id="pull">Fetch Schedules</button>
+		<button id="push">Apply Changes</button>
+		<button id="update">Force Schedule Reload</button>
 		<span id="controls_error" class="error"></span>
 		<hr>
-		<h2>Schedule Type information</h2>
+		<h2>Manage Schedules</h2>
+		<button id="add_schedule">Create New Blank Schedule</button>
+		<br>
 		<select id="select_schedule">
 		</select>
-		<button id="add_schedule">+</button>
-		<button id="copy_schedule">copy</button>
-		<button id="remove_schedule">-</button>
+		<button id="copy_schedule">Duplicate Selected Schedule</button>
+		<button id="remove_schedule">Delete Selected Schedule</button>
 		<br>
-		<label for="schedule_friendly_name">Friendly Name</label>
-		<input id="schedule_friendly_name">
+		<br>
+		<label for="schedule_friendly_name">Schedule Name</label>
+		<input id="schedule_friendly_name" class="schedule_setting">
+		<br>
+		<label for="schedule_code">Schedule Code (internal use)</label>
+		<input id="schedule_code" class="schedule_setting">
+		<br>
+		<label for="schedule_color">Schedule Color</label>
+		<input id="schedule_color" class="schedule_setting" type="color">
+		<br>
+		<label for="schedule_hide">Hide in dropdowns</label>
+		<input id="schedule_hide" class="schedule_setting" type="checkbox">
 		<br>
 		<label for="schedule_regex">Schedule Regex</label>
-		<input id="schedule_regex">
+		<input id="schedule_regex" class="schedule_setting">
 		<hr>
-		<h2>Period Information</h2>
+		<h2>Manage Periods</h2>
 		<template id="period_settings">
 			<button id="move_up">Move Up</button>
 			<button id="move_down">Move Down</button>
@@ -80,7 +91,7 @@
 		</template>
 		<div id="periods">
 		</div>
-		<button id="add_period">Add Period</button>
+		<button id="add_period" disabled>Add Period</button>
 	</div>
 </body>
 

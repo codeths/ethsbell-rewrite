@@ -1,15 +1,16 @@
 let data;
 
-function check_data(error_span) {
-	if (!data) {
-		$(error_span).innerHTML = 'No data';
-		throw new Error('No data');
-	}
-}
-
 $('pull').addEventListener('click', pull);
 
 async function pull() {
+	if (
+		data &&
+		!confirm(
+			'This will overwrite any existing changes. Are you sure you want to continue?',
+		)
+	)
+		return;
+
 	data = await (await fetch('../api/v1/spec')).json();
 	update_view();
 }
@@ -17,22 +18,32 @@ async function pull() {
 window.pull = pull;
 
 $('push').addEventListener('click', async () => {
-	await fetch('../api/v1/spec', {
+	let res = await fetch('../api/v1/spec', {
 		method: 'POST',
 		body: JSON.stringify(data),
 		headers: {
 			Authorization,
 		},
 	});
+	if (res.ok) {
+		alert('Saved!');
+	} else {
+		alert(`Error: ${res.status} ${res.statusText}`);
+	}
 });
 
 $('update').addEventListener('click', async () => {
-	await fetch('../api/v1/update', {
+	let res = await fetch('../api/v1/update', {
 		method: 'POST',
 		headers: {
 			Authorization,
 		},
 	});
+	if (res.ok) {
+		alert('Saved!');
+	} else {
+		alert(`Error: ${res.status} ${res.statusText}`);
+	}
 });
 
 $('select_schedule').addEventListener('change', () => {
@@ -46,29 +57,50 @@ let period;
 
 function update_view() {
 	// Fill drop-down menus
-	schedule_name =
-		$('select_schedule').value || Object.keys(data.schedule_types)[0];
+	schedule_name = $('select_schedule').value;
 	$('select_schedule').innerHTML = '';
-	for (const schedule_type of Object.keys(data.schedule_types)) {
+	for (const schedule_type of Object.keys(data.schedule_types).sort((a, b) =>
+		data.schedule_types[a].friendly_name.localeCompare(
+			data.schedule_types[b].friendly_name,
+		),
+	)) {
 		$(
 			'select_schedule',
 		).innerHTML += `<option value="${schedule_type}">${data.schedule_types[schedule_type].friendly_name}</option>`;
 	}
+	if (!schedule_name) schedule_name = $('select_schedule').value;
 
 	$('select_schedule').value = schedule_name;
+	$('add_period').disabled = !schedule_name;
+
 	// Load current data
-	schedule = data.schedule_types[schedule_name];
-	displayPeriods();
-	// Fill form fields
-	$('schedule_friendly_name').value = schedule.friendly_name;
-	$('schedule_regex').value = schedule.regex;
+	schedule = schedule_name && data.schedule_types[schedule_name];
+
+	[...document.querySelectorAll('.schedule_setting')].forEach(
+		el => (el.disabled = !schedule),
+	);
+
+	if (schedule) {
+		displayPeriods();
+		// Fill form fields
+		$('schedule_friendly_name').value = schedule.friendly_name;
+		$('schedule_code').value = schedule_name;
+		$('schedule_color').value = `#${schedule.color
+			.map(x => `0${x.toString(16)}`.slice(-2))
+			.join('')}`;
+		$('schedule_hide').checked = schedule.hide;
+		$('schedule_regex').value = schedule.regex;
+	} else {
+		$('periods').innerHTML = '';
+	}
 }
 
 // Schedule add, copy, and remove
 $('add_schedule').addEventListener('click', () => {
-	check_data('controls_error');
-	const new_name = prompt(
-		'Set the internal name for the new schedule type (like no_school or orange_day)',
+	const new_name = codeStr(
+		prompt(
+			'Set the internal name for the new schedule type (like no_school or orange_day)',
+		),
 	);
 	if (new_name.length > 0) {
 		data.schedule_types[new_name] = {
@@ -83,15 +115,19 @@ $('add_schedule').addEventListener('click', () => {
 	update_view();
 });
 $('copy_schedule').addEventListener('click', () => {
-	check_data('controls_error');
-	const new_name = prompt(
-		'Set the internal name for the newly copied schedule (like no_school or orange_day)',
+	const new_name = codeStr(
+		prompt(
+			'Set the internal name for the newly copied schedule (like no_school or orange_day)',
+		),
 	);
 	if (new_name.length > 0) {
-		data.schedule_types[new_name] = JSON.parse(
-			JSON.stringify(data.schedule_types[schedule_name]),
+		data.schedule_types[new_name] = Object.assign(
+			{},
+			data.schedule_types[schedule_name],
 		);
-		data.schedule_types[new_name].friendly_name = new_name;
+		data.schedule_types[
+			new_name
+		].friendly_name = `Copy of ${schedule_name}`;
 	}
 
 	update_view();
@@ -99,11 +135,10 @@ $('copy_schedule').addEventListener('click', () => {
 	update_view();
 });
 $('remove_schedule').addEventListener('click', () => {
-	check_data('controls_error');
 	const response = confirm(`Do you really want to delete ${schedule_name}?`);
 	if (response) {
 		delete data.schedule_types[schedule_name];
-		$('select_schedule').value = Object.keys(data.schedule_types)[0];
+		$('select_schedule').value = '';
 		update_view();
 	}
 });
@@ -123,12 +158,38 @@ $('add_period').addEventListener('click', () => {
 
 // Handle form changes
 $('schedule_friendly_name').addEventListener('change', event => {
-	check_data('controls_error');
-	data.schedule_types[schedule_name].friendly_name = event.target.value;
+	schedule.friendly_name = event.target.value;
+	update_view();
 });
+$('schedule_code').addEventListener('change', event => {
+	let v = codeStr(event.target.value);
+	event.target.value = v;
+	if (data.schedule_types[v]) {
+		event.target.value = schedule_name;
+		return alert('A schedule already exists with this code.');
+	}
+
+	data.schedule_types[v] = schedule;
+	delete data.schedule_types[schedule_name];
+	schedule_name = v;
+	schedule = data.schedule_types[v];
+	update_view();
+	$('select_schedule').value = v;
+});
+
+$('schedule_color').addEventListener('change', event => {
+	schedule.color = event.target.value
+		.slice(1)
+		.match(/.{2}/g)
+		.map(x => parseInt(x, 16));
+});
+
+$('schedule_hide').addEventListener('change', event => {
+	schedule.hide = event.target.checked;
+});
+
 $('schedule_regex').addEventListener('change', event => {
-	check_data('controls_error');
-	data.schedule_types[schedule_name].regex = event.target.value;
+	schedule.regex = event.target.value;
 });
 
 let template = $('period_settings');
@@ -205,4 +266,11 @@ function displayPeriods() {
 
 		$('periods').append(new_element);
 	});
+}
+
+function codeStr(string) {
+	return (string || '')
+		.toLowerCase()
+		.replace(/^\s+|\s+$/, '')
+		.replace(/\s/g, '_');
 }
