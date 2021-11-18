@@ -51,33 +51,37 @@
 		<input id="schedule_regex">
 		<hr>
 		<h2>Period Information</h2>
-		<select id="select_period">
-		</select>
-		<button id="add_period">+</button>
-		<button id="remove_period">-</button>
-		<br>
-		<label for="period_friendly_name">Friendly Name</label>
-		<input id="period_friendly_name">
-		<br>
-		<label for="period_start">Start Time</label>
-		<input id="period_start">
-		<br>
-		<label for="period_end">End Time</label>
-		<input id="period_end">
-		<br>
-		<label for="period_kind">Period Kind</label>
-		<select id="period_kind">
-			<option value="Class">Class</option>
-			<option value="Lunch">Lunch</option>
-			<option value="Break">Break</option>
-			<option value="AMSupport">AM Support</option>
-			<option value="Passing">Passing (implicit)</option>
-			<option value="BeforeSchool">BeforeSchool (implicit)</option>
-			<option value="AfterSchool">AfterSchool (implicit)</option>
-		</select>
-		<br>
-		<label for="period_class_index">Class Index</label>
-		<input id="period_class_index" type="number">
+		<template id="period_settings">
+			<button id="move_up">Move Up</button>
+			<button id="move_down">Move Down</button>
+			<button id="remove_period">Remove</button>
+			<br>
+			<label for="period_friendly_name">Friendly Name</label>
+			<input id="period_friendly_name">
+			<br>
+			<label for="period_start">Start Time</label>
+			<input id="period_start">
+			<br>
+			<label for="period_end">End Time</label>
+			<input id="period_end">
+			<br>
+			<label for="period_kind">Period Kind</label>
+			<select id="period_kind">
+				<option value="Class">Class</option>
+				<option value="Lunch">Lunch</option>
+				<option value="Break">Break</option>
+				<option value="AMSupport">AM Support</option>
+				<option value="Passing">Passing (implicit)</option>
+				<option value="BeforeSchool">BeforeSchool (implicit)</option>
+				<option value="AfterSchool">AfterSchool (implicit)</option>
+			</select>
+			<br>
+			<label for="period_class_index">Class Code</label>
+			<input id="period_class_index">
+		</template>
+		<div id="periods">
+		</div>
+		<button id="add_period">Add Period</button>
 	</div>
 </body>
 

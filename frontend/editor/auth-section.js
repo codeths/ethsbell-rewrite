@@ -1,7 +1,5 @@
 let Authorization = getCookie('Authorization');
 
-const {setCookie, getCookie, request, $} = window;
-
 $('auth_form').addEventListener('submit', event => {
 	event.preventDefault();
 	const username = $('auth_username').value;
@@ -21,6 +19,7 @@ async function authenticate(auth = Authorization) {
 		);
 		$('authenticate').style.display = 'none';
 		$('settings').style.display = 'initial';
+		pull();
 	} else {
 		$('auth_error').innerHTML = 'Failed to log in. Please try again.';
 	}

@@ -1,6 +1,10 @@
 $('lock').addEventListener('click', async () => {
 	const response = await (
-		await fetch('../api/v1/lock', {}, 'controls_error')
+		await fetch('../api/v1/lock', {
+			headers: {
+				Authorization,
+			},
+		})
 	).json();
 	if (!response.includes('OK')) {
 		const date = new Date(response);
@@ -12,7 +16,11 @@ $('lock').addEventListener('click', async () => {
 
 $('unlock').addEventListener('click', async () => {
 	const response = await (
-		await fetch('../api/v1/force-unlock', {}, 'controls_error')
+		await fetch('../api/v1/force-unlock', {
+			headers: {
+				Authorization,
+			},
+		})
 	).text();
 });
 
@@ -25,26 +33,30 @@ function check_data(error_span) {
 	}
 }
 
-$('pull').addEventListener('click', async () => {
-	data = await (await fetch('../api/v1/spec', {}, 'controls_error')).json();
+$('pull').addEventListener('click', pull);
+
+async function pull() {
+	data = await (await fetch('../api/v1/spec')).json();
 	update_view();
-});
+}
+
+window.pull = pull;
 
 $('push').addEventListener('click', async () => {
-	check_data('controls_error');
 	await fetch(
 		'../api/v1/spec',
 		{
 			method: 'POST',
 			body: JSON.stringify(data),
+			headers: {
+				Authorization,
+			},
 		},
 		'controls_error',
 	);
 });
 
-$('select_period').addEventListener('change', update_view);
 $('select_schedule').addEventListener('change', () => {
-	$('select_period').value = 0;
 	update_view();
 });
 
@@ -55,10 +67,8 @@ let period;
 
 function update_view() {
 	// Fill drop-down menus
-	schedule_name
-		= $('select_schedule').value || Object.keys(data.schedule_types)[0];
-	period_index = $('select_period').value || 0;
-	$('select_period').innerHTML = '';
+	schedule_name =
+		$('select_schedule').value || Object.keys(data.schedule_types)[0];
 	$('select_schedule').innerHTML = '';
 	for (const schedule_type of Object.keys(data.schedule_types)) {
 		$(
@@ -67,37 +77,12 @@ function update_view() {
 	}
 
 	$('select_schedule').value = schedule_name;
-	for (
-		let index = 0;
-		index < data.schedule_types[schedule_name].periods.length;
-		++index
-	) {
-		const period = data.schedule_types[schedule_name].periods[index];
-		$(
-			'select_period',
-		).innerHTML += `<option value="${index}">${period.friendly_name}</option>`;
-	}
-
-	$('select_period').value = period_index;
 	// Load current data
 	schedule = data.schedule_types[schedule_name];
-	period = schedule.periods[period_index];
+	displayPeriods();
 	// Fill form fields
 	$('schedule_friendly_name').value = schedule.friendly_name;
 	$('schedule_regex').value = schedule.regex;
-	if (period) {
-		$('period_friendly_name').value = period.friendly_name;
-		$('period_start').value = period.start;
-		$('period_end').value = period.end;
-		if (typeof period.kind === 'string') {
-			$('period_kind').value = period.kind;
-			$('period_class_index').disabled = true;
-		} else {
-			$('period_kind').value = 'Class';
-			$('period_class_index').disabled = false;
-			$('period_class_index').value = period.kind.Class;
-		}
-	}
 }
 
 // Schedule add, copy, and remove
@@ -146,32 +131,15 @@ $('remove_schedule').addEventListener('click', () => {
 
 // Period add, copy, and remove
 $('add_period').addEventListener('click', () => {
-	check_data('controls_error');
-	const new_name = prompt(
-		'Set the name for the new period (like First Period or Lunch)',
-	);
-	if (new_name.length > 0) {
-		data.schedule_types[schedule_name].periods.push({
-			friendly_name: new_name,
+	if (schedule)
+		schedule.periods.push({
+			friendly_name: '',
 			start: '00:00:00',
 			end: '00:00:00',
-			kind: 'Break',
+			kind: {Class: ''},
 		});
-	}
 
-	update_view();
-	$('select_period').value
-		= data.schedule_types[schedule_name].periods.length - 1;
-	update_view();
-});
-$('remove_period').addEventListener('click', () => {
-	check_data('controls_error');
-	const response = confirm(`Do you really want to delete ${period_index}?`);
-	if (response) {
-		data.schedule_types[schedule_name].periods.splice(period_index, 1);
-		$('select_period').value = 0;
-		update_view();
-	}
+	displayPeriods();
 });
 
 // Handle form changes
@@ -183,36 +151,79 @@ $('schedule_regex').addEventListener('change', event => {
 	check_data('controls_error');
 	data.schedule_types[schedule_name].regex = event.target.value;
 });
-$('period_friendly_name').addEventListener('change', event => {
-	check_data('controls_error');
-	data.schedule_types[schedule_name].periods[period_index].friendly_name
-		= event.target.value;
-});
-$('period_start').addEventListener('change', event => {
-	check_data('controls_error');
-	data.schedule_types[schedule_name].periods[period_index].start
-		= event.target.value;
-});
-$('period_end').addEventListener('change', event => {
-	check_data('controls_error');
-	data.schedule_types[schedule_name].periods[period_index].end
-		= event.target.value;
-});
-$('period_kind').addEventListener('change', event => {
-	check_data('controls_error');
-	if (event.target.value === 'Class') {
-		data.schedule_types[schedule_name].periods[period_index].kind = {
-			Class: Number.parseInt($('period_class_index').value, 10),
-		};
-		$('period_class_index').disabled = false;
-	} else {
-		data.schedule_types[schedule_name].periods[period_index].kind
-			= event.target.value;
-		$('period_class_index').disabled = true;
-	}
-});
-$('period_class_index').addEventListener('change', event => {
-	check_data('controls_error');
-	data.schedule_types[schedule_name].periods[period_index].kind.Class
-		= Number.parseInt(event.target.value, 10);
-});
+
+let template = $('period_settings');
+
+function displayPeriods() {
+	$('periods').innerHTML = '';
+	schedule.periods.forEach((period, i, arr) => {
+		const new_element = document.createElement('div');
+		new_element.classList.add('period');
+		new_element.innerHTML = template.innerHTML;
+
+		[...new_element.querySelectorAll('[id]')].forEach(element => {
+			element.id = element.id + `_${i}`;
+		});
+		[...new_element.querySelectorAll('[for]')].forEach(element => {
+			element.for = element.for + `_${i}`;
+		});
+
+		let $$ = id => new_element.querySelector(`#${id}_${i}`);
+
+		$$('period_friendly_name').value = period.friendly_name;
+		$$('period_start').value = period.start;
+		$$('period_end').value = period.end;
+		if (typeof period.kind === 'string') {
+			$$('period_kind').value = period.kind;
+			$$('period_class_index').disabled = true;
+		} else {
+			$$('period_kind').value = 'Class';
+			$$('period_class_index').disabled = false;
+			$$('period_class_index').value = period.kind.Class;
+		}
+
+		$$('move_up').disabled = i === 0;
+		$$('move_down').disabled = i === arr.length - 1;
+
+		$$('period_friendly_name').addEventListener('change', event => {
+			period.friendly_name = event.target.value;
+		});
+		$$('period_start').addEventListener('change', event => {
+			period.start = event.target.value;
+		});
+		$$('period_end').addEventListener('change', event => {
+			period.end = event.target.value;
+		});
+		$$('period_kind').addEventListener('change', event => {
+			if (event.target.value === 'Class') {
+				period.kind = {
+					Class: Number.parseInt($('period_class_index').value, 10),
+				};
+				$('period_class_index').disabled = false;
+			} else {
+				period.kind = event.target.value;
+				$('period_class_index').disabled = true;
+			}
+		});
+		$$('period_class_index').addEventListener('change', event => {
+			period.periods[period_index].kind.Class = Number.parseInt(
+				event.target.value,
+				10,
+			);
+		});
+		$$('move_up').addEventListener('click', () => {
+			[arr[i], arr[i - 1]] = [arr[i - 1], arr[i]];
+			displayPeriods();
+		});
+		$$('move_down').addEventListener('click', () => {
+			[arr[i], arr[i + 1]] = [arr[i + 1], arr[i]];
+			displayPeriods();
+		});
+		$$('remove_period').addEventListener('click', () => {
+			schedule.periods.splice(i, 1);
+			displayPeriods();
+		});
+
+		$('periods').append(new_element);
+	});
+}
