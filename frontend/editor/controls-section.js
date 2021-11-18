@@ -4,21 +4,20 @@ $('pull').addEventListener('click', pull);
 
 async function pull() {
 	if (
-		data &&
-		!confirm(
+		data
+		&& !confirm(
 			'This will overwrite any existing changes. Are you sure you want to continue?',
 		)
-	)
+	) {
 		return;
+	}
 
 	data = await (await fetch('../api/v1/spec')).json();
 	update_view();
 }
 
-window.pull = pull;
-
 $('push').addEventListener('click', async () => {
-	let res = await fetch('../api/v1/spec', {
+	const res = await fetch('../api/v1/spec', {
 		method: 'POST',
 		body: JSON.stringify(data),
 		headers: {
@@ -33,7 +32,7 @@ $('push').addEventListener('click', async () => {
 });
 
 $('update').addEventListener('click', async () => {
-	let res = await fetch('../api/v1/update', {
+	const res = await fetch('../api/v1/update', {
 		method: 'POST',
 		headers: {
 			Authorization,
@@ -68,7 +67,10 @@ function update_view() {
 			'select_schedule',
 		).innerHTML += `<option value="${schedule_type}">${data.schedule_types[schedule_type].friendly_name}</option>`;
 	}
-	if (!schedule_name) schedule_name = $('select_schedule').value;
+
+	if (!schedule_name) {
+		schedule_name = $('select_schedule').value;
+	}
 
 	$('select_schedule').value = schedule_name;
 	$('add_period').disabled = !schedule_name;
@@ -76,9 +78,9 @@ function update_view() {
 	// Load current data
 	schedule = schedule_name && data.schedule_types[schedule_name];
 
-	[...document.querySelectorAll('.schedule_setting')].forEach(
-		el => (el.disabled = !schedule),
-	);
+	for (const el of document.querySelectorAll('.schedule_setting')) {
+		el.disabled = !schedule;
+	}
 
 	if (schedule) {
 		displayPeriods();
@@ -102,9 +104,13 @@ $('add_schedule').addEventListener('click', () => {
 			'Set the internal name for the new schedule type (like no_school or orange_day)',
 		),
 	);
-	if (data.schedule_types[v])
+	if (data.schedule_types[new_name]) {
 		return alert('A schedule already exists with this code.');
-	if (!new_name) return;
+	}
+
+	if (!new_name) {
+		return;
+	}
 
 	data.schedule_types[new_name] = {
 		friendly_name: new_name,
@@ -122,9 +128,13 @@ $('copy_schedule').addEventListener('click', () => {
 			'Set the internal name for the newly copied schedule (like no_school or orange_day)',
 		),
 	);
-	if (data.schedule_types[v])
+	if (data.schedule_types[new_name]) {
 		return alert('A schedule already exists with this code.');
-	if (!new_name) return;
+	}
+
+	if (!new_name) {
+		return;
+	}
 
 	data.schedule_types[new_name] = Object.assign(
 		{},
@@ -147,13 +157,14 @@ $('remove_schedule').addEventListener('click', () => {
 
 // Period add, copy, and remove
 $('add_period').addEventListener('click', () => {
-	if (schedule)
+	if (schedule) {
 		schedule.periods.push({
 			friendly_name: '',
 			start: '00:00:00',
 			end: '00:00:00',
 			kind: {Class: ''},
 		});
+	}
 
 	displayPeriods();
 });
@@ -164,12 +175,13 @@ $('schedule_friendly_name').addEventListener('change', event => {
 	update_view();
 });
 $('schedule_code').addEventListener('change', event => {
-	let v = codeStr(event.target.value);
+	const v = codeStr(event.target.value);
 	event.target.value = v;
 	if (data.schedule_types[v]) {
 		event.target.value = schedule_name;
 		return alert('A schedule already exists with this code.');
 	}
+
 	if (!v) {
 		event.target.value = schedule_name;
 		return;
@@ -187,7 +199,7 @@ $('schedule_color').addEventListener('change', event => {
 	schedule.color = event.target.value
 		.slice(1)
 		.match(/.{2}/g)
-		.map(x => parseInt(x, 16));
+		.map(x => Number.parseInt(x, 16));
 });
 
 $('schedule_hide').addEventListener('change', event => {
@@ -198,7 +210,7 @@ $('schedule_regex').addEventListener('change', event => {
 	schedule.regex = event.target.value;
 });
 
-let template = $('period_settings');
+const template = $('period_settings');
 
 function displayPeriods() {
 	$('periods').innerHTML = '';
@@ -207,14 +219,15 @@ function displayPeriods() {
 		new_element.classList.add('period');
 		new_element.innerHTML = template.innerHTML;
 
-		[...new_element.querySelectorAll('[id]')].forEach(element => {
-			element.id = element.id + `_${i}`;
-		});
-		[...new_element.querySelectorAll('[for]')].forEach(element => {
-			element.for = element.for + `_${i}`;
-		});
+		for (const element of new_element.querySelectorAll('[id]')) {
+			element.id += `_${i}`;
+		}
 
-		let $$ = id => new_element.querySelector(`#${id}_${i}`);
+		for (const element of new_element.querySelectorAll('[for]')) {
+			element.for += `_${i}`;
+		}
+
+		const $$ = id => new_element.querySelector(`#${id}_${i}`);
 
 		$$('period_friendly_name').value = period.friendly_name;
 		$$('period_start').value = period.start;

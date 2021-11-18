@@ -33,7 +33,6 @@
 			"toggleFullScreen",
 			"Authorization",
 			"place_boxes",
-			"req",
 			"display",
 			"current_date",
 			"date_to_string",
@@ -48,7 +47,11 @@
 			"date_string_to_date",
 			"setTheme",
 			"chrome",
-			"broadcastConfigToExtension"
+			"broadcastConfigToExtension",
+			"getCookie",
+			"setCookie",
+			"request",
+			"pull"
 		],
 		"rules": {
 			"camelcase": 0,
@@ -63,7 +66,8 @@
 			"no-use-extend-native/no-use-extend-native": 0,
 			"no-extend-native": 0,
 			"unicorn/no-document-cookie": 0,
-			"unicorn/no-array-reduce": 0
+			"unicorn/no-array-reduce": 0,
+			"unicorn/no-array-for-each": 0
 		},
 		"ignores": [
 			"/tests/"
