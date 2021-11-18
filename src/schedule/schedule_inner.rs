@@ -154,7 +154,7 @@ impl Schedule {
 
 /// Get schedule JSON from definition file
 pub fn get_schedule_from_config() -> ScheduleDefinition {
-	if Path::new("./def.json").exists() {
+	if !Path::new("./def.json").exists() {
 		fs::copy("./def.example.json", "./def.json").expect("Could not copy def");
 	}
 
