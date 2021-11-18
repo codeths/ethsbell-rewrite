@@ -148,7 +148,7 @@ fn get_spec(
 	Ok(Json(schedule.read().unwrap().definition.clone()))
 }
 
-/// Uploads a new schedule specification file. Broken.
+/// Uploads a new schedule specification file.
 #[openapi(skip)]
 #[post("/spec", data = "<body>")]
 fn post_spec(
@@ -169,7 +169,7 @@ fn post_spec(
 	Ok(())
 }
 
-/// Acquires a lock on the schedule specification. Broken.
+/// Acquires a lock on the schedule specification.
 #[openapi]
 #[get("/lock")]
 fn get_lock(
@@ -186,7 +186,7 @@ fn get_lock(
 	}
 }
 
-/// Unlocks the schedule specification. Broken.
+/// Unlocks the schedule specification.
 #[openapi]
 #[get("/force-unlock")]
 fn force_unlock(lock: State<Arc<Mutex<SpecLock>>>, _auth: Authenticated) {
