@@ -102,13 +102,15 @@ $('add_schedule').addEventListener('click', () => {
 			'Set the internal name for the new schedule type (like no_school or orange_day)',
 		),
 	);
-	if (new_name.length > 0) {
-		data.schedule_types[new_name] = {
-			friendly_name: new_name,
-			periods: [],
-			regex: '',
-		};
-	}
+	if (data.schedule_types[v])
+		return alert('A schedule already exists with this code.');
+	if (!new_name) return;
+
+	data.schedule_types[new_name] = {
+		friendly_name: new_name,
+		periods: [],
+		regex: '',
+	};
 
 	update_view();
 	$('select_schedule').value = new_name;
@@ -120,15 +122,15 @@ $('copy_schedule').addEventListener('click', () => {
 			'Set the internal name for the newly copied schedule (like no_school or orange_day)',
 		),
 	);
-	if (new_name.length > 0) {
-		data.schedule_types[new_name] = Object.assign(
-			{},
-			data.schedule_types[schedule_name],
-		);
-		data.schedule_types[
-			new_name
-		].friendly_name = `Copy of ${schedule_name}`;
-	}
+	if (data.schedule_types[v])
+		return alert('A schedule already exists with this code.');
+	if (!new_name) return;
+
+	data.schedule_types[new_name] = Object.assign(
+		{},
+		data.schedule_types[schedule_name],
+	);
+	data.schedule_types[new_name].friendly_name = `Copy of ${schedule_name}`;
 
 	update_view();
 	$('select_schedule').value = new_name;
@@ -167,6 +169,10 @@ $('schedule_code').addEventListener('change', event => {
 	if (data.schedule_types[v]) {
 		event.target.value = schedule_name;
 		return alert('A schedule already exists with this code.');
+	}
+	if (!v) {
+		event.target.value = schedule_name;
+		return;
 	}
 
 	data.schedule_types[v] = schedule;
