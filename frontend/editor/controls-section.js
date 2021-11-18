@@ -270,19 +270,19 @@ function displayPeriods() {
 		$$('period_kind').addEventListener('change', event => {
 			if (event.target.value === 'Class') {
 				period.kind = {
-					Class: Number.parseInt($('period_class_index').value, 10),
+					Class: '',
 				};
-				$('period_class_index').disabled = false;
+				$$('period_class_index').disabled = false;
 			} else {
 				period.kind = event.target.value;
-				$('period_class_index').disabled = true;
+				$$('period_class_index').value = '';
+				$$('period_class_index').disabled = true;
 			}
 		});
 		$$('period_class_index').addEventListener('change', event => {
-			period.periods[period_index].kind.Class = Number.parseInt(
-				event.target.value,
-				10,
-			);
+			period.kind = {
+				Class: event.target.value,
+			};
 		});
 		$$('move_up').addEventListener('click', () => {
 			[arr[i], arr[i - 1]] = [arr[i - 1], arr[i]];
