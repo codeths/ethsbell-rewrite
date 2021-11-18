@@ -62,5 +62,9 @@
 	"xo.format.enable": true,
 	"[javascript]": {
 		"editor.defaultFormatter": "samverschueren.linter-xo"
-	}
+	},
+	"[html]": {
+		"editor.defaultFormatter": "vscode.html-language-features"
+	},
+	"html.format.indentInnerHtml": false
 }
