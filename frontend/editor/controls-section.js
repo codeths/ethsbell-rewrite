@@ -116,7 +116,7 @@ $('add_schedule').addEventListener('click', () => {
 	}
 
 	data.schedule_types[new_name] = {
-		friendly_name: new_name,
+		friendly_name: 'New Schedule',
 		periods: [],
 		regex: '',
 		color: [255, 255, 255],
