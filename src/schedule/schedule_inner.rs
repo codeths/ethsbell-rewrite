@@ -78,7 +78,6 @@ impl Schedule {
 		for cal in calendars {
 			ical_to_ours(&mut schedule.write().unwrap(), &cal)
 		}
-		schedule.write().unwrap().definition = get_schedule_from_config();
 		// Update the last-updated value
 		schedule.write().unwrap().last_updated = Local::now().naive_local();
 		println!("Done.");
@@ -91,7 +90,6 @@ impl Schedule {
 		for cal in self.definition.calendar_urls.clone() {
 			ical_to_ours(self, &IcalEvent::get(&cal))
 		}
-		self.definition = get_schedule_from_config();
 		// Update the last-updated value
 		self.last_updated = Local::now().naive_local();
 		println!("Done.");
@@ -155,13 +153,13 @@ impl Schedule {
 
 /// Get schedule JSON from definition file
 pub fn get_schedule_from_config() -> ScheduleDefinition {
-	// Load the definition.
-	let string = if cfg!(target_arch = "wasm32") {
-		include_str!("../../def.json").to_string()
-	} else {
+	if !fs::metadata("./def.json").is_ok() {
+		fs::copy("./def.example.json", "./def.json").expect("Could not copy def");
+	}
+
+	let string =
 		fs::read_to_string(env::var("SCHEDULE_DEF").unwrap_or_else(|_| "./def.json".to_string()))
-			.expect("Opened schedule definition")
-	};
+			.expect("Opened schedule definition");
 
 	// Deserialize the definition.
 	let schedule_def: ScheduleDefinition =
