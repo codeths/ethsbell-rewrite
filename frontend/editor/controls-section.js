@@ -338,3 +338,37 @@ function codeStr(string) {
 		.trim()
 		.replace(/\s/g, '_');
 }
+
+$('export').addEventListener('click', () => {
+	const blob = new Blob([JSON.stringify(data)], {
+		type: 'application/json',
+	});
+
+	const url = URL.createObjectURL(blob);
+	const a = document.createElement('a');
+	a.href = url;
+	a.download = 'def.json';
+	a.click();
+	URL.revokeObjectURL(url);
+});
+
+$('import').addEventListener('change', async event => {
+	const file = event.target.files[0];
+	if (!file) {
+		return;
+	}
+
+	const text = await file.text();
+
+	try {
+		const json = JSON.parse(text);
+		data = json;
+	} catch {
+		alert('Invalid file contents');
+	}
+
+	event.target.value = '';
+	update_view();
+
+	alert('Imported settings.');
+});
