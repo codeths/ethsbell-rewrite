@@ -16,19 +16,15 @@
 	<h1>ETHSBell Schedule Editor</h1>
 	<hr>
 	<div id="authenticate">
-		<h2>Authenticate</h2>
-		<p>
-			To use the schedule editor, you need to input the administrator's secret.
-			<br>
+		<h2>Log In</h2>
 		<form id="auth_form">
 			<label for="auth_username">Username: </label>
 			<input id="auth_username"><br>
 			<label for="auth_password">Password: </label>
 			<input type="password" id="auth_password"><br>
-			<input type="submit" id="auth_check" value="Login"></input><br>
+			<input type="submit" id="auth_check" value="Log In"></input><br>
 			<span id="auth_error" class="error"></span>
 		</form>
-		</p>
 	</div>
 	<div id="settings">
 		<button id="pull">Fetch Schedules</button>
@@ -59,6 +55,7 @@
 		<br>
 		<label for="schedule_regex">Schedule Regex</label>
 		<input id="schedule_regex" class="schedule_setting">
+		<br>
 		<hr>
 		<h2>Manage Periods</h2>
 		<template id="period_settings">
