@@ -200,13 +200,18 @@ $('schedule_friendly_name').addEventListener('change', event => {
 	update_view();
 });
 $('schedule_code').addEventListener('change', event => {
+	const v = codeStr(event.target.value);
+	event.target.value = v;
+
+	if (v === schedule_name) {
+		return;
+	}
+
 	if (!confirm('Changing the code of existing schedules can cause issues and is generally not recommended. Are you sure you want to change it?')) {
 		event.target.value = schedule_name;
 		return;
 	}
 
-	const v = codeStr(event.target.value);
-	event.target.value = v;
 	if (data.schedule_types[v]) {
 		event.target.value = schedule_name;
 		return alert('A schedule already exists with this code.');
@@ -306,13 +311,20 @@ function displayPeriods() {
 			}
 		});
 		$$('period_class_index').addEventListener('change', event => {
+			const v = event.target.value.trim();
+			event.target.value = v;
+
+			if (v === period.kind.Class) {
+				return;
+			}
+
 			if (period.kind.Class && !confirm('Changing the code of existing periods can cause issues and is generally not recommended. Are you sure you want to change it?')) {
 				event.target.value = period.kind.Class;
 				return;
 			}
 
 			period.kind = {
-				Class: event.target.value,
+				Class: v,
 			};
 		});
 		$$('move_up').addEventListener('click', () => {
