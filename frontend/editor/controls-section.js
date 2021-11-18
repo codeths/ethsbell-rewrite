@@ -95,6 +95,9 @@ function update_view() {
 	} else {
 		$('periods').innerHTML = '';
 	}
+
+	$('calendars').value = data.calendar_urls.reverse().join('\n') + '\n';
+	$('calendars').setAttribute('rows', $('calendars').value.match(/\n/g).length + 1);
 }
 
 // Schedule add, copy, and remove
@@ -210,6 +213,15 @@ $('schedule_regex').addEventListener('change', event => {
 	schedule.regex = event.target.value;
 });
 
+$('calendars').addEventListener('change', event => {
+	data.calendar_urls = event.target.value.split('\n').map(x => x.trim()).filter(x => x).reverse();
+	update_view();
+});
+
+$('calendars').addEventListener('input', event => {
+	$('calendars').setAttribute('rows', $('calendars').value.match(/\n/g).length + 1);
+});
+
 const template = $('period_settings');
 
 function displayPeriods() {
@@ -290,6 +302,6 @@ function displayPeriods() {
 function codeStr(string) {
 	return (string || '')
 		.toLowerCase()
-		.replace(/^\s+|\s+$/, '')
+		.trim()
 		.replace(/\s/g, '_');
 }

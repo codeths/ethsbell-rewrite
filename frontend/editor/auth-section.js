@@ -18,7 +18,7 @@ async function authenticate(auth = Authorization) {
 			new Date().setHours(24, 0, 0, 0),
 		);
 		$('authenticate').style.display = 'none';
-		$('settings').style.display = 'initial';
+		$('settings').style.display = 'block';
 		pull();
 	} else {
 		$('auth_error').innerHTML = 'Failed to log in. Please try again.';
