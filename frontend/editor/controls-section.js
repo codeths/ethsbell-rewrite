@@ -43,17 +43,22 @@ async function pull() {
 window.pull = pull;
 
 $('push').addEventListener('click', async () => {
-	await fetch(
-		'../api/v1/spec',
-		{
-			method: 'POST',
-			body: JSON.stringify(data),
-			headers: {
-				Authorization,
-			},
+	await fetch('../api/v1/spec', {
+		method: 'POST',
+		body: JSON.stringify(data),
+		headers: {
+			Authorization,
 		},
-		'controls_error',
-	);
+	});
+});
+
+$('update').addEventListener('click', async () => {
+	await fetch('../api/v1/update', {
+		method: 'POST',
+		headers: {
+			Authorization,
+		},
+	});
 });
 
 $('select_schedule').addEventListener('change', () => {

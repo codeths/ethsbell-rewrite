@@ -37,6 +37,7 @@ pub fn routes() -> Vec<Route> {
 		force_unlock,
 		get_spec,
 		post_spec,
+		post_update,
 		check_auth,
 		check_version,
 		ical,
@@ -166,6 +167,17 @@ fn post_spec(
 	file.flush()?;
 	schedule.write().unwrap().definition = get_schedule_from_config();
 
+	Ok(())
+}
+
+/// Update schedule data
+#[openapi(skip)]
+#[post("/update")]
+fn post_update(
+	_auth: Authenticated,
+	schedule: State<Arc<RwLock<Schedule>>>,
+) -> Result<(), OurError> {
+	Schedule::update_async(schedule.clone());
 	Ok(())
 }
 
