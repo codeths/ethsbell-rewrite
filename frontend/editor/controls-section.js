@@ -119,6 +119,8 @@ $('add_schedule').addEventListener('click', () => {
 		friendly_name: new_name,
 		periods: [],
 		regex: '',
+		color: [255, 255, 255],
+		hide: false,
 	};
 
 	update_view();
