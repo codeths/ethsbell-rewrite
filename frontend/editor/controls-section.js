@@ -1,29 +1,3 @@
-$('lock').addEventListener('click', async () => {
-	const response = await (
-		await fetch('../api/v1/lock', {
-			headers: {
-				Authorization,
-			},
-		})
-	).json();
-	if (!response.includes('OK')) {
-		const date = new Date(response);
-		$(
-			'controls_error',
-		).innerHTML = `Locked previously at ${date.toLocaleString()}`;
-	}
-});
-
-$('unlock').addEventListener('click', async () => {
-	const response = await (
-		await fetch('../api/v1/force-unlock', {
-			headers: {
-				Authorization,
-			},
-		})
-	).text();
-});
-
 let data;
 
 function check_data(error_span) {

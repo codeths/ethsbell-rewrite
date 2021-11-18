@@ -6,9 +6,8 @@ use crate::{
 	ical::IcalResponder,
 	login::Authenticated,
 	schedule::{get_schedule_from_config, Period, Schedule, ScheduleDefinition, ScheduleType},
-	SpecLock,
 };
-use chrono::{DateTime, Datelike, Duration, Local, NaiveDate, NaiveDateTime, NaiveTime, TimeZone};
+use chrono::{Datelike, Duration, Local, NaiveDate, NaiveDateTime, NaiveTime, TimeZone};
 use rocket::{http::Status, response::content::Html, Data, Route, State};
 use rocket_contrib::{json::Json, templates::Template};
 use rocket_okapi::{openapi, routes_with_openapi};
@@ -17,7 +16,7 @@ use std::{
 	fs::OpenOptions,
 	io::Write,
 	str::FromStr,
-	sync::{Arc, Mutex, RwLock},
+	sync::{Arc, RwLock},
 };
 
 /// Generates a list of Routes for Rocket
@@ -33,8 +32,6 @@ pub fn routes() -> Vec<Route> {
 		date_at,
 		today_around_now,
 		what_time,
-		get_lock,
-		force_unlock,
 		get_spec,
 		post_spec,
 		post_update,
@@ -179,31 +176,6 @@ fn post_update(
 ) -> Result<(), OurError> {
 	Schedule::update_async(schedule.clone());
 	Ok(())
-}
-
-/// Acquires a lock on the schedule specification.
-#[openapi]
-#[get("/lock")]
-fn get_lock(
-	lock: State<Arc<Mutex<SpecLock>>>,
-	_auth: Authenticated,
-) -> Result<Json<String>, Json<DateTime<Local>>> {
-	let mut lock = lock.lock().unwrap();
-	match lock.0 {
-		Some(dt) => Err(Json(dt)),
-		None => {
-			lock.0 = Some(Local::now());
-			Ok(Json("OK".to_string()))
-		}
-	}
-}
-
-/// Unlocks the schedule specification.
-#[openapi]
-#[get("/force-unlock")]
-fn force_unlock(lock: State<Arc<Mutex<SpecLock>>>, _auth: Authenticated) {
-	let mut lock = lock.lock().unwrap();
-	lock.0 = None
 }
 
 /// Returns the time.
