@@ -38,7 +38,6 @@ WORKDIR /app
 
 RUN apt-get update && apt-get install -y libssl-dev ca-certificates && rm -rf /var/lib/apt/lists
 RUN update-ca-certificates
-RUN apt update && rm -rf /var/apt/lists
 ARG GITHUB_SHA
 ENV GITHUB_SHA=$GITHUB_SHA
 ARG GITHUB_REPOSITORY
