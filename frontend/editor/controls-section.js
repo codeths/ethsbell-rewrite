@@ -196,12 +196,26 @@ $('add_period').addEventListener('click', () => {
 
 // Handle form changes
 $('schedule_friendly_name').addEventListener('change', event => {
+	event.target.value = event.target.value.trim();
+
+	if (!event.target.value) {
+		alert('This value is required.');
+		update_view();
+		return;
+	}
+
 	schedule.friendly_name = event.target.value;
 	update_view();
 });
 $('schedule_code').addEventListener('change', event => {
 	const v = codeStr(event.target.value);
 	event.target.value = v;
+
+	if (!v) {
+		alert('This value is required.');
+		update_view();
+		return;
+	}
 
 	if (v === schedule_name) {
 		return;
@@ -213,8 +227,9 @@ $('schedule_code').addEventListener('change', event => {
 	}
 
 	if (data.schedule_types[v]) {
-		event.target.value = schedule_name;
-		return alert('A schedule already exists with this code.');
+		alert('A schedule already exists with this code.');
+		update_view();
+		return;
 	}
 
 	if (!v) {
@@ -243,11 +258,35 @@ $('schedule_hide').addEventListener('change', event => {
 });
 
 $('schedule_regex').addEventListener('change', event => {
+	try {
+		const regex = new RegExp(event.target.value);
+	} catch {
+		alert('Invalid regular expression.');
+		update_view();
+		return;
+	}
+
 	schedule.regex = event.target.value;
 });
 
 $('calendars').addEventListener('change', event => {
-	data.calendar_urls = event.target.value.split('\n').map(x => x.trim()).filter(x => x).reverse();
+	const items = event.target.value.split('\n').map(x => x.trim()).filter(x => x).reverse();
+
+	if (items.some(x => {
+		try {
+			const url = new URL(x);
+			return false;
+		} catch {
+			return true;
+		}
+	})) {
+		alert('Invalid calendar URL.');
+		update_view();
+		return;
+	}
+
+	data.calendar_urls = items;
+
 	update_view();
 });
 
@@ -290,12 +329,36 @@ function displayPeriods() {
 		$$('move_down').disabled = i === arr.length - 1;
 
 		$$('period_friendly_name').addEventListener('change', event => {
+			event.target.value = event.target.value.trim();
+
+			if (!event.target.value) {
+				alert('This value is required.');
+				update_view();
+				return;
+			}
+
 			period.friendly_name = event.target.value;
 		});
 		$$('period_start').addEventListener('change', event => {
+			event.target.value = event.target.value.trim();
+
+			if (!event.target.value) {
+				alert('This value is required.');
+				update_view();
+				return;
+			}
+
 			period.start = event.target.value;
 		});
 		$$('period_end').addEventListener('change', event => {
+			event.target.value = event.target.value.trim();
+
+			if (!event.target.value) {
+				alert('This value is required.');
+				update_view();
+				return;
+			}
+
 			period.end = event.target.value;
 		});
 		$$('period_kind').addEventListener('change', event => {
@@ -311,10 +374,15 @@ function displayPeriods() {
 			}
 		});
 		$$('period_class_index').addEventListener('change', event => {
-			const v = event.target.value.trim();
-			event.target.value = v;
+			event.target.value = event.target.value.trim();
 
-			if (v === period.kind.Class) {
+			if (!event.target.value) {
+				alert('This value is required.');
+				update_view();
+				return;
+			}
+
+			if (event.target.value === period.kind.Class) {
 				return;
 			}
 
@@ -324,7 +392,7 @@ function displayPeriods() {
 			}
 
 			period.kind = {
-				Class: v,
+				Class: event.target.value,
 			};
 		});
 		$$('move_up').addEventListener('click', () => {
