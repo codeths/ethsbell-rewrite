@@ -37,6 +37,16 @@
 		<label for="import">Import settings:</label>
 		<input type="file" id="import" accept=".json" />
 		<hr>
+		<h2>Schedule Calendar</h2>
+		<label for="calendars">Calendar URLs (ical feed, one per line. Top items take priority.)</label>
+		<br>
+		<textarea id="calendars"></textarea>
+		<br>
+		<h3>Typical Week</h3>
+		<div id="typical_schedule">
+		</div>
+		<br>
+		<hr>
 		<h2>Manage Schedules</h2>
 		<button id="add_schedule">Create New Blank Schedule</button>
 		<br>
@@ -61,16 +71,7 @@
 		<label for="schedule_regex">Schedule Regex</label>
 		<input id="schedule_regex" class="schedule_setting">
 		<br>
-		<hr>
-		<h2>Schedule Calendar</h2>
-		<label for="calendars">Calendar URLs (ical feed, one per line. Top items take priority.)</label>
 		<br>
-		<textarea id="calendars"></textarea>
-		<br>
-		<h3>Typical Week</h3>
-		<div id="typical_schedule">
-
-		</div>
 		<hr>
 		<h2>Manage Periods</h2>
 		<template id="period_settings">
