@@ -8,6 +8,8 @@ $('auth_form').addEventListener('submit', event => {
 	authenticate(`Basic ${auth_b64}`);
 });
 
+$('auth_username').focus();
+
 async function authenticate(auth = Authorization) {
 	Authorization = auth;
 	const ok = await request('../api/v1/check-auth', {});
