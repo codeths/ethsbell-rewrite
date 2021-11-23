@@ -29,3 +29,8 @@ label {
 	overflow-x: scroll;
 	resize: vertical;
 }
+
+#add_period {
+	margin-top: 10px;
+	margin-bottom: 5px;
+}

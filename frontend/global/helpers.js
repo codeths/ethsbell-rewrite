@@ -282,6 +282,10 @@ function toggleFullScreen(element) {
 }
 
 window.addEventListener('load', () => {
+	if (!document.querySelector('nav')) {
+		return;
+	}
+
 	const nav_links = document.querySelector('#nav-links');
 	document
 		.querySelector('#nav-toggle-button')
