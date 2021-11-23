@@ -51,7 +51,9 @@
 			"getCookie",
 			"setCookie",
 			"request",
-			"pull"
+			"pull",
+			"config",
+			"DEFAULT_CONFIG"
 		],
 		"rules": {
 			"camelcase": 0,

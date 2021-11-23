@@ -29,27 +29,7 @@ async function request(url, request, error_span) {
 	return result && result.ok;
 }
 
-function setCookie(name, value, expires, path = window.location.pathname) {
-	document.cookie = `${name}=${encodeURIComponent(value)}; ${
-		expires ? `expires=${new Date(expires).toUTCString()}; ` : ''
-	}path=${path}`;
-}
-
-function getCookie(name) {
-	return document.cookie.split('; ').reduce((r, v) => {
-		const parts = v.split('=');
-		return parts[0] === name ? decodeURIComponent(parts[1]) : r;
-	}, '');
-}
-
-function deleteCookie(name, path) {
-	setCookie(name, '', null, path);
-}
-
 Object.assign(window, {
 	$,
 	request,
-	setCookie,
-	getCookie,
-	deleteCookie,
 });
