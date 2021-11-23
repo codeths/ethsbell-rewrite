@@ -10,6 +10,16 @@ if (!String.prototype.replaceAll) {
 	};
 }
 
+const DEFAULT_CONFIG = {
+	schedule: {},
+	foreground_color: '#1a2741',
+	background_color: '#c34614',
+	foreground_text_color: '#ffffff',
+	background_text_color: '#ffffff',
+	include_period_name: true,
+	use_schedule_color: true,
+};
+
 // Start helpers
 let lastFetchedData = null;
 const serverOffset = null;
@@ -25,15 +35,7 @@ async function get(endpoint = '/api/v1/today/now/near') {
 let config;
 function updateConfig() {
 	config = Object.assign(
-		{
-			schedule: {},
-			foreground_color: '#1a2741',
-			background_color: '#c34614',
-			foreground_text_color: '#ffffff',
-			background_text_color: '#ffffff',
-			include_period_name: true,
-			use_schedule_color: true,
-		},
+		DEFAULT_CONFIG,
 		JSON.parse(localStorage.getItem('schedule') || '{}'),
 	);
 	return config;
@@ -436,6 +438,7 @@ Object.assign(window, {
 	getCookie,
 	deleteCookie,
 	config,
+	DEFAULT_CONFIG,
 });
 
 // Writes a period to an element and its children
