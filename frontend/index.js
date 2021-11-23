@@ -106,15 +106,12 @@ function setColors(color) {
 	}
 
 	color ??= getCookie('schedule_color');
-	if (!color) {
-		return;
+	if (color) {
+		setCookie('schedule_color', color, new Date().setHours(24, 0, 0, 0));
 	}
 
-	setCookie('schedule_color', color, new Date().setHours(24, 0, 0, 0));
-	document.body.style.setProperty('--background_color', color);
-	// Document.body.style.setProperty('--foreground_color', 'unset');
-	document.body.style.setProperty('--background_text_color', black_or_white(color));
-	// Document.body.style.setProperty('--foreground_text_color', 'unset');
+	document.body.style.setProperty('--background_color', color || config.background_color);
+	document.body.style.setProperty('--background_text_color', color ? black_or_white(color) : config.background_text_color);
 }
 
 setColors();
