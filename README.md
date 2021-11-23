@@ -57,9 +57,14 @@ services:
   ports:
     - 8000:8000
   volumes:
+  volumes:
    - "/etc/localtime:/etc/localtime:ro"
-   - "./def.json:/def.json"
    - "./advisory.html:/app/frontend-dist/advisory.html"
+   - type: bind
+     source: ./def.json
+     target: /app/def.json
+     volume:
+       nocopy: true
 ```
 
 ### Non-x86 or without Docker
