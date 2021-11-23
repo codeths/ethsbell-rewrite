@@ -32,6 +32,7 @@ function updateConfig() {
 			foreground_text_color: '#ffffff',
 			background_text_color: '#ffffff',
 			include_period_name: true,
+			use_schedule_color: true,
 		},
 		JSON.parse(localStorage.getItem('schedule') || '{}'),
 	);
@@ -336,34 +337,31 @@ window.addEventListener('load', () => {
 });
 
 function setTheme() {
-	const cfg = config;
+	const cfg = config || {};
+	const setBg = !(window.location.pathname === '/' && cfg.use_schedule_color);
 
 	document
 		.querySelector('meta[name=theme-color]')
-		.setAttribute('content', (cfg || {}).foreground_color || '#1a2741');
+		.setAttribute('content', cfg.foreground_color || '#1a2741');
 
-	if (!cfg) {
-		return;
-	}
-
-	if (cfg.background_color) {
+	if (setBg && cfg.background_color) {
 		document
 			.querySelector('body')
-			.style.setProperty('--background_color', cfg.background_color);
+			.style.setProperty('--background_color', cfg.background_color || '#c34614');
 	}
 
 	if (cfg.foreground_color) {
 		document
 			.querySelector('body')
-			.style.setProperty('--foreground_color', cfg.foreground_color);
+			.style.setProperty('--foreground_color', cfg.foreground_color || '#1a2741');
 	}
 
-	if (cfg.background_text_color) {
+	if (setBg && cfg.background_text_color) {
 		document
 			.querySelector('body')
 			.style.setProperty(
 				'--background_text_color',
-				cfg.background_text_color,
+				cfg.background_text_color || '#ffffff',
 			);
 	}
 
@@ -372,7 +370,7 @@ function setTheme() {
 			.querySelector('body')
 			.style.setProperty(
 				'--foreground_text_color',
-				cfg.foreground_text_color,
+				cfg.foreground_text_color || '#ffffff',
 			);
 	}
 }
@@ -388,6 +386,23 @@ function broadcastConfigToExtension() {
 			data: JSON.stringify(config),
 		});
 	}
+}
+
+function setCookie(name, value, expires, path = window.location.pathname) {
+	document.cookie = `${name}=${encodeURIComponent(value)}; ${
+		expires ? `expires=${new Date(expires).toUTCString()}; ` : ''
+	}path=${path}`;
+}
+
+function getCookie(name) {
+	return document.cookie.split('; ').reduce((r, v) => {
+		const parts = v.split('=');
+		return parts[0] === name ? decodeURIComponent(parts[1]) : r;
+	}, '');
+}
+
+function deleteCookie(name, path) {
+	setCookie(name, '', null, path);
 }
 
 broadcastConfigToExtension();
@@ -417,6 +432,10 @@ Object.assign(window, {
 	put_period_to_element,
 	setTheme,
 	broadcastConfigToExtension,
+	setCookie,
+	getCookie,
+	deleteCookie,
+	config,
 });
 
 // Writes a period to an element and its children

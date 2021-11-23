@@ -1,7 +1,7 @@
-const periodText = document.querySelector('#period');
-const endTimeText = document.querySelector('#end_time');
-const nextText = document.querySelector('#next');
-const schedulenameElement = document.querySelector('#schedulename');
+let periodText;
+let endTimeText;
+let nextText;
+let schedulenameElement;
 
 let lastData;
 // Gets data from /today/now/near
@@ -83,13 +83,13 @@ function display(data) {
 
 window.addEventListener('resize', () => display(lastData));
 
-go(display);
-
 async function schedule() {
 	const day = await get('/api/v1/today');
 	if (!day) {
 		return;
 	}
+
+	setColors(bytes_to_color(day.color));
 
 	if (day.periods.length > 0) {
 		schedulenameElement.innerHTML = `${day.friendly_name}`;
@@ -100,4 +100,31 @@ async function schedule() {
 	}
 }
 
-schedule();
+function setColors(color) {
+	if (!config.use_schedule_color) {
+		return;
+	}
+
+	color ??= getCookie('schedule_color');
+	if (!color) {
+		return;
+	}
+
+	setCookie('schedule_color', color, new Date().setHours(24, 0, 0, 0));
+	document.body.style.setProperty('--background_color', color);
+	// Document.body.style.setProperty('--foreground_color', 'unset');
+	document.body.style.setProperty('--background_text_color', black_or_white(color));
+	// Document.body.style.setProperty('--foreground_text_color', 'unset');
+}
+
+setColors();
+
+window.addEventListener('load', () => {
+	periodText = document.querySelector('#period');
+	endTimeText = document.querySelector('#end_time');
+	nextText = document.querySelector('#next');
+	schedulenameElement = document.querySelector('#schedulename');
+
+	go(display);
+	schedule();
+});
