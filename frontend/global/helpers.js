@@ -298,6 +298,10 @@ window.addEventListener('load', () => {
 });
 
 window.addEventListener('resize', () => {
+	if (!document.querySelector('nav')) {
+		return;
+	}
+
 	const nav_links = document.querySelector('#nav-links');
 	if (nav_links.classList.contains('show')) {
 		nav_links.style.maxHeight
