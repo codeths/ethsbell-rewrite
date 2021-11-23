@@ -5,19 +5,18 @@ use crate::{
 	ical,
 	ical::IcalResponder,
 	login::Authenticated,
-	schedule::{Period, Schedule, ScheduleDefinition, ScheduleType},
-	SpecLock,
+	schedule::{get_schedule_from_config, Period, Schedule, ScheduleDefinition, ScheduleType},
 };
-use chrono::{DateTime, Datelike, Duration, Local, NaiveDate, NaiveDateTime, NaiveTime, TimeZone};
+use chrono::{Datelike, Duration, Local, NaiveDate, NaiveDateTime, NaiveTime, TimeZone};
 use rocket::{http::Status, response::content::Html, Data, Route, State};
 use rocket_contrib::{json::Json, templates::Template};
 use rocket_okapi::{openapi, routes_with_openapi};
 use serde::Serialize;
 use std::{
-	fs::{File, OpenOptions},
+	fs::OpenOptions,
 	io::Write,
 	str::FromStr,
-	sync::{Arc, Mutex, RwLock},
+	sync::{Arc, RwLock},
 };
 
 /// Generates a list of Routes for Rocket
@@ -33,10 +32,9 @@ pub fn routes() -> Vec<Route> {
 		date_at,
 		today_around_now,
 		what_time,
-		get_lock,
-		force_unlock,
 		get_spec,
 		post_spec,
+		post_update,
 		check_auth,
 		check_version,
 		ical,
@@ -148,47 +146,36 @@ fn get_spec(
 	Ok(Json(schedule.read().unwrap().definition.clone()))
 }
 
-/// Uploads a new schedule specification file. Broken.
+/// Uploads a new schedule specification file.
 #[openapi(skip)]
 #[post("/spec", data = "<body>")]
-fn post_spec(body: Data, _auth: Authenticated) -> Result<(), OurError> {
+fn post_spec(
+	body: Data,
+	_auth: Authenticated,
+	schedule: State<Arc<RwLock<Schedule>>>,
+) -> Result<(), OurError> {
 	let mut file = OpenOptions::new()
 		.read(true)
 		.write(true)
 		.create(true)
 		.truncate(true)
-		.open("./def-test.json")?;
+		.open("./def.json")?;
 	body.stream_to(&mut file)?;
 	file.flush()?;
-	let file = File::open("./def-test.json")?;
-	let _: ScheduleDefinition = serde_json::from_reader(file)?;
-	std::fs::copy("./def-test.json", "./def.json")?;
+	schedule.write().unwrap().definition = get_schedule_from_config();
+
 	Ok(())
 }
 
-/// Acquires a lock on the schedule specification. Broken.
-#[openapi]
-#[get("/lock")]
-fn get_lock(
-	lock: State<Arc<Mutex<SpecLock>>>,
+/// Update schedule data
+#[openapi(skip)]
+#[post("/update")]
+fn post_update(
 	_auth: Authenticated,
-) -> Result<Json<String>, Json<DateTime<Local>>> {
-	let mut lock = lock.lock().unwrap();
-	match lock.0 {
-		Some(dt) => Err(Json(dt)),
-		None => {
-			lock.0 = Some(Local::now());
-			Ok(Json("OK".to_string()))
-		}
-	}
-}
-
-/// Unlocks the schedule specification. Broken.
-#[openapi]
-#[get("/force-unlock")]
-fn force_unlock(lock: State<Arc<Mutex<SpecLock>>>, _auth: Authenticated) {
-	let mut lock = lock.lock().unwrap();
-	lock.0 = None
+	schedule: State<Arc<RwLock<Schedule>>>,
+) -> Result<(), OurError> {
+	Schedule::update_async(schedule.clone());
+	Ok(())
 }
 
 /// Returns the time.
@@ -286,10 +273,7 @@ fn today_code(
 /// Returns the current period type.
 #[openapi]
 #[get("/today/now?<timestamp>")]
-fn today_now(
-	schedule: State<Arc<RwLock<Schedule>>>,
-	timestamp: Option<i64>,
-) -> Json<Vec<Period>> {
+fn today_now(schedule: State<Arc<RwLock<Schedule>>>, timestamp: Option<i64>) -> Json<Vec<Period>> {
 	Schedule::update_if_needed_async(schedule.clone());
 	let now = match timestamp {
 		None => Local::now(),

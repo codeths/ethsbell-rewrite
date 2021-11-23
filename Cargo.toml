@@ -35,10 +35,12 @@ crate-type = ["cdylib", "rlib"]
 [[bin]]
 name = "ethsbell-rewrite"
 required-features = ["ws"]
+path = "src/main.rs"
 
 [[bin]]
 name = "bell_mkschema"
 required-features = ["ws"]
+path = "src/bin/bell_mkschema.rs"
 
 [features]
 default = ["ws"]

@@ -12,13 +12,9 @@ if (!String.prototype.replaceAll) {
 
 // Start helpers
 let lastFetchedData = null;
-let serverOffset = null;
+const serverOffset = null;
 
 async function get(endpoint = '/api/v1/today/now/near') {
-	if (serverOffset === null) {
-		serverOffset = await getServerOffset();
-	}
-
 	return fetch(
 		`${endpoint}?timestamp=${Math.floor(current_date().getTime() / 1000)}`,
 	)
@@ -166,7 +162,6 @@ function date_from_api(time, now = current_date()) {
 		m,
 		s,
 	);
-	date.setTime(date.getTime() + serverOffset);
 	return date;
 }
 

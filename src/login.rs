@@ -43,7 +43,6 @@ impl<'r> Responder<'r> for WantsBasicAuth {
 	fn respond_to(self, _request: &rocket::Request) -> rocket::response::Result<'r> {
 		Response::build()
 			.sized_body(Cursor::new("Needs authorization"))
-			.raw_header("WWW-Authenticate", "Basic")
 			.ok()
 	}
 }
