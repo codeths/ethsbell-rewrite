@@ -1,7 +1,7 @@
 [package]
 name = "ethsbell-rewrite"
 version = "2.0.2"
-authors = ["Willow Carlson-Huber <willow.ch@protonmail.com>", "Albert Portnoy <albert@asportnoy.com>"]
+authors = ["Willow Carlson-Huber <willow.ch@protonmail.com>", "Albert Portnoy <albert@albertp.dev"]
 edition = "2018"
 default-run = "ethsbell-rewrite"
 
