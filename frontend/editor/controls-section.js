@@ -363,6 +363,10 @@ function displayPeriods() {
 				return;
 			}
 
+			if (/^\d{2}:\d{2}$/.test(event.target.value)) {
+				event.target.value += ':00';
+			}
+
 			period.end = event.target.value;
 		});
 		$$('period_kind').addEventListener('change', event => {
