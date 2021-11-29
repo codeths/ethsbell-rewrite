@@ -1,6 +1,8 @@
 body {
 	font-family: sans-serif;
 	line-height: 1.5;
+	padding: 10px !important;
+	height: auto !important;
 }
 
 .error {
