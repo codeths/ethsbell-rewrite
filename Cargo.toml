@@ -1,6 +1,6 @@
 [package]
 name = "ethsbell-rewrite"
-version = "2.0.4"
+version = "2.0.5"
 authors = ["Willow Carlson-Huber <willow.ch@protonmail.com>", "Albert Portnoy <albert@albertp.dev"]
 edition = "2018"
 default-run = "ethsbell-rewrite"
