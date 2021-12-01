@@ -1,61 +1,63 @@
 <!DOCTYPE html>
 <html lang="en">
-	<head>
-		<meta charset="UTF-8" />
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<title>ETHSBell NG</title>
-		<link rel="stylesheet" href="../timeline/index.css" />
-		<include src="include/prelude.html"></include>
-		<script defer async type="module" src="../timeline/index.js"></script>
-		<script defer src="../global/autohide_nav.js"></script>
-		<meta http-equiv="Content-Security-Policy" content="default-src 'self';" />
-	</head>
 
-	<body class="background-color">
-		<include src="include/navbar.html"></include>
-		<div class="portrait_warning">This page doesn't work great on narrow screens, sorry!</div>
-		<div id="wrapper">
-			<div class="bg">
-				<include src="include/timeline.html"></include>
-				<div id="around" class="foreground-color">
-					<table>
-						<tr>
-							<td class="prev_parent">
-								<div class="small" id="prev_start"></div>
-								<div id="prev_name"></div>
-								<div class="small" id="prev_end"></div>
-							</td>
-							<td>→</td>
-							<template id="current">
-								<td>
-									<div class="small">from CURR_START</div>
-									<div>CURR_NAME</div>
-									<div class="small">until CURR_END</div>
-								</td>
-							</template>
-							<template id="current_separator">
-								<td>&nbsp;and&nbsp;</td>
-							</template>
+<head>
+	<meta charset="UTF-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>ETHSBell NG</title>
+	<link rel="stylesheet" href="../timeline/index.css" />
+	<include src="include/prelude.html"></include>
+	<script defer async type="module" src="../timeline/index.js" type="module"></script>
+	<script defer src="../global/autohide_nav.js" type="module"></script>
+	<meta http-equiv="Content-Security-Policy" content="default-src 'self';" />
+</head>
+
+<body class="background-color">
+	<include src="include/navbar.html"></include>
+	<div class="portrait_warning">This page doesn't work great on narrow screens, sorry!</div>
+	<div id="wrapper">
+		<div class="bg">
+			<include src="include/timeline.html"></include>
+			<div id="around" class="foreground-color">
+				<table>
+					<tr>
+						<td class="prev_parent">
+							<div class="small" id="prev_start"></div>
+							<div id="prev_name"></div>
+							<div class="small" id="prev_end"></div>
+						</td>
+						<td>→</td>
+						<template id="current">
 							<td>
-								<table>
-									<tr id="current_parent"></tr>
-								</table>
+								<div class="small">from CURR_START</div>
+								<div>CURR_NAME</div>
+								<div class="small">until CURR_END</div>
 							</td>
-							<td>→</td>
-							<td id="next_parent">
-								<div class="small" id="next_start"></div>
-								<div id="next_name"></div>
-								<div class="small" id="next_end"></div>
-							</td>
-						</tr>
-					</table>
-					<div id="time_left" class="text-center"></div>
-					<br /><br />
-				</div>
+						</template>
+						<template id="current_separator">
+							<td>&nbsp;and&nbsp;</td>
+						</template>
+						<td>
+							<table>
+								<tr id="current_parent"></tr>
+							</table>
+						</td>
+						<td>→</td>
+						<td id="next_parent">
+							<div class="small" id="next_start"></div>
+							<div id="next_name"></div>
+							<div class="small" id="next_end"></div>
+						</td>
+					</tr>
+				</table>
+				<div id="time_left" class="text-center"></div>
+				<br /><br />
 			</div>
-			<include src="include/advisory.html"></include>
-			<include src="include/fullscreen.html"></include>
 		</div>
-	</body>
+		<include src="include/advisory.html"></include>
+		<include src="include/fullscreen.html"></include>
+	</div>
+</body>
+
 </html>

@@ -1,15 +1,3 @@
-// Polyfills
-
-// String.prototype.replaceAll
-if (!String.prototype.replaceAll) {
-	String.prototype.replaceAll = function (search, replacement) {
-		return this.replace(
-			typeof search === 'string' ? new RegExp(search, 'g') : search,
-			replacement,
-		);
-	};
-}
-
 const DEFAULT_CONFIG = {
 	schedule: {},
 	foreground_color: '#1a2741',
