@@ -2,10 +2,11 @@
 	"scripts": {
 		"lint": "xo",
 		"build": "parcel build $(find frontend -name \\*.html) --dist-dir frontend-dist",
-		"dev": "cargo watch -i frontend-dist -s 'npm run build'"
+		"dev": "cargo watch -i frontend-dist -s 'npm run build'",
+		"polyfill": "create-polyfill-service-url analyse --file $(find frontend/**.js) 2>/dev/null"
 	},
-	"dependencies": {},
 	"devDependencies": {
+		"create-polyfill-service-url": "^2.2.6",
 		"eslint-config-xo": "^0.37.0",
 		"eslint-plugin-promise": "^5.1.1",
 		"parcel": "^2.0.1",
