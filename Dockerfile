@@ -27,7 +27,7 @@ RUN apt-get update && apt-get install -y libssl-dev ca-certificates curl make bu
 RUN curl -fsSL https://deb.nodesource.com/setup_14.x | bash -
 RUN apt-get install -y nodejs
 WORKDIR /app
-COPY package*.json .posthtmlrc ./
+COPY package*.json .posthtmlrc .browserslistrc ./
 RUN npm i
 COPY frontend frontend
 RUN npm run build -- --no-cache
