@@ -1,6 +1,4 @@
-let Authorization = getCookie('Authorization');
-
-window.Authorization = Authorization;
+window.Authorization = getCookie('Authorization');
 
 $('auth_form').addEventListener('submit', event => {
 	event.preventDefault();
@@ -13,7 +11,7 @@ $('auth_form').addEventListener('submit', event => {
 $('auth_username').focus();
 
 async function authenticate(auth = Authorization) {
-	Authorization = auth;
+	window.Authorization = auth;
 	const ok = await request('../api/v1/check-auth', {});
 	if (ok) {
 		setCookie(
