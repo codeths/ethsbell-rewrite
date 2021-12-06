@@ -1,5 +1,7 @@
 let Authorization = getCookie('Authorization');
 
+window.Authorization = Authorization;
+
 $('auth_form').addEventListener('submit', event => {
 	event.preventDefault();
 	const username = $('auth_username').value;
