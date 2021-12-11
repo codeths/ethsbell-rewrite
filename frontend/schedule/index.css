@@ -52,7 +52,7 @@ body {
 #calendar-table {
 	width: 100%;
 	max-width: 1000px;
-	overflow: scroll;
+	overflow: auto;
 	margin: 25px 0px;
 }
 

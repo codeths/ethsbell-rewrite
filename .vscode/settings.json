@@ -53,17 +53,19 @@
 		"wildkit"
 	],
 	"rust-analyzer.cargo.features": ["ws"],
+	"rust-analyzer.updates.channel": "nightly",
 	"nixEnvSelector.suggestion": false,
 	"rcover.testCommand": "cargo test --features ws",
 	"editor.detectIndentation": false,
 	"editor.insertSpaces": false,
+	"editor.formatOnSave": true,
 	"xo.enable": true,
 	"xo.format.enable": true,
-	"editor.defaultFormatter": "samverschueren.linter-xo",
 	"[javascript]": {
 		"editor.defaultFormatter": "samverschueren.linter-xo"
 	},
-	"[typescript]": {
-		"editor.defaultFormatter": "samverschueren.linter-xo"
-	}
+	"[html]": {
+		"editor.defaultFormatter": "vscode.html-language-features"
+	},
+	"html.format.indentInnerHtml": false
 }

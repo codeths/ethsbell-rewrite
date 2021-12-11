@@ -1,14 +1,5 @@
-const defaultConfig = {
-	schedule: {},
-	foreground_color: '#1a2741',
-	background_color: '#c34614',
-	foreground_text_color: '#ffffff',
-	background_text_color: '#ffffff',
-	include_period_name: true,
-};
-
 function getConfig() {
-	return Object.assign(defaultConfig, JSON.parse(localStorage.getItem('schedule')) || '{}');
+	return Object.assign(DEFAULT_CONFIG, JSON.parse(localStorage.getItem('schedule')) || '{}');
 }
 
 getel('upload').addEventListener('click', async () => {
@@ -55,6 +46,7 @@ function populate() {
 	getel('background_color').value = initial.background_color;
 	getel('foreground_text_color').value = initial.foreground_text_color;
 	getel('background_text_color').value = initial.background_text_color;
+	getel('schedule_color_background').checked = initial.use_schedule_color;
 	getel('default-page').value = initial.default_page || '/';
 	getel('cfg_body').innerHTML = [
 		{name: 'Early Bird', code: 'EarlyBird'},
@@ -89,7 +81,7 @@ populate();
 
 getel('save-schedule').addEventListener('click', () => {
 	const schedule = {};
-	for (const x of [...document.querySelectorAll('input[data-for=name]')]) {
+	for (const x of document.querySelectorAll('input[data-for=name]')) {
 		const period = x.getAttribute('data-period');
 		if (!schedule[period]) {
 			schedule[period] = {};
@@ -98,7 +90,7 @@ getel('save-schedule').addEventListener('click', () => {
 		schedule[period].name = x.value || null;
 	}
 
-	for (const x of [...document.querySelectorAll('input[data-for=url]')]) {
+	for (const x of document.querySelectorAll('input[data-for=url]')) {
 		const period = x.getAttribute('data-period');
 		if (!schedule[period]) {
 			schedule[period] = {};
@@ -134,6 +126,7 @@ getel('save-colors').addEventListener('click', () => {
 	data.background_color = getel('background_color').value;
 	data.foreground_text_color = getel('foreground_text_color').value;
 	data.background_text_color = getel('background_text_color').value;
+	data.use_schedule_color = getel('schedule_color_background').checked;
 
 	localStorage.setItem('schedule', JSON.stringify(data));
 	broadcastConfigToExtension();
@@ -165,6 +158,7 @@ getel('reset-colors').addEventListener('click', () => {
 	data.background_color = '#c34614';
 	data.foreground_text_color = '#ffffff';
 	data.background_text_color = '#ffffff';
+	data.use_schedule_color = true;
 
 	localStorage.setItem('schedule', JSON.stringify(data));
 	broadcastConfigToExtension();

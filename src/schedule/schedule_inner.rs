@@ -3,8 +3,11 @@ use chrono::{Local, NaiveDate, NaiveDateTime};
 use serde::Serialize;
 use std::collections::HashMap;
 use std::convert::TryInto;
+use std::{env, fs};
+
 #[cfg(feature = "pull")]
 use std::{
+	path::Path,
 	sync::{Arc, RwLock},
 	thread,
 };
@@ -94,14 +97,14 @@ impl Schedule {
 	}
 	/// Returns whether the schedule's calendar data is out of date.
 	pub fn is_update_needed(&self) -> bool {
-		match option_env!("UPDATE_INTERVAL") {
-			None => self.last_updated.date() != Local::now().date().naive_local(),
-			Some(v) => {
+		match env::var("UPDATE_INTERVAL") {
+			Ok(v) => {
 				let seconds: u64 = v.parse().unwrap();
 				let latest_needed = Local::now().naive_local().timestamp() as u64 - seconds;
 				let last_updated = self.last_updated.timestamp() as u64;
 				latest_needed > last_updated
 			}
+			Err(_) => self.last_updated.date() != Local::now().date().naive_local(),
 		}
 	}
 	/// Returns a tuple of the schedule occurring on a target date and its key in the schedule table.
@@ -147,4 +150,20 @@ impl Schedule {
 			},
 		}
 	}
+}
+
+/// Get schedule JSON from definition file
+pub fn get_schedule_from_config() -> ScheduleDefinition {
+	if !Path::new("./def.json").exists() {
+		fs::copy("./def.example.json", "./def.json").expect("Could not copy def");
+	}
+
+	let string =
+		fs::read_to_string(env::var("SCHEDULE_DEF").unwrap_or_else(|_| "./def.json".to_string()))
+			.expect("Opened schedule definition");
+
+	// Deserialize the definition.
+	let schedule_def: ScheduleDefinition =
+		serde_json::from_str(&string).expect("Deserialized schedule definition");
+	schedule_def
 }

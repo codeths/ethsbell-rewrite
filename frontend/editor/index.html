@@ -6,79 +6,109 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Schedule Editor</title>
-	<script src="../editor/helpers.js"></script>
 	<link rel="stylesheet" href="../editor/index.css">
+	<include src="include/prelude.html"></include>
+	<script src="../editor/helpers.js" type="module"></script>
+	<script src="../editor/controls-section.js" type="module" defer></script>
+	<script src="../editor/auth-section.js" type="module" defer></script>
 </head>
 
 <body>
-	<b>This editor is broken right now, please edit the underlying JSON files instead.</b>
-	<h1>ETHSBell Rewrite Schedule Editor</h1>
+	<h1>ETHSBell Schedule Editor</h1>
 	<hr>
 	<div id="authenticate">
-		<h2>Authenticate</h2>
-		<p>
-			To use the schedule editor, you need to input the administrator's secret.
-			<br>
+		<h2>Log In</h2>
 		<form id="auth_form">
 			<label for="auth_username">Username: </label>
-			<input id="auth_username"><br>
+			<input id="auth_username" autocomplete="username"><br>
 			<label for="auth_password">Password: </label>
-			<input type="password" id="auth_password"><br>
-			<button id="auth_check">Check</button><br>
+			<input type="password" id="auth_password" autocomplete="current-password"><br>
+			<input type="submit" id="auth_check" value="Log In"></input><br>
 			<span id="auth_error" class="error"></span>
-			<script src="../editor/auth_section.js"></script>
 		</form>
-		</p>
 	</div>
-	<hr>
-	<button id="lock">Lock</button>
-	<button id="unlock">Unlock</button>
-	<button id="pull">Pull</button>
-	<button id="push">Push</button>
-	<span id="controls_error" class="error"></span>
-	<hr>
-	<h2>Schedule Type information</h2>
-	<select id="select_schedule">
-	</select>
-	<button id="add_schedule">+</button>
-	<button id="copy_schedule">copy</button>
-	<button id="remove_schedule">-</button>
-	<br>
-	<label for="schedule_friendly_name">Friendly Name</label>
-	<input id="schedule_friendly_name">
-	<br>
-	<label for="schedule_regex">Schedule Regex</label>
-	<input id="schedule_regex">
-	<hr>
-	<h2>Period Information</h2>
-	<select id="select_period">
-	</select>
-	<button id="add_period">+</button>
-	<button id="remove_period">-</button>
-	<br>
-	<label for="period_friendly_name">Friendly Name</label>
-	<input id="period_friendly_name">
-	<br>
-	<label for="period_start">Start Time</label>
-	<input id="period_start">
-	<br>
-	<label for="period_end">End Time</label>
-	<input id="period_end">
-	<br>
-	<label for="period_kind">Period Kind</label>
-	<select id="period_kind">
-		<option value="Class">Class</option>
-		<option value="Lunch">Lunch</option>
-		<option value="Break">Break</option>
-		<option value="AMSupport">AM Support</option>
-		<option value="Passing">Passing (implicit)</option>
-		<option value="BeforeSchool">BeforeSchool (implicit)</option>
-		<option value="AfterSchool">AfterSchool (implicit)</option>
-	</select>
-	<br>
-	<label for="period_class_index">Class Index</label>
-	<input id="period_class_index" type="number">
-	<script src="../editor/controls-section.js"></script>
+	<div id="settings">
+		<button id="pull">Fetch Schedules</button>
+		<button id="push">Apply Changes</button>
+		<button id="update">Force Schedule Reload</button>
+		<span id="controls_error" class="error"></span>
+		<hr>
+		<button id="export">Export settings</button>
+		<br>
+		<label for="import">Import settings:</label>
+		<input type="file" id="import" accept=".json" />
+		<hr>
+		<h2>Schedule Calendar</h2>
+		<label for="calendars">Calendar URLs (ical feed, one per line. Top items take priority.)</label>
+		<br>
+		<textarea id="calendars"></textarea>
+		<br>
+		<h3>Typical Week</h3>
+		<div id="typical_schedule">
+		</div>
+		<br>
+		<hr>
+		<h2>Manage Schedules</h2>
+		<button id="add_schedule">Create New Blank Schedule</button>
+		<br>
+		<select id="select_schedule">
+		</select>
+		<button id="copy_schedule">Duplicate Selected Schedule</button>
+		<button id="remove_schedule">Delete Selected Schedule</button>
+		<br>
+		<br>
+		<label for="schedule_friendly_name">Schedule Name</label>
+		<input id="schedule_friendly_name" class="schedule_setting">
+		<br>
+		<label for="schedule_code">Schedule Code (internal use)</label>
+		<input id="schedule_code" class="schedule_setting">
+		<br>
+		<label for="schedule_color">Schedule Color</label>
+		<input id="schedule_color" class="schedule_setting" type="color">
+		<br>
+		<label for="schedule_hide">Hide in dropdowns</label>
+		<input id="schedule_hide" class="schedule_setting" type="checkbox">
+		<br>
+		<label for="schedule_regex">Schedule Regex</label>
+		<input id="schedule_regex" class="schedule_setting">
+		<br>
+		<br>
+		<hr>
+		<h2>Manage Periods</h2>
+		<template id="period_settings">
+			<button id="move_up">Move Up</button>
+			<button id="move_down">Move Down</button>
+			<button id="remove_period">Remove</button>
+			<br>
+			<label for="period_friendly_name">Friendly Name</label>
+			<input id="period_friendly_name">
+			<br>
+			<label for="period_start">Start Time</label>
+			<input type="time" id="period_start">
+			<br>
+			<label for="period_end">End Time</label>
+			<input type="time" id="period_end">
+			<br>
+			<label for="period_kind">Period Kind</label>
+			<select id="period_kind">
+				<option value="Class">Class</option>
+				<option value="Lunch">Lunch</option>
+				<option value="Break">Break</option>
+				<option value="AMSupport">AM Support</option>
+				<option value="Passing">Passing (implicit)</option>
+				<option value="BeforeSchool">BeforeSchool (implicit)</option>
+				<option value="AfterSchool">AfterSchool (implicit)</option>
+			</select>
+			<br>
+			<label for="period_class_index">Class Code (internal use)</label>
+			<input id="period_class_index">
+		</template>
+		<div id="periods">
+		</div>
+		<button id="add_period" disabled>
+			Add Period
+		</button>
+	</div>
 </body>
 
 </html>

@@ -9,4 +9,5 @@ package-lock.json
 node_modules
 /schema
 /frontend-dist
-.cache
+.parcel-cache
+def.json

@@ -1,4 +1,38 @@
+body {
+	font-family: sans-serif;
+	line-height: 1.5;
+	padding: 10px !important;
+	height: auto !important;
+}
+
 .error {
 	color: red;
 	font-weight: bold;
+}
+
+#settings {
+	display: none;
+}
+
+.period {
+	padding: 10px 0px;
+	border-bottom: 1px dashed gray;
+}
+
+label {
+	padding-right: 5px;
+}
+
+#calendars {
+	width: calc(100% - 6px);
+	max-width: 1000px;
+	padding: 3px;
+	overflow-wrap: normal;
+	overflow-x: auto;
+	resize: vertical;
+}
+
+#add_period {
+	margin-top: 10px;
+	margin-bottom: 5px;
 }
