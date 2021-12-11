@@ -327,5 +327,14 @@ a {
 	color: white;
 	font-weight: bold;
 	opacity: 0.5;
-	pointer-events: none;
+}
+
+.advisory-close {
+	margin-left: 5px;
+	background-color: transparent;
+	border: none;
+	color: white;
+	cursor: pointer;
+	font-size: 150%;
+	vertical-align: middle;
 }
