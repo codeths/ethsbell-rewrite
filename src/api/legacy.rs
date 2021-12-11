@@ -2,6 +2,7 @@
 use crate::impls::MaxElement;
 use crate::schedule::{Period, PeriodType, Schedule, ScheduleType};
 use chrono::{Datelike, Local, NaiveDate, NaiveTime, Timelike, Weekday};
+use rocket::response::content::Html;
 use rocket::{Route, State};
 use rocket_contrib::json::Json;
 use rocket_contrib::templates::Template;
@@ -12,7 +13,7 @@ use std::sync::{Arc, RwLock};
 
 /// Returns a list of all our routes for Rocket.
 pub fn routes() -> Vec<Route> {
-	routes_with_openapi![display, data]
+	routes_with_openapi![display, data, oliver]
 }
 
 /// This returns a templated HTML response for use with the original frontend and the browser extension.
@@ -116,7 +117,6 @@ struct LegacySchedule {
 	/// The class number of the next Class(_) period, or -1 if none exist.
 	pub theNextSlot_: String,
 	/// The time of day as a negative number of minutes.
-	/// I don't understand it either.
 	pub timeLeftInPeriod: isize,
 	/// The time since the end of the last period in minutes.
 	pub timeSinceLastPeriod: isize,
@@ -266,4 +266,11 @@ impl ToLegacyFormat for Weekday {
 		}
 		.to_string()
 	}
+}
+
+/// 🪦
+#[openapi]
+#[get("/oliver")]
+fn oliver() -> Html<&'static str> {
+	Html(include_str!("oliver.html"))
 }
