@@ -386,7 +386,7 @@ function broadcastConfigToExtension() {
 	}
 }
 
-function setCookie(name, value, expires, path = window.location.pathname) {
+function setCookie(name, value, expires, path = '/') {
 	document.cookie = `${name}=${encodeURIComponent(value)}; ${
 		expires ? `expires=${new Date(expires).toUTCString()}; ` : ''
 	}path=${path}`;
