@@ -11,7 +11,7 @@ let scrolled_distance = 0;
 
 /// Place period boxes for a list of periods.
 function place_boxes(data_unprocessed) {
-	let data = replace_period(data_unprocessed);
+	let data = replace_period(data_unprocessed.filter(p => p.kind !== 'Passing'));
 	if (!has_resize_listener) {
 		window.addEventListener('resize', () => {
 			place_boxes(all_data);
