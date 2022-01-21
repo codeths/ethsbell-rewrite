@@ -35,17 +35,25 @@ impl ScheduleType {
 			let mut next: Option<Period> = None;
 			self.periods.iter().for_each(|period| {
 				if period.end <= time {
-					match before.clone() {
-						Some(before_) if before_.end < period.end => before = Some(period.clone()),
-						None => before = Some(period.clone()),
-						_ => {}
+					if period.kind != PeriodType::Passing {
+						match before.clone() {
+							Some(before_) if before_.end < period.end => {
+								before = Some(period.clone())
+							}
+							None => before = Some(period.clone()),
+							_ => {}
+						}
 					}
 				} else if period.start > time {
-					match next.clone() {
-						Some(next_) if next_.start > period.start => next = Some(period.clone()),
-						None => next = Some(period.clone()),
-						_ => {}
-					};
+					if period.kind != PeriodType::Passing {
+						match next.clone() {
+							Some(next_) if next_.start > period.start => {
+								next = Some(period.clone())
+							}
+							None => next = Some(period.clone()),
+							_ => {}
+						}
+					}
 				} else {
 					current.push(period.clone());
 				}
