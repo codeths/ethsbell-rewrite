@@ -47,7 +47,7 @@ _Follow the instructions in [DEVELOPING](DEVELOPING.md) to set up a development 
 
 You can deploy the software with a Compose file like this.
 
-````yml
+```yml
 version: "3.7"
 
 services:
@@ -77,7 +77,7 @@ git clone https://github.com/chromezoneeths/ethsbell-rewrite.git
 cd ethsbell-rewrite
 cargo build
 # The resulting binary will be placed at ./target/release/ethsbell-rewrite
-````
+```
 
 ## Known Issues
 
