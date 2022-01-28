@@ -52,7 +52,7 @@ version: "3.7"
 
 services:
  web:
-  image: docker.pkg.github.com/chromezoneeths/ethsbell-rewrite/ethsbell-rewrite:latest
+  image: ghcr.io/codeths/ethsbell-rewrite/ethsbell-rewrite:latest
   restart: unless-stopped
   init: true
   ports:
