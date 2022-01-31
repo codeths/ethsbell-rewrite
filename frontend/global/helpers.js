@@ -473,3 +473,9 @@ function put_period_to_element(element, period) {
 	element.innerHTML = 'No School';
 	return false;
 }
+
+if (new URLSearchParams(
+	window.location.search,
+).get('fullscreen') !== null) {
+	document.querySelector('nav').style.display = 'none';
+}

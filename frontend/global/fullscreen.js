@@ -86,9 +86,3 @@ fullScreenButton.addEventListener('mouseenter', () => {
 fullScreenButton.addEventListener('mouseleave', () => {
 	doNotHideButton = false;
 });
-
-if (new URLSearchParams(
-	window.location.search,
-).get('fullscreen') !== null) {
-	document.querySelector('nav').style.display = 'none';
-}
