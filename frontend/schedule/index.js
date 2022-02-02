@@ -45,6 +45,26 @@ async function getDate(date = current_date(), setCurrent = false) {
 	}
 }
 
+let scheduleArray = [];
+
+function setScheduleValue(code) {
+	scheduleSelect.innerHTML = '';
+	for (const schedule of scheduleArray.filter(x => !x.hide || code === x.code)) {
+		const option = document.createElement('option');
+		option.value = schedule.code;
+		if (code === schedule.code) {
+			option.selected = true;
+		}
+
+		if (schedule.hide || schedule.periods.length === 0) {
+			option.disabled = true;
+		}
+
+		option.innerHTML = schedule.friendly_name;
+		scheduleSelect.append(option);
+	}
+}
+
 async function getSchedules() {
 	const today = await get('/api/v1/spec');
 	if (!today) {
@@ -55,28 +75,21 @@ async function getSchedules() {
 
 	scheduleSelect.innerHTML = '<option value="" disabled selected>Select a Schedule</option>';
 
-	for (const schedule of Object.keys(schedules).sort((a, b) => {
-		if ((schedules[a].hide && !schedules[b].hide) || schedules[a].periods.length === 0) {
+	scheduleArray = Object.keys(schedules).map(x => Object.assign({code: x}, schedules[x])).sort((a, b) => {
+		if ((!a.hide && b.hide) || a.periods.length === 0) {
 			return 1;
 		}
 
-		if ((!schedules[a].hide && schedules[b].hide) || schedules[b].periods.length === 0) {
+		if ((a.hide && !b.hide) || b.periods.length === 0) {
 			return -1;
 		}
 
-		return schedules[a].friendly_name.localeCompare(schedules[b].friendly_name);
-	})) {
-		const option = document.createElement('option');
-		option.value = schedule;
-		if (currentSchedule.friendly_name === schedules[schedule].friendly_name) {
-			option.selected = true;
-		} else {
-			option.hidden = schedules[schedule].hide || schedules[schedule].periods.length === 0;
-		}
+		return a.friendly_name.localeCompare(b.friendly_name);
+	});
 
-		option.innerHTML = schedules[schedule].friendly_name;
-		scheduleSelect.append(option);
-	}
+	const currentScheduleCode = currentSchedule && scheduleArray.find(x => x.friendly_name === currentSchedule.friendly_name)?.code || null;
+
+	setScheduleValue(currentScheduleCode);
 }
 
 async function getScheduleList(start, end) {
@@ -165,7 +178,7 @@ dateSelect.max = date_to_string(new Date(endOfNextWeek.getTime() - 60 * 60 * 24)
 			} else {
 				td.addEventListener('click', () => {
 					place_boxes(day.data, day.date, true, day.date.toLocaleDateString() === current_date().toLocaleDateString());
-					scheduleSelect.value = day.code;
+					setScheduleValue(day.code);
 					dateSelect.value = date_to_string(day.date);
 				});
 			}
