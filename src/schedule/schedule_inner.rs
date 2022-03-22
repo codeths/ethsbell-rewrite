@@ -1,5 +1,4 @@
 use chrono::Datelike;
-use chrono::Duration;
 use chrono::{Local, NaiveDate, NaiveDateTime};
 use serde::Serialize;
 use std::collections::HashMap;
@@ -61,10 +60,7 @@ impl Schedule {
 	pub fn update_if_needed_async(schedule: Arc<RwLock<Schedule>>) {
 		if schedule.read().unwrap().is_update_needed() {
 			schedule.write().unwrap().last_updated = Local::now().naive_local();
-			thread::spawn(move || {
-				Schedule::update_async(schedule.clone());
-				schedule.read().unwrap().push_notifications();
-			});
+			thread::spawn(|| Schedule::update_async(schedule));
 		}
 	}
 	/// Updates a schedule, locking minimally.
@@ -152,80 +148,6 @@ impl Schedule {
 					)
 				}
 			},
-		}
-	}
-	/// Pushes the schedule notifications to ntfy
-	pub fn push_notifications(&self) {
-		if let Ok(ntfy_endpoint) = std::env::var("NTFY") {
-			let now = Local::now();
-			let mut schedule_type = self.on_date(Local::now().naive_local().date()).0;
-			schedule_type
-				.periods
-				.iter_mut()
-				.for_each(|v| *v = v.clone().populate(now));
-			let now = now.time();
-			let client = reqwest::blocking::Client::new();
-			for i in schedule_type.periods {
-				let start = i.start;
-				let end = i.end;
-				let start_offset = start - now;
-				let end_offset = end - now;
-				if start_offset.num_seconds() < 0 || end_offset.num_seconds() < 0 {
-					eprintln!("Notification {} is in the past.", i.friendly_name);
-					continue;
-				} else {
-					eprintln!(
-						"Notification {} begins in {}s and ends in {}s.",
-						i.friendly_name,
-						start_offset.num_seconds(),
-						end_offset.num_seconds()
-					);
-				}
-				// Schedule the notifications
-				let early_start_response = client
-					.post(ntfy_endpoint.clone())
-					.body(format!(
-						"The period {} begins in five minutes!",
-						i.friendly_name
-					))
-					.header(
-						"Delay",
-						format!("{}s", (start_offset - Duration::minutes(5)).num_seconds()),
-					)
-					.send()
-					.unwrap();
-				let early_end_response = client
-					.post(ntfy_endpoint.clone())
-					.body(format!(
-						"The period {} ends in five minutes!",
-						i.friendly_name
-					))
-					.header(
-						"Delay",
-						format!("{}s", (end_offset - Duration::minutes(5)).num_seconds()),
-					)
-					.send()
-					.unwrap();
-				let start_response = client
-					.post(ntfy_endpoint.clone())
-					.body(format!("The period {} begins now!", i.friendly_name))
-					.header("Delay", format!("{}s", (start_offset).num_seconds()))
-					.send()
-					.unwrap();
-				let end_response = client
-					.post(ntfy_endpoint.clone())
-					.body(format!("The period {} ends now!", i.friendly_name))
-					.header("Delay", format!("{}s", (end_offset).num_seconds()))
-					.send()
-					.unwrap();
-				eprintln!(
-					"{} {} {} {}",
-					early_start_response.status(),
-					early_end_response.status(),
-					start_response.status(),
-					end_response.status()
-				)
-			}
 		}
 	}
 }
