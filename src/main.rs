@@ -29,6 +29,5 @@ fn main() {
 		// Build the runtime schedule struct and run the first update.
 		Schedule::from(schedule_def)
 	};
-	schedule.push_notifications();
 	rocket_builder::rocket(schedule).launch();
 }
