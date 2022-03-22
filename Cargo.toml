@@ -8,12 +8,15 @@ default-run = "ethsbell-rewrite"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-rocket = {version = "0.4.10", optional = true}
-rocket_contrib = {version = "0.4.10", features = ["json", "tera_templates"], optional = true}
-serde = {version = "1.0.125", features = ["derive"]}
+rocket = { version = "0.4.10", optional = true }
+rocket_contrib = { version = "0.4.10", features = [
+	"json",
+	"tera_templates",
+], optional = true }
+serde = { version = "1.0.125", features = ["derive"] }
 serde_json = "1.0.64"
-chrono = {version = "0.4.19", features = ["serde"]}
-reqwest = {version = "0.11.3", features = ["blocking"], optional = true}
+chrono = { version = "0.4.19", features = ["serde"] }
+reqwest = { version = "0.11.3", features = ["blocking"], optional = true }
 serde_regex = "1.1.0"
 regex = "1.4.6"
 urlencoding = "2.0.0"
@@ -21,10 +24,12 @@ thiserror = "1.0.24"
 base64 = "0.13.0"
 rand = "0.8.3"
 
-rocket_prometheus = {git = "https://github.com/chromezoneeths/rocket_prometheus", optional = true}
-rocket_okapi = {version = "0.6.0-alpha-1", optional = true}
-schemars = {version = "0.8.3", features = ["chrono"], optional = true}
-okapi = { version = "0.5.0-alpha-1", features = ["derive_json_schema"], optional = true }
+rocket_prometheus = { git = "https://github.com/chromezoneeths/rocket_prometheus", optional = true }
+rocket_okapi = { version = "0.6.0-alpha-1", optional = true }
+schemars = { version = "0.8.3", features = ["chrono"], optional = true }
+okapi = { version = "0.5.0-alpha-1", features = [
+	"derive_json_schema",
+], optional = true }
 
 [build-dependencies]
 subprocess = "*"
@@ -44,5 +49,13 @@ path = "src/bin/bell_mkschema.rs"
 
 [features]
 default = ["ws"]
-ws = ["rocket", "rocket_contrib", "pull", "rocket_okapi", "schemars", "okapi", "rocket_prometheus"]
+ws = [
+	"rocket",
+	"rocket_contrib",
+	"pull",
+	"rocket_okapi",
+	"schemars",
+	"okapi",
+	"rocket_prometheus",
+]
 pull = ["reqwest"]
