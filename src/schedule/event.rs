@@ -54,7 +54,7 @@ pub fn ical_to_ours(schedule: &mut Schedule, data: &[IcalEvent]) {
 					.as_ref()
 					.unwrap()
 					.to_string()
-					.replace("\n ","")
+					.replace("\n ", "")
 					.chars()
 					.skip(literal_header.len())
 					.collect::<String>();
@@ -88,8 +88,55 @@ pub fn ical_to_ours(schedule: &mut Schedule, data: &[IcalEvent]) {
 					}
 					if !found {
 						// Otherwise, create a new event entry.
-						date.push(Event::ScheduleOverride(i.0.clone()));
-						is_schedule_event = true;
+
+						// Check if there is a partial literal schedule to apply
+						let literal_header = "PARTIAL LITERAL ";
+						if event
+							.description
+							.as_ref()
+							.unwrap_or(&"".to_string())
+							.starts_with(literal_header)
+						{
+							// Get original schedule
+							let mut json = serde_json::to_value(
+								schedule
+									.definition
+									.schedule_types
+									.get(&i.0.clone())
+									.unwrap(),
+							)
+							.unwrap();
+
+							// Get partial schedule from description
+							let result = serde_json::from_str(
+								&event
+									.description
+									.as_ref()
+									.unwrap()
+									.to_string()
+									.replace("\n ", "")
+									.chars()
+									.skip(literal_header.len())
+									.collect::<String>(),
+							);
+							if result.is_ok() {
+								// Merge partial schedule into original
+								merge(&mut json, &result.unwrap());
+
+								date.push(Event::ScheduleLiteral(
+									serde_json::to_string(&json).unwrap(),
+								));
+								return;
+							} else {
+								println!(
+									"Error parsing schedule literal: {:?}",
+									result.unwrap_err()
+								)
+							}
+						} else {
+							date.push(Event::ScheduleOverride(i.0.clone()));
+							is_schedule_event = true;
+						}
 					}
 				}
 			}
@@ -104,4 +151,17 @@ pub fn ical_to_ours(schedule: &mut Schedule, data: &[IcalEvent]) {
 			day += Duration::days(1)
 		}
 	})
+}
+
+fn merge(a: &mut serde_json::Value, b: &serde_json::Value) {
+	match (a, b) {
+		(&mut serde_json::Value::Object(ref mut a), &serde_json::Value::Object(ref b)) => {
+			for (k, v) in b {
+				merge(a.entry(k.clone()).or_insert(serde_json::Value::Null), v);
+			}
+		}
+		(a, b) => {
+			*a = b.clone();
+		}
+	}
 }
