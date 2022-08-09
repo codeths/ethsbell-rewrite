@@ -1,5 +1,5 @@
 # Setup chef
-FROM rustlang/rust:nightly AS chef
+FROM docker.io/rustlang/rust:nightly AS chef
 RUN cargo install cargo-chef
 
 # Build
@@ -22,7 +22,7 @@ COPY templates templates
 RUN cargo test --release --features=ws
 RUN cargo build --release --bin ethsbell-rewrite --features=ws
 
-FROM ubuntu AS frontend
+FROM docker.io/ubuntu AS frontend
 RUN apt-get update && apt-get install -y libssl-dev ca-certificates curl make build-essential && rm -rf /var/lib/apt/lists
 RUN curl -fsSL https://deb.nodesource.com/setup_14.x | bash -
 RUN apt-get install -y nodejs
@@ -33,10 +33,10 @@ COPY frontend frontend
 RUN npm run build -- --no-cache
 COPY frontend/favicon.ico frontend-dist
 
-FROM ubuntu
+FROM docker.io/ubuntu
 WORKDIR /app
 
-RUN apt-get update && apt-get install -y libssl-dev ca-certificates && rm -rf /var/lib/apt/lists
+RUN apt-get update && apt-get install -y libssl-dev ca-certificates curl && rm -rf /var/lib/apt/lists
 RUN update-ca-certificates
 ARG GITHUB_SHA
 ENV GITHUB_SHA=$GITHUB_SHA
