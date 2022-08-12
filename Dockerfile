@@ -34,7 +34,7 @@ COPY frontend frontend
 RUN npm run build -- --no-cache
 COPY frontend/favicon.ico frontend-dist
 
-FROM docker.io/ubuntu
+FROM docker.io/ubuntu:focal
 WORKDIR /app
 
 RUN apt-get update && apt-get install -y libssl-dev ca-certificates curl && rm -rf /var/lib/apt/lists
