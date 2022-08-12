@@ -109,7 +109,7 @@ fn on_code() {
 	schedule
 		.definition
 		.schedule_types
-		.insert("test_a".to_string(), test_a.clone());
+		.insert("test_a".to_string(), test_a);
 	// Add no
 	let no = ScheduleType {
 		hide: false,
@@ -121,7 +121,7 @@ fn on_code() {
 	schedule
 		.definition
 		.schedule_types
-		.insert("no".to_string(), no.clone());
+		.insert("no".to_string(), no);
 	// Build typical schedule
 	schedule.definition.typical_schedule =
 		vec!["test_a", "no", "test_a", "no", "test_a", "no", "test_a"]
@@ -169,7 +169,7 @@ fn on_at() {
 	schedule
 		.definition
 		.schedule_types
-		.insert("test_a".to_string(), test_a.clone());
+		.insert("test_a".to_string(), test_a);
 	// Build typical schedule
 	schedule.definition.typical_schedule = vec!["test_a".to_string(); 7];
 	let client = client(schedule.clone());
@@ -211,7 +211,7 @@ fn now() {
 	schedule
 		.definition
 		.schedule_types
-		.insert("test_a".to_string(), test_a.clone());
+		.insert("test_a".to_string(), test_a);
 	// Build typical schedule
 	schedule.definition.typical_schedule = vec!["test_a".to_string(); 7];
 	let client = client(schedule.clone());
@@ -285,7 +285,7 @@ fn now_near() {
 	schedule
 		.definition
 		.schedule_types
-		.insert("test_a".to_string(), test_a.clone());
+		.insert("test_a".to_string(), test_a);
 	// Build typical schedule
 	schedule.definition.typical_schedule = vec!["test_a".to_string(); 7];
 	let client = client(schedule.clone());
@@ -299,22 +299,22 @@ fn now_near() {
 	response.1[0].end_timestamp = 0;
 	// this is
 	response.0 = response.0.map(|v| {
-		let mut p = v.clone();
+		let mut p = v;
 		p.start_timestamp = 0;
 		p
 	});
 	response.0 = response.0.map(|v| {
-		let mut p = v.clone();
+		let mut p = v;
 		p.end_timestamp = 0;
 		p
 	});
 	response.2 = response.2.map(|v| {
-		let mut p = v.clone();
+		let mut p = v;
 		p.start_timestamp = 0;
 		p
 	});
 	response.2 = response.2.map(|v| {
-		let mut p = v.clone();
+		let mut p = v;
 		p.end_timestamp = 0;
 		p
 	});
@@ -346,7 +346,7 @@ fn today_at() {
 	schedule
 		.definition
 		.schedule_types
-		.insert("test_a".to_string(), test_a.clone());
+		.insert("test_a".to_string(), test_a);
 	// Build typical schedule
 	schedule.definition.typical_schedule = vec!["test_a".to_string(); 7];
 	let client = client(schedule.clone());
@@ -375,7 +375,7 @@ fn today() {
 	let test_a = ScheduleType {
 		hide: false,
 		friendly_name: "Test A".to_string(),
-		periods: vec![period.clone()],
+		periods: vec![period],
 		regex: None,
 		color: Some([0, 0, 0]),
 	};
@@ -409,14 +409,14 @@ fn today_code() {
 	let test_a = ScheduleType {
 		hide: false,
 		friendly_name: "Test A".to_string(),
-		periods: vec![period.clone()],
+		periods: vec![period],
 		regex: None,
 		color: Some([0, 0, 0]),
 	};
 	schedule
 		.definition
 		.schedule_types
-		.insert("test_a".to_string(), test_a.clone());
+		.insert("test_a".to_string(), test_a);
 	// Build typical schedule
 	schedule.definition.typical_schedule = vec!["test_a".to_string(); 7];
 	let client = client(schedule.clone());

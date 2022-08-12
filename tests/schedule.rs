@@ -78,7 +78,7 @@ fn on_date_override() {
 			calendar_urls: vec![],
 			schedule_types: {
 				let mut result = HashMap::new();
-				result.insert("type_a".to_string(), type_a.clone());
+				result.insert("type_a".to_string(), type_a);
 				result.insert("type_b".to_string(), type_b.clone());
 				result
 			},
@@ -163,7 +163,7 @@ fn at_time_typical() {
 
 	assert_eq!(
 		schedule.at_time(NaiveTime::from_hms(6, 0, 0)).2,
-		Some(test_period.clone())
+		Some(test_period)
 	);
 }
 

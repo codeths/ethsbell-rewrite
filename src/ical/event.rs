@@ -156,7 +156,7 @@ END:VEVENT
 ",
 					uid = rng.gen::<usize>(),
 					summary = period.friendly_name,
-					dtstamp = format!(
+					dtstamp = format_args!(
 						"{:0>4}{:0>2}{:0>2}T{:0>2}{:0>2}{:0>2}",
 						date.year(),
 						date.month(),
@@ -165,7 +165,7 @@ END:VEVENT
 						period.start.minute(),
 						period.start.second()
 					),
-					dtstart = format!(
+					dtstart = format_args!(
 						"{:0>4}{:0>2}{:0>2}T{:0>2}{:0>2}{:0>2}",
 						date.year(),
 						date.month(),
@@ -174,7 +174,7 @@ END:VEVENT
 						period.start.minute(),
 						period.start.second()
 					),
-					dtend = format!(
+					dtend = format_args!(
 						"{:0>4}{:0>2}{:0>2}T{:0>2}{:0>2}{:0>2}",
 						date.year(),
 						date.month(),
@@ -208,7 +208,7 @@ END:VEVENT
 					day = ["SU", "MO", "TU", "WE", "TH", "FR", "SA"][index],
 					uid = rng.gen::<usize>(),
 					summary = period.friendly_name,
-					dtstart = format!(
+					dtstart = format_args!(
 						"{:0>4}{:0>2}{:0>2}T{:0>2}{:0>2}{:0>2}",
 						start.year(),
 						start.month(),
@@ -217,7 +217,7 @@ END:VEVENT
 						period.start.minute(),
 						period.start.second()
 					),
-					dtstamp = format!(
+					dtstamp = format_args!(
 						"{:0>4}{:0>2}{:0>2}T{:0>2}{:0>2}{:0>2}",
 						start.year(),
 						start.month(),
@@ -226,7 +226,7 @@ END:VEVENT
 						period.start.minute(),
 						period.start.second()
 					),
-					dtend = format!(
+					dtend = format_args!(
 						"{:0>4}{:0>2}{:0>2}T{:0>2}{:0>2}{:0>2}",
 						start.year(),
 						start.month(),
