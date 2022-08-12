@@ -1,5 +1,6 @@
 # Setup chef
 FROM docker.io/rustlang/rust:nightly AS chef
+COPY rust-toolchain.toml ./
 RUN cargo install cargo-chef
 
 # Build
