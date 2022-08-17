@@ -105,10 +105,8 @@ impl ScheduleType {
 	/// Returns the first period of the schedule with the kind Class(_).
 	pub fn first_class(&self) -> Option<Period> {
 		self.periods
-			.iter()
-			.filter(|v| matches!(v.kind, PeriodType::Class(_)))
+			.iter().find(|v| matches!(v.kind, PeriodType::Class(_)))
 			.cloned()
-			.next()
 	}
 }
 

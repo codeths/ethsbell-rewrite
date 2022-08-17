@@ -27,14 +27,14 @@ fn things() {
 	let test_a = ScheduleType {
 		hide: false,
 		friendly_name: "Test A".to_string(),
-		periods: vec![period.clone()],
+		periods: vec![period],
 		regex: None,
 		color: Some([0, 0, 0]),
 	};
 	schedule
 		.definition
 		.schedule_types
-		.insert("test_a".to_string(), test_a.clone());
+		.insert("test_a".to_string(), test_a);
 	// Build typical schedule
 	schedule.definition.typical_schedule = vec!["test_a".to_string(); 7];
 	let client = client(schedule.clone());

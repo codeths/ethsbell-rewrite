@@ -119,9 +119,9 @@ pub fn ical_to_ours(schedule: &mut Schedule, data: &[IcalEvent]) {
 									.skip(literal_header.len())
 									.collect::<String>(),
 							);
-							if result.is_ok() {
+							if let Ok(r) = result {
 								// Merge partial schedule into original
-								merge(&mut json, &result.unwrap());
+								merge(&mut json, &r);
 
 								date.push(Event::ScheduleLiteral(
 									serde_json::to_string(&json).unwrap(),
