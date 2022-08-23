@@ -6,6 +6,7 @@
 pub use locks::SpecLock;
 use schedule::{get_schedule_from_config, Schedule};
 
+mod aliases;
 #[cfg(feature = "ws")]
 mod api;
 mod frontend;

@@ -2,6 +2,7 @@
 
 use super::OurError;
 use crate::{
+	aliases::v1::NearbyPeriods,
 	ical,
 	ical::IcalResponder,
 	login::Authenticated,
@@ -295,7 +296,7 @@ fn today_now(schedule: State<Arc<RwLock<Schedule>>>, timestamp: Option<i64>) -> 
 fn today_around_now(
 	schedule: State<Arc<RwLock<Schedule>>>,
 	timestamp: Option<i64>,
-) -> Json<(Option<Period>, Vec<Period>, Option<Period>)> {
+) -> Json<NearbyPeriods> {
 	Schedule::update_if_needed_async(schedule.clone());
 	let now = match timestamp {
 		None => Local::now(),

@@ -52,7 +52,7 @@
 		"wasm",
 		"wildkit"
 	],
-	"rust-analyzer.cargo.features": ["ws"],
+	"rust-analyzer.cargo.features": "all",
 	"rust-analyzer.updates.channel": "nightly",
 	"nixEnvSelector.suggestion": false,
 	"rcover.testCommand": "cargo test --features ws",

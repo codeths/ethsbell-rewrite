@@ -26,5 +26,8 @@ pub use locks::SpecLock;
 pub mod frontend;
 pub mod schedule;
 
+/// Contains type aliases which may be useful to those consuming ETHSBell as a library
+pub mod aliases;
+
 /// Re-export things from serde.
 pub use serde_json::from_str;
