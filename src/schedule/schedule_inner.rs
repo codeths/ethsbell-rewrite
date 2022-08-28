@@ -1,6 +1,6 @@
 use chrono::Datelike;
 use chrono::{Local, NaiveDate, NaiveDateTime};
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::convert::TryInto;
 use std::{env, fs};
