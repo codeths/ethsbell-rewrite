@@ -5,9 +5,9 @@ use std::collections::HashMap;
 use std::convert::TryInto;
 use std::{env, fs};
 
+use std::path::Path;
 #[cfg(feature = "pull")]
 use std::{
-	path::Path,
 	sync::{Arc, RwLock},
 	thread,
 };
