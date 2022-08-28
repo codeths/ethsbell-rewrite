@@ -60,7 +60,10 @@ pub fn ical_to_ours(schedule: &mut Schedule, data: &[IcalEvent]) {
 					.collect::<String>();
 				let result = serde_json::from_str::<ScheduleType>(&json);
 				if result.is_ok() {
-					date.push(Event::ScheduleLiteral(json));
+					let ev = Event::ScheduleLiteral(json);
+					if !date.contains(&ev) {
+						date.push(ev);
+					}
 					return;
 				} else {
 					println!("Error parsing schedule literal: {:?}", result.unwrap_err())
