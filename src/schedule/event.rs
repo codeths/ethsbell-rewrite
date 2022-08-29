@@ -61,10 +61,7 @@ pub fn ical_to_ours(schedule: &mut Schedule, data: &[IcalEvent]) {
 				let result = serde_json::from_str::<ScheduleType>(&json);
 				if result.is_ok() {
 					let ev = Event::ScheduleLiteral(json.clone());
-					if !date.iter().any(|v| match v {
-						Event::ScheduleLiteral(e) => e == &json,
-						_ => false,
-					}) {
+					if !date.contains(&Event::ScheduleLiteral(json.clone())) {
 						date.push(ev);
 					}
 					return;
@@ -128,10 +125,10 @@ pub fn ical_to_ours(schedule: &mut Schedule, data: &[IcalEvent]) {
 							if let Ok(r) = result {
 								// Merge partial schedule into original
 								merge(&mut json, &r);
-
-								date.push(Event::ScheduleLiteral(
-									serde_json::to_string(&json).unwrap(),
-								));
+								let json = serde_json::to_string(&json).unwrap();
+								if !date.contains(&Event::ScheduleLiteral(json.clone())) {
+									date.push(Event::ScheduleLiteral(json));
+								}
 								return;
 							} else {
 								println!(
