@@ -22,7 +22,8 @@ use std::{
 
 /// Generates a list of Routes for Rocket
 pub fn routes() -> Vec<Route> {
-	routes_with_openapi![
+	#[allow(unused_mut)]
+	let mut r = routes_with_openapi![
 		get_schedule,
 		today,
 		today_code,
@@ -43,7 +44,20 @@ pub fn routes() -> Vec<Route> {
 		widget,
 		license,
 		schedule_from_to,
-	]
+	];
+	#[cfg(debug_assertions)]
+	r.append(&mut routes![force_update]);
+	r
+}
+
+/// This route is only compiled on debug builds.
+/// It forces ETHSBell to rebuild the schedule for testing purposes.
+#[cfg(debug_assertions)]
+#[get("/force-update")]
+fn force_update(schedule: State<Arc<RwLock<Schedule>>>) {
+	let schedule = schedule.clone();
+	schedule.write().unwrap().last_updated = Local::now().naive_local();
+	std::thread::spawn(|| Schedule::update_async(schedule));
 }
 
 #[derive(Serialize)]
