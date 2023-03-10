@@ -6,11 +6,9 @@ use std::convert::TryInto;
 use std::{env, fs};
 
 use std::path::Path;
-#[cfg(feature = "pull")]
-use std::{
-	sync::{Arc, RwLock},
-	thread,
-};
+use std::sync::{Arc, RwLock};
+#[cfg(feature = "ws")]
+use std::thread;
 
 #[cfg(feature = "pull")]
 use super::{ical_to_ours, IcalEvent};
@@ -63,6 +61,9 @@ impl Schedule {
 			thread::spawn(|| Schedule::update_async(schedule));
 		}
 	}
+	/// Dummy function to allow compiling without pull.
+	#[cfg(not(feature = "pull"))]
+	pub fn update_if_needed_async(_schedule: Arc<RwLock<Schedule>>) {}
 	/// Updates a schedule, locking minimally.
 	#[cfg(feature = "pull")]
 	pub fn update_async(schedule: Arc<RwLock<Schedule>>) {

@@ -10,13 +10,11 @@ extern crate rocket;
 #[macro_use]
 extern crate rocket_okapi;
 
-#[cfg(feature = "ws")]
 pub mod api;
 pub mod ical;
 pub mod impls;
 #[cfg(feature = "ws")]
 pub mod locks;
-#[cfg(feature = "ws")]
 pub mod login;
 #[cfg(feature = "ws")]
 pub mod rocket_builder;
