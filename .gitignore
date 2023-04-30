@@ -11,3 +11,4 @@ node_modules
 /frontend-dist
 .parcel-cache
 def.json
+.env

@@ -1,7 +1,7 @@
 {
   "scripts": {
     "lint": "xo",
-    "build": "parcel build $(find frontend -name \\*.ejs) --dist-dir frontend-dist",
+    "build": "parcel build $(find frontend -name \\*.ejs) --dist-dir frontend-dist --no-cache",
     "dev": "cargo watch -i frontend-dist -s 'npm run build'",
     "polyfill": "create-polyfill-service-url analyse --file $(find frontend/**.js) 2>/dev/null"
   },
