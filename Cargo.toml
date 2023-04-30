@@ -20,6 +20,7 @@ urlencoding = "2.0.0"
 thiserror = "1.0.24"
 base64 = "0.13.0"
 rand = "0.8.3"
+cargo-chef = "0.1.36"
 
 rocket_prometheus = {git = "https://github.com/chromezoneeths/rocket_prometheus", optional = true}
 rocket_okapi = {version = "0.6.0-alpha-1", optional = true}
