@@ -1,79 +1,82 @@
 {
-	"scripts": {
-		"lint": "xo",
-		"build": "parcel build $(find frontend -name \\*.html) --dist-dir frontend-dist",
-		"dev": "cargo watch -i frontend-dist -s 'npm run build'",
-		"polyfill": "create-polyfill-service-url analyse --file $(find frontend/**.js) 2>/dev/null"
-	},
-	"devDependencies": {
-		"create-polyfill-service-url": "^2.2.6",
-		"eslint-config-xo": "^0.37.0",
-		"eslint-plugin-promise": "^5.1.1",
-		"parcel": "^2.0.1",
-		"posthtml-include": "^1.7.2",
-		"xo": "^0.46.4"
-	},
-	"xo": {
-		"envs": [
-			"browser"
-		],
-		"globals": [
-			"localStorage",
-			"human_time",
-			"document",
-			"human_time_left",
-			"fetch",
-			"$",
-			"isFullScreen",
-			"human_list",
-			"go",
-			"all_data",
-			"get",
-			"getel",
-			"canFullScreen",
-			"toggleFullScreen",
-			"Authorization",
-			"place_boxes",
-			"display",
-			"current_date",
-			"date_to_string",
-			"period_html",
-			"bytes_to_color",
-			"black_or_white",
-			"update_progress",
-			"update_progress_circular",
-			"replace_period",
-			"put_period_to_element",
-			"date_from_api",
-			"date_string_to_date",
-			"setTheme",
-			"chrome",
-			"broadcastConfigToExtension",
-			"getCookie",
-			"setCookie",
-			"request",
-			"pull",
-			"config",
-			"DEFAULT_CONFIG"
-		],
-		"rules": {
-			"camelcase": 0,
-			"no-unused-vars": 0,
-			"unicorn/filename-case": 0,
-			"no-global-assign": 0,
-			"no-alert": 0,
-			"complexity": 0,
-			"unicorn/numeric-separators-style": 0,
-			"no-mixed-operators": 0,
-			"unicorn/prevent-abbreviations": 0,
-			"no-use-extend-native/no-use-extend-native": 0,
-			"no-extend-native": 0,
-			"unicorn/no-document-cookie": 0,
-			"unicorn/no-array-reduce": 0,
-			"unicorn/no-array-for-each": 0
-		},
-		"ignores": [
-			"/tests/"
-		]
-	}
+  "scripts": {
+    "lint": "xo",
+    "build": "parcel build $(find frontend -name \\*.ejs) --dist-dir frontend-dist",
+    "dev": "cargo watch -i frontend-dist -s 'npm run build'",
+    "polyfill": "create-polyfill-service-url analyse --file $(find frontend/**.js) 2>/dev/null"
+  },
+  "devDependencies": {
+    "create-polyfill-service-url": "^2.2.6",
+    "dotenv": "^16.0.3",
+    "ejs": "^3.1.9",
+    "eslint-config-xo": "^0.37.0",
+    "eslint-plugin-promise": "^5.1.1",
+    "parcel": "^2.0.1",
+    "parcel-transformer-ejs": "^1.0.1",
+    "posthtml-include": "^1.7.2",
+    "xo": "^0.46.4"
+  },
+  "xo": {
+    "envs": [
+      "browser"
+    ],
+    "globals": [
+      "localStorage",
+      "human_time",
+      "document",
+      "human_time_left",
+      "fetch",
+      "$",
+      "isFullScreen",
+      "human_list",
+      "go",
+      "all_data",
+      "get",
+      "getel",
+      "canFullScreen",
+      "toggleFullScreen",
+      "Authorization",
+      "place_boxes",
+      "display",
+      "current_date",
+      "date_to_string",
+      "period_html",
+      "bytes_to_color",
+      "black_or_white",
+      "update_progress",
+      "update_progress_circular",
+      "replace_period",
+      "put_period_to_element",
+      "date_from_api",
+      "date_string_to_date",
+      "setTheme",
+      "chrome",
+      "broadcastConfigToExtension",
+      "getCookie",
+      "setCookie",
+      "request",
+      "pull",
+      "config",
+      "DEFAULT_CONFIG"
+    ],
+    "rules": {
+      "camelcase": 0,
+      "no-unused-vars": 0,
+      "unicorn/filename-case": 0,
+      "no-global-assign": 0,
+      "no-alert": 0,
+      "complexity": 0,
+      "unicorn/numeric-separators-style": 0,
+      "no-mixed-operators": 0,
+      "unicorn/prevent-abbreviations": 0,
+      "no-use-extend-native/no-use-extend-native": 0,
+      "no-extend-native": 0,
+      "unicorn/no-document-cookie": 0,
+      "unicorn/no-array-reduce": 0,
+      "unicorn/no-array-for-each": 0
+    },
+    "ignores": [
+      "/tests/"
+    ]
+  }
 }

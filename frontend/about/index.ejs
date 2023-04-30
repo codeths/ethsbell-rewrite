@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>About <%= process.env.INSTANCE_NAME %>
+	</title>
+	<link rel="stylesheet" href="../about/index.css" />
+	<%- include('../include/prelude'); %>
+</head>
+
+<body class="background-color">
+	<%- include('../include/navbar'); %>
+		<div class="content">
+			<h1>About <%= process.env.INSTANCE_NAME %>
+			</h1>
+			<p>
+				<%= process.env.INSTANCE_NAME %> helps students at Evanston Township High School (ETHS) know when the
+					period
+					ends. It is written in
+					<a href="https://rustlang.org/">Rust</a> and maintained by
+					<a href="https://sites.google.com/eths202.org/ethscz/chromezone">codETHS</a>. The code is entirely
+					<a href="https://github.com/chromezoneeths/ethsbell-rewrite">open source</a> and is
+					published under the <a href="/api/v1/license">AGPL License</a>.
+			</p>
+			<p>You can get our official browser extension on the <a
+					href="https://chrome.google.com/webstore/detail/ethsbell/gbkjjbecehodfeijbdmoieepgmfdlgle">Chrome
+					Web
+					Store</a>.</p>
+			<p>
+				You can contact us by <a
+					href="https://github.com/chromezoneeths/ethsbell-rewrite/issues/new/choose">opening
+					a GitHub Issue</a> or emailing
+				<a href="mailto:willow.ch@protonmail.com">Willow Carlson-Huber</a> and/or <a
+					href="mailto:albert@albertp.dev">Albert Portnoy</a>.
+			</p>
+			<p>You can access extra documentation <a
+					href="https://github.com/chromezoneeths/ethsbell-rewrite/wiki/WillowsDocs">here</a> or <a
+					href="https://chromezoneeths.github.io/kb/">here</a>.</p>
+			<p>
+				<a href="/api/legacy/oliver">🪦 Remembering Oliver Leopold</a>
+			</p>
+		</div>
+		<%- include('../include/advisory'); %>
+</body>
+
+</html>
