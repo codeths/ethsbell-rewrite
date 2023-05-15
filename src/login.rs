@@ -1,11 +1,17 @@
 //! This file defines our authentication behavior for the admin editor.
+
+#[cfg(feature = "ws")]
 use rocket::response::Response;
+#[cfg(feature = "ws")]
 use rocket::{http::Status, request::FromRequest, response::Responder, Outcome};
+#[cfg(feature = "ws")]
 use std::env;
+#[cfg(feature = "ws")]
 use std::io::Cursor;
 /// This struct is used as a request guard to require authentication.
 pub struct Authenticated;
 
+#[cfg(feature = "ws")]
 impl<'a, 'r> FromRequest<'a, 'r> for Authenticated {
 	type Error = WantsBasicAuth;
 
@@ -39,6 +45,7 @@ impl<'a, 'r> FromRequest<'a, 'r> for Authenticated {
 #[derive(Debug)]
 pub struct WantsBasicAuth;
 
+#[cfg(feature = "ws")]
 impl<'r> Responder<'r> for WantsBasicAuth {
 	fn respond_to(self, _request: &rocket::Request) -> rocket::response::Result<'r> {
 		Response::build()

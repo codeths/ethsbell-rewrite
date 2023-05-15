@@ -1,4 +1,5 @@
 #![allow(missing_docs)]
+#![allow(non_snake_case)]
 
 use super::OurError;
 use crate::{
@@ -6,20 +7,31 @@ use crate::{
 	ical,
 	ical::IcalResponder,
 	login::Authenticated,
-	schedule::{get_schedule_from_config, Period, Schedule, ScheduleDefinition, ScheduleType},
+	schedule::{Period, Schedule, ScheduleDefinition, ScheduleType}
 };
+#[cfg(feature = "ws")]
+use crate::schedule::get_schedule_from_config;
 use chrono::{Datelike, Duration, Local, NaiveDate, NaiveDateTime, NaiveTime, TimeZone};
+#[cfg(feature = "ws")]
 use rocket::{http::Status, response::content::Html, Data, Route, State};
+#[cfg(feature = "ws")]
 use rocket_contrib::{json::Json, templates::Template};
+#[cfg(feature = "ws")]
 use rocket_okapi::{openapi, routes_with_openapi};
+#[cfg(not(feature = "ws"))]
+use crate::api::{Json, State};
 use serde::Serialize;
 use std::{
-	fs::OpenOptions,
-	io::Write,
 	str::FromStr,
 	sync::{Arc, RwLock},
 };
+#[cfg(feature = "ws")]
+use std::{
+	fs::OpenOptions,
+	io::Write,
+};
 
+#[cfg(feature = "ws")]
 /// Generates a list of Routes for Rocket
 pub fn routes() -> Vec<Route> {
 	#[allow(unused_mut)]
@@ -52,9 +64,10 @@ pub fn routes() -> Vec<Route> {
 
 /// This route is only compiled on debug builds.
 /// It forces ETHSBell to rebuild the schedule for testing purposes.
+#[cfg(feature = "pull")]
 #[cfg(debug_assertions)]
-#[get("/force-update")]
-fn force_update(schedule: State<Arc<RwLock<Schedule>>>) {
+#[cfg_attr(feature = "ws", get("/force-update"))]
+pub fn force_update(schedule: State<Arc<RwLock<Schedule>>>) {
 	let schedule = schedule.clone();
 	schedule.write().unwrap().last_updated = Local::now().naive_local();
 	std::thread::spawn(|| Schedule::update_async(schedule));
@@ -73,8 +86,9 @@ struct WidgetContext {
 
 /// Returns HTML for the output of /today/now/near
 /// This is frontend and is not considered in our versioning or tests.
-#[openapi(skip)]
-#[get("/widget")]
+#[cfg(feature = "ws")]
+#[cfg_attr(feature = "ws", openapi(skip))]
+#[cfg_attr(feature = "ws", get("/widget"))]
 fn widget(schedule: State<Arc<RwLock<Schedule>>>) -> Template {
 	Schedule::update_if_needed_async(schedule.clone());
 	let now = Local::now();
@@ -135,9 +149,9 @@ fn widget(schedule: State<Arc<RwLock<Schedule>>>) -> Template {
 }
 
 /// Returns a tuple of the crate version, the CI commit hash, and the CI repository.
-#[openapi]
-#[get("/check-version")]
-fn check_version() -> Json<(String, Option<String>, Option<String>)> {
+#[cfg_attr(feature = "ws", openapi)]
+#[cfg_attr(feature = "ws", get("/check-version"))]
+pub fn check_version() -> Json<(String, Option<String>, Option<String>)> {
 	Json((
 		env!("CARGO_PKG_VERSION").to_string(),
 		option_env!("GITHUB_SHA").map(|f| f.to_string()),
@@ -146,25 +160,26 @@ fn check_version() -> Json<(String, Option<String>, Option<String>)> {
 }
 
 /// Returns "ok" if the authentication data is valid.
-#[openapi]
-#[get("/check-auth")]
-fn check_auth(_auth: Authenticated) -> &'static str {
+#[cfg_attr(feature = "ws", openapi)]
+#[cfg_attr(feature = "ws", get("/check-auth"))]
+pub fn check_auth(_auth: Authenticated) -> &'static str {
 	"ok"
 }
 
 /// Fetches the contents of the schedule specification in memory.
-#[openapi]
-#[get("/spec")]
-fn get_spec(
+#[cfg_attr(feature = "ws", openapi)]
+#[cfg_attr(feature = "ws", get("/spec"))]
+pub fn get_spec(
 	schedule: State<Arc<RwLock<Schedule>>>,
 ) -> Result<Json<ScheduleDefinition>, std::io::Error> {
 	Ok(Json(schedule.read().unwrap().definition.clone()))
 }
 
 /// Uploads a new schedule specification file.
-#[openapi(skip)]
-#[post("/spec", data = "<body>")]
-fn post_spec(
+#[cfg(feature = "ws")]
+#[cfg_attr(feature = "ws", openapi(skip))]
+#[cfg_attr(feature = "ws", post("/spec", data = "<body>"))]
+pub fn post_spec(
 	body: Data,
 	_auth: Authenticated,
 	schedule: State<Arc<RwLock<Schedule>>>,
@@ -183,9 +198,10 @@ fn post_spec(
 }
 
 /// Update schedule data
-#[openapi(skip)]
-#[post("/update")]
-fn post_update(
+#[cfg(feature = "pull")]
+#[cfg_attr(feature = "ws", openapi(skip))]
+#[cfg_attr(feature = "ws", post("/update"))]
+pub fn post_update(
 	_auth: Authenticated,
 	schedule: State<Arc<RwLock<Schedule>>>,
 ) -> Result<(), OurError> {
@@ -194,9 +210,9 @@ fn post_update(
 }
 
 /// Returns the time.
-#[openapi]
-#[get("/what-time-is-it?<timestamp>")]
-fn what_time(timestamp: Option<i64>) -> String {
+#[cfg_attr(feature = "ws", openapi)]
+#[cfg_attr(feature = "ws", get("/what-time-is-it?<timestamp>"))]
+pub fn what_time(timestamp: Option<i64>) -> String {
 	let now = match timestamp {
 		None => Local::now(),
 		Some(timestamp) => Local
@@ -207,18 +223,18 @@ fn what_time(timestamp: Option<i64>) -> String {
 }
 
 /// Returns the entire schedule struct.
-#[openapi]
-#[get("/schedule")]
-fn get_schedule(schedule: State<Arc<RwLock<Schedule>>>) -> Json<Schedule> {
+#[cfg_attr(feature = "ws", openapi)]
+#[cfg_attr(feature = "ws", get("/schedule"))]
+pub fn get_schedule(schedule: State<Arc<RwLock<Schedule>>>) -> Json<Schedule> {
 	Schedule::update_if_needed_async(schedule.clone());
 	let schedule = schedule.read().unwrap();
 	Json(schedule.clone())
 }
 
 /// Returns the schedule type IDs for each day in the range.
-#[openapi]
-#[get("/schedule/from/<start>/to/<end>")]
-fn schedule_from_to(
+#[cfg_attr(feature = "ws", openapi)]
+#[cfg_attr(feature = "ws", get("/schedule/from/<start>/to/<end>"))]
+pub fn schedule_from_to(
 	schedule: State<Arc<RwLock<Schedule>>>,
 	start: String,
 	end: String,
@@ -242,9 +258,9 @@ fn schedule_from_to(
 }
 
 /// Returns today's schedule type.
-#[openapi]
-#[get("/today?<timestamp>")]
-fn today(schedule: State<Arc<RwLock<Schedule>>>, timestamp: Option<i64>) -> Json<ScheduleType> {
+#[cfg_attr(feature = "ws", openapi)]
+#[cfg_attr(feature = "ws", get("/today?<timestamp>"))]
+pub fn today(schedule: State<Arc<RwLock<Schedule>>>, timestamp: Option<i64>) -> Json<ScheduleType> {
 	Schedule::update_if_needed_async(schedule.clone());
 	// Get the current date as a NaiveDate
 	let now = match timestamp {
@@ -265,9 +281,9 @@ fn today(schedule: State<Arc<RwLock<Schedule>>>, timestamp: Option<i64>) -> Json
 }
 
 /// Returns today's schedule type ID.
-#[openapi]
-#[get("/today/code?<timestamp>")]
-fn today_code(
+#[cfg_attr(feature = "ws", openapi)]
+#[cfg_attr(feature = "ws", get("/today/code?<timestamp>"))]
+pub fn today_code(
 	schedule: State<Arc<RwLock<Schedule>>>,
 	timestamp: Option<i64>,
 ) -> Json<Option<String>> {
@@ -286,9 +302,9 @@ fn today_code(
 }
 
 /// Returns the current period type.
-#[openapi]
-#[get("/today/now?<timestamp>")]
-fn today_now(schedule: State<Arc<RwLock<Schedule>>>, timestamp: Option<i64>) -> Json<Vec<Period>> {
+#[cfg_attr(feature = "ws", openapi)]
+#[cfg_attr(feature = "ws", get("/today/now?<timestamp>"))]
+pub fn today_now(schedule: State<Arc<RwLock<Schedule>>>, timestamp: Option<i64>) -> Json<Vec<Period>> {
 	Schedule::update_if_needed_async(schedule.clone());
 	let now = match timestamp {
 		None => Local::now(),
@@ -305,9 +321,9 @@ fn today_now(schedule: State<Arc<RwLock<Schedule>>>, timestamp: Option<i64>) -> 
 }
 
 /// Returns the current period type and its neighbors.
-#[openapi]
-#[get("/today/now/near?<timestamp>")]
-fn today_around_now(
+#[cfg_attr(feature = "ws", openapi)]
+#[cfg_attr(feature = "ws", get("/today/now/near?<timestamp>"))]
+pub fn today_around_now(
 	schedule: State<Arc<RwLock<Schedule>>>,
 	timestamp: Option<i64>,
 ) -> Json<NearbyPeriods> {
@@ -332,9 +348,9 @@ fn today_around_now(
 }
 
 /// Returns today's period type at the provided time.
-#[openapi]
-#[get("/today/at/<time_string>?<timestamp>")]
-fn today_at(
+#[cfg_attr(feature = "ws", openapi)]
+#[cfg_attr(feature = "ws", get("/today/at/<time_string>?<timestamp>"))]
+pub fn today_at(
 	schedule: State<Arc<RwLock<Schedule>>>,
 	time_string: String,
 	timestamp: Option<i64>,
@@ -359,9 +375,9 @@ fn today_at(
 }
 
 /// Returns the schedule type on the given date.
-#[openapi]
-#[get("/on/<date_string>")]
-fn date(
+#[cfg_attr(feature = "ws", openapi)]
+#[cfg_attr(feature = "ws", get("/on/<date_string>"))]
+pub fn date(
 	schedule: State<Arc<RwLock<Schedule>>>,
 	date_string: String,
 ) -> Result<Json<ScheduleType>, OurError> {
@@ -384,9 +400,9 @@ fn date(
 }
 
 /// Returns the schedule type ID on the given date.
-#[openapi]
-#[get("/on/<date_string>/code")]
-fn date_code(
+#[cfg_attr(feature = "ws", openapi)]
+#[cfg_attr(feature = "ws", get("/on/<date_string>/code"))]
+pub fn date_code(
 	schedule: State<Arc<RwLock<Schedule>>>,
 	date_string: String,
 ) -> Result<Json<Option<String>>, OurError> {
@@ -397,9 +413,9 @@ fn date_code(
 }
 
 /// Returns the period type at the given date and time.
-#[openapi]
-#[get("/on/<date_string>/at/<time_string>")]
-fn date_at(
+#[cfg_attr(feature = "ws", openapi)]
+#[cfg_attr(feature = "ws", get("/on/<date_string>/at/<time_string>"))]
+pub fn date_at(
 	schedule: State<Arc<RwLock<Schedule>>>,
 	date_string: String,
 	time_string: String,
@@ -427,9 +443,9 @@ fn date_at(
 }
 
 /// Returns an ICalendar file containing periods as events.
-#[openapi]
-#[get("/ical?<backward>&<forward>")]
-fn ical(backward: i64, forward: i64, schedule: State<Arc<RwLock<Schedule>>>) -> IcalResponder {
+#[cfg_attr(feature = "ws", openapi)]
+#[cfg_attr(feature = "ws", get("/ical?<backward>&<forward>"))]
+pub fn ical(backward: i64, forward: i64, schedule: State<Arc<RwLock<Schedule>>>) -> IcalResponder {
 	Schedule::update_if_needed_async(schedule.clone());
 	let now = Local::now().date().naive_local();
 	let start = now - Duration::days(backward);
@@ -440,16 +456,18 @@ fn ical(backward: i64, forward: i64, schedule: State<Arc<RwLock<Schedule>>>) -> 
 }
 
 /// This is an easter egg, but it's also the Docker health check endpoint so don't remove it
+#[cfg(feature = "ws")]
 #[openapi(skip)]
-#[get("/coffee")]
+#[cfg_attr(feature = "ws", get("/coffee"))]
 fn coffee(schedule: State<Arc<RwLock<Schedule>>>) -> Status {
 	let _lock = schedule.write().unwrap();
 	Status::ImATeapot
 }
 
 /// Returns the license.
-#[openapi]
-#[get("/license")]
+#[cfg(feature = "ws")]
+#[cfg_attr(feature = "ws", openapi)]
+#[cfg_attr(feature = "ws", get("/license"))]
 fn license() -> Html<String> {
 	let authors = env!("CARGO_PKG_AUTHORS");
 	let authors = authors
