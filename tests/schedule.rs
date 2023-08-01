@@ -127,7 +127,7 @@ fn on_date_literal() {
 			typical_schedule: vec![],
 		},
 	};
-	assert_eq!(schedule.on_date(date), (literal, None))
+	assert_eq!(schedule.on_date(date), (literal, None));
 }
 
 #[test]
@@ -143,7 +143,7 @@ fn at_time_typical() {
 	let schedule = ScheduleType {
 		hide: false,
 		color: None,
-		friendly_name: "".to_string(),
+		friendly_name: String::new(),
 		periods: vec![test_period.clone()],
 		regex: None,
 	};
@@ -180,7 +180,7 @@ fn at_time_pseudo() {
 	let schedule = ScheduleType {
 		hide: false,
 		color: None,
-		friendly_name: "".to_string(),
+		friendly_name: String::new(),
 		periods: vec![
 			Period {
 				friendly_name: "test_period_a".to_string(),
@@ -231,7 +231,7 @@ fn at_time_overlap() {
 	let schedule = ScheduleType {
 		hide: false,
 		color: None,
-		friendly_name: "".to_string(),
+		friendly_name: String::new(),
 		periods: vec![
 			Period {
 				friendly_name: "test_period_a".to_string(),
@@ -284,7 +284,7 @@ fn at_time_envelop() {
 	let schedule = ScheduleType {
 		hide: false,
 		color: None,
-		friendly_name: "".to_string(),
+		friendly_name: String::new(),
 		periods: vec![
 			Period {
 				friendly_name: "test_period_a".to_string(),
@@ -337,14 +337,14 @@ fn at_time_no_schedule() {
 	let schedule = ScheduleType {
 		hide: false,
 		color: None,
-		friendly_name: "".to_string(),
+		friendly_name: String::new(),
 		periods: vec![],
 		regex: None,
 	};
 	assert_eq!(
 		schedule.at_time(NaiveTime::from_hms_opt(12, 0, 0).unwrap_or_default()),
 		(None, vec![], None)
-	)
+	);
 }
 
 #[cfg(feature = "pull")]
@@ -400,9 +400,9 @@ fn schedule_ical() {
 	definition.typical_schedule = vec!["yes".to_string(); 7];
 	definition.calendar_urls =
 		vec!["https://www.eths.k12.il.us/site/handlers/icalfeed.ashx?MIID=1".to_string()];
-	let _schedule = Schedule::from(definition);
+	let schedule = Schedule::from(definition);
 	let _ical = IcalEvent::generate(
-		&_schedule,
+		&schedule,
 		NaiveDate::from_ymd_opt(2020, 1, 1).unwrap_or_default(),
 		NaiveDate::from_ymd_opt(2022, 1, 1).unwrap_or_default(),
 	);

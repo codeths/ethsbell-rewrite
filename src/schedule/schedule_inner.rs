@@ -78,7 +78,7 @@ impl Schedule {
 			.map(|v| IcalEvent::get(v))
 			.collect::<Vec<Vec<IcalEvent>>>();
 		for cal in calendars {
-			ical_to_ours(&mut schedule.write().unwrap(), &cal)
+			ical_to_ours(&mut schedule.write().unwrap(), &cal);
 		}
 		// Update the last-updated value
 		schedule.write().unwrap().last_updated = Local::now().naive_local();
@@ -90,13 +90,14 @@ impl Schedule {
 		println!("Refreshing...");
 		// Fetch the calendars
 		for cal in self.definition.calendar_urls.clone() {
-			ical_to_ours(self, &IcalEvent::get(&cal))
+			ical_to_ours(self, &IcalEvent::get(&cal));
 		}
 		// Update the last-updated value
 		self.last_updated = Local::now().naive_local();
 		println!("Done.");
 	}
 	/// Returns whether the schedule's calendar data is out of date.
+	#[must_use]
 	pub fn is_update_needed(&self) -> bool {
 		match env::var("UPDATE_INTERVAL") {
 			Ok(v) => {
@@ -109,6 +110,7 @@ impl Schedule {
 		}
 	}
 	/// Returns a tuple of the schedule occurring on a target date and its key in the schedule table.
+	#[must_use]
 	pub fn on_date(&self, date: NaiveDate) -> (ScheduleType, Option<String>) {
 		let mut literal: Option<ScheduleType> = None;
 		let special: Option<String> = self
@@ -125,12 +127,12 @@ impl Schedule {
 							literal = Some(serde_json::from_str(s).unwrap());
 							return None;
 						}
-						_ => {}
+						Event::SpecialEvent(_) => {}
 					}
 				}
 				None
 			})
-			.filter(|v| v.is_some())
+			.filter(std::option::Option::is_some)
 			.map(|v| v.unwrap().clone())
 			.next();
 		match special {
@@ -138,9 +140,10 @@ impl Schedule {
 				self.definition.schedule_types.get(&name).unwrap().clone(),
 				Some(name),
 			),
-			None => match literal {
-				Some(schedule) => (schedule, None),
-				None => {
+			None => {
+				if let Some(schedule) = literal {
+					(schedule, None)
+				} else {
 					let weekday: usize = date.weekday().num_days_from_sunday().try_into().unwrap();
 					let name = self.definition.typical_schedule[weekday].clone();
 					(
@@ -148,12 +151,13 @@ impl Schedule {
 						Some(name),
 					)
 				}
-			},
+			}
 		}
 	}
 }
 
 /// Get schedule JSON from definition file
+#[must_use]
 pub fn get_schedule_from_config() -> ScheduleDefinition {
 	if !Path::new("./def.json").exists() {
 		fs::copy("./def.example.json", "./def.json").expect("Could not copy def");

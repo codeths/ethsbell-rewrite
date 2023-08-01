@@ -24,6 +24,7 @@ pub struct Period {
 }
 impl Period {
 	/// Populate a period's timestamp fields, which are normally 0.
+	#[must_use]
 	pub fn populate(mut self, date: DateTime<Local>) -> Self {
 		let start_date = date;
 		let end_date = date;

@@ -4,8 +4,12 @@
 #![allow(clippy::no_effect_underscore_binding)]
 #![allow(clippy::cast_sign_loss)]
 #![allow(clippy::cast_possible_wrap)]
+#![allow(clippy::module_name_repetitions)]
+#![allow(clippy::needless_pass_by_value)]
+#![allow(clippy::missing_panics_doc)]
+#![allow(clippy::too_many_lines)]
 
-//! ETHSBell is a web-based bell schedule tracker.
+//! `ETHSBell` is a web-based bell schedule tracker.
 pub use locks::SpecLock;
 use schedule::{get_schedule_from_config, Schedule};
 

@@ -161,6 +161,7 @@ pub fn check_version() -> Json<(String, Option<String>, Option<String>)> {
 /// Returns "ok" if the authentication data is valid.
 #[cfg_attr(feature = "ws", openapi)]
 #[cfg_attr(feature = "ws", get("/check-auth"))]
+#[must_use]
 pub fn check_auth(_auth: Authenticated) -> &'static str {
 	"ok"
 }
@@ -168,10 +169,9 @@ pub fn check_auth(_auth: Authenticated) -> &'static str {
 /// Fetches the contents of the schedule specification in memory.
 #[cfg_attr(feature = "ws", openapi)]
 #[cfg_attr(feature = "ws", get("/spec"))]
-pub fn get_spec(
-	schedule: &State<Arc<RwLock<Schedule>>>,
-) -> Result<Json<ScheduleDefinition>, std::io::Error> {
-	Ok(Json(schedule.read().unwrap().definition.clone()))
+#[must_use]
+pub fn get_spec(schedule: &State<Arc<RwLock<Schedule>>>) -> Json<ScheduleDefinition> {
+	Json(schedule.read().unwrap().definition.clone())
 }
 
 /// Uploads a new schedule specification file.
@@ -203,17 +203,14 @@ pub async fn post_spec(
 #[cfg(feature = "pull")]
 #[cfg_attr(feature = "ws", openapi(skip))]
 #[cfg_attr(feature = "ws", post("/update"))]
-pub fn post_update(
-	_auth: Authenticated,
-	schedule: &State<Arc<RwLock<Schedule>>>,
-) -> Result<(), OurError> {
+pub fn post_update(_auth: Authenticated, schedule: &State<Arc<RwLock<Schedule>>>) {
 	Schedule::update_async(schedule.inner().clone());
-	Ok(())
 }
 
 /// Returns the time.
 #[cfg_attr(feature = "ws", openapi)]
 #[cfg_attr(feature = "ws", get("/what-time-is-it?<timestamp>"))]
+#[must_use]
 pub fn what_time(timestamp: Option<i64>) -> String {
 	let now = match timestamp {
 		None => Local::now(),
@@ -227,6 +224,7 @@ pub fn what_time(timestamp: Option<i64>) -> String {
 /// Returns the entire schedule struct.
 #[cfg_attr(feature = "ws", openapi)]
 #[cfg_attr(feature = "ws", get("/schedule"))]
+#[must_use]
 pub fn get_schedule(schedule: &State<Arc<RwLock<Schedule>>>) -> Json<Schedule> {
 	Schedule::update_if_needed_async(schedule.inner().clone());
 	let schedule = schedule.read().unwrap();
@@ -262,6 +260,7 @@ pub fn schedule_from_to(
 /// Returns today's schedule type.
 #[cfg_attr(feature = "ws", openapi)]
 #[cfg_attr(feature = "ws", get("/today?<timestamp>"))]
+#[must_use]
 pub fn today(
 	schedule: &State<Arc<RwLock<Schedule>>>,
 	timestamp: Option<i64>,
@@ -288,6 +287,7 @@ pub fn today(
 /// Returns today's schedule type ID.
 #[cfg_attr(feature = "ws", openapi)]
 #[cfg_attr(feature = "ws", get("/today/code?<timestamp>"))]
+#[must_use]
 pub fn today_code(
 	schedule: &State<Arc<RwLock<Schedule>>>,
 	timestamp: Option<i64>,
@@ -309,6 +309,7 @@ pub fn today_code(
 /// Returns the current period type.
 #[cfg_attr(feature = "ws", openapi)]
 #[cfg_attr(feature = "ws", get("/today/now?<timestamp>"))]
+#[must_use]
 pub fn today_now(
 	schedule: &State<Arc<RwLock<Schedule>>>,
 	timestamp: Option<i64>,
@@ -331,6 +332,7 @@ pub fn today_now(
 /// Returns the current period type and its neighbors.
 #[cfg_attr(feature = "ws", openapi)]
 #[cfg_attr(feature = "ws", get("/today/now/near?<timestamp>"))]
+#[must_use]
 pub fn today_around_now(
 	schedule: &State<Arc<RwLock<Schedule>>>,
 	timestamp: Option<i64>,
@@ -453,6 +455,7 @@ pub fn date_at(
 /// Returns an ICalendar file containing periods as events.
 #[cfg_attr(feature = "ws", openapi)]
 #[cfg_attr(feature = "ws", get("/ical?<backward>&<forward>"))]
+#[must_use]
 pub fn ical(backward: i64, forward: i64, schedule: &State<Arc<RwLock<Schedule>>>) -> IcalResponder {
 	Schedule::update_if_needed_async(schedule.inner().clone());
 	let now = Local::now().date_naive();
@@ -480,7 +483,7 @@ fn license() -> Html<String> {
 	let authors = env!("CARGO_PKG_AUTHORS");
 	let authors = authors
 		.split(':')
-		.map(|v| v.trim())
+		.map(str::trim)
 		.collect::<Vec<&str>>()
 		.join(", ");
 	Html(format!(

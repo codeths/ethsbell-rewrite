@@ -12,6 +12,7 @@ use std::env;
 use std::io::Cursor;
 /// This struct is used as a request guard to require authentication.
 #[cfg_attr(feature = "ws", derive(OpenApiFromRequest))]
+#[derive(Clone, Copy)]
 pub struct Authenticated;
 
 #[cfg(feature = "ws")]

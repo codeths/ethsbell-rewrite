@@ -80,7 +80,7 @@ async fn on() {
 	schedule.definition.typical_schedule =
 		vec!["test_a", "no", "test_a", "no", "test_a", "no", "test_a"]
 			.iter()
-			.map(|v| v.to_string())
+			.map(|v| (*v).to_string())
 			.collect();
 	let client = client(schedule.clone()).await;
 	// Check test A
@@ -98,7 +98,7 @@ async fn on() {
 	assert_eq!(
 		response.into_string().await.unwrap(),
 		serde_json::to_string(&no).unwrap()
-	)
+	);
 }
 
 #[async_test]
