@@ -1,12 +1,13 @@
 # Setup chef
-FROM docker.io/rustlang/rust:nightly AS chef
-COPY rust-toolchain.toml ./
+FROM docker.io/rust:1.71 AS chef
+# COPY rust-toolchain.toml ./
 RUN cargo install cargo-chef
 
 # Build
 FROM chef AS planner
 WORKDIR /app
 COPY Cargo.toml Cargo.lock ./
+RUN mkdir -p src && touch src/lib.rs
 RUN cargo chef prepare --recipe-path recipe.json
 
 FROM chef AS builder
@@ -17,15 +18,17 @@ RUN cargo chef cook --release --recipe-path recipe.json
 # Build image and run tests
 COPY LICENSE.html def.json* def.example.json ./
 RUN cp -n def.example.json def.json
+RUN rm -r src
 COPY src src
 COPY tests tests
 COPY templates templates
+RUN mkdir frontend-dist
 RUN cargo test --release --features=ws
 RUN cargo build --release --bin ethsbell-rewrite --features=ws
 
 FROM docker.io/ubuntu AS frontend
 RUN apt-get update && apt-get install -y libssl-dev ca-certificates curl make build-essential && rm -rf /var/lib/apt/lists
-RUN curl -fsSL https://deb.nodesource.com/setup_14.x | bash -
+RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash -
 RUN apt-get install -y nodejs
 WORKDIR /app
 COPY package*.json .posthtmlrc .browserslistrc ./
