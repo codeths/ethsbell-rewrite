@@ -1,5 +1,6 @@
 //! Defines backend behavior.
 
+use rocket::Build;
 #[cfg(feature = "ws")]
 use rocket::{
 	fairing::{Fairing, Info, Kind},
@@ -9,7 +10,7 @@ use rocket::{
 };
 #[cfg(feature = "ws")]
 use rocket_okapi::{
-	response::OpenApiResponder,
+	response::OpenApiResponderInner,
 	swagger_ui::{make_swagger_ui, SwaggerUIConfig},
 };
 
@@ -21,18 +22,23 @@ pub mod v1;
 
 /// This struct is used as a Rocket Fairing and adds our API endpoints.
 #[cfg(feature = "ws")]
+#[allow(clippy::module_name_repetitions)]
 pub struct ApiFairing;
 
 #[cfg(feature = "ws")]
+#[async_trait]
 impl Fairing for ApiFairing {
 	fn info(&self) -> rocket::fairing::Info {
 		Info {
 			name: "API methods",
-			kind: Kind::Attach,
+			kind: Kind::Ignite,
 		}
 	}
 
-	fn on_attach(&self, rocket: rocket::Rocket) -> Result<rocket::Rocket, rocket::Rocket> {
+	async fn on_ignite(
+		&self,
+		rocket: rocket::Rocket<Build>,
+	) -> Result<rocket::Rocket<Build>, rocket::Rocket<Build>> {
 		Ok(rocket
 			.mount("/api/v1", v1::routes())
 			.mount("/api/legacy", legacy::routes())
@@ -50,7 +56,7 @@ impl Fairing for ApiFairing {
 					..Default::default()
 				}),
 			)
-			.register(catchers![wants_auth]))
+			.register("/", catchers![wants_auth]))
 	}
 }
 
@@ -77,23 +83,25 @@ pub enum OurError {
 }
 
 #[cfg(feature = "ws")]
-impl<'r> Responder<'r> for OurError {
+impl<'o, 'r> Responder<'o, 'r> for OurError
+where
+	'r: 'o,
+{
 	fn respond_to(self, request: &rocket::Request) -> rocket::response::Result<'r> {
 		Response::build_from(self.to_string().respond_to(request).unwrap())
 			.status(match self {
-				OurError::BadString(_) => Status::BadRequest,
+				OurError::BadString(_) | OurError::SerdeError(_) => Status::BadRequest,
 				OurError::IOError(_) => Status::InternalServerError,
-				OurError::SerdeError(_) => Status::BadRequest,
 			})
 			.ok()
 	}
 }
 
 #[cfg(feature = "ws")]
-impl<'r> OpenApiResponder<'r> for OurError {
+impl OpenApiResponderInner for OurError {
 	fn responses(
 		gen: &mut rocket_okapi::gen::OpenApiGenerator,
-	) -> rocket_okapi::Result<okapi::openapi3::Responses> {
+	) -> rocket_okapi::Result<rocket_okapi::okapi::openapi3::Responses> {
 		BadRequest::<()>::responses(gen)
 	}
 }

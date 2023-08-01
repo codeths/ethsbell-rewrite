@@ -1,41 +1,43 @@
 #![allow(missing_docs)]
 #![allow(non_snake_case)]
+#![allow(clippy::let_unit_value)]
 
 use super::OurError;
-use crate::{
-	aliases::v1::NearbyPeriods,
-	ical,
-	ical::IcalResponder,
-	login::Authenticated,
-	schedule::{Period, Schedule, ScheduleDefinition, ScheduleType}
-};
-#[cfg(feature = "ws")]
-use crate::schedule::get_schedule_from_config;
-use chrono::{Datelike, Duration, Local, NaiveDate, NaiveDateTime, NaiveTime, TimeZone};
-#[cfg(feature = "ws")]
-use rocket::{http::Status, response::content::Html, Data, Route, State};
-#[cfg(feature = "ws")]
-use rocket_contrib::{json::Json, templates::Template};
-#[cfg(feature = "ws")]
-use rocket_okapi::{openapi, routes_with_openapi};
 #[cfg(not(feature = "ws"))]
 use crate::api::{Json, State};
+#[cfg(feature = "ws")]
+use crate::schedule::get_schedule_from_config;
+use crate::{
+	aliases::v1::NearbyPeriods,
+	ical::IcalResponder,
+	login::Authenticated,
+	schedule::{Period, Schedule, ScheduleDefinition, ScheduleType},
+};
+use chrono::{Datelike, Duration, Local, NaiveDate, NaiveDateTime, NaiveTime, TimeZone};
+#[cfg(feature = "ws")]
+use rocket::serde::json::Json;
+#[cfg(feature = "ws")]
+use rocket::tokio::fs::OpenOptions;
+#[cfg(feature = "ws")]
+use rocket::{http::Status, response::content::RawHtml as Html, Data, Route, State};
+#[cfg(feature = "ws")]
+use rocket_dyn_templates::Template;
+#[cfg(feature = "ws")]
+use rocket_okapi::openapi;
 use serde::Serialize;
 use std::{
 	str::FromStr,
 	sync::{Arc, RwLock},
 };
-#[cfg(feature = "ws")]
-use std::{
-	fs::OpenOptions,
-	io::Write,
-};
 
 #[cfg(feature = "ws")]
+#[must_use]
 /// Generates a list of Routes for Rocket
 pub fn routes() -> Vec<Route> {
+	use rocket_okapi::settings::OpenApiSettings;
+	let settings = OpenApiSettings::new();
 	#[allow(unused_mut)]
-	let mut r = routes_with_openapi![
+	let mut r = rocket_okapi::openapi_routes![
 		get_schedule,
 		today,
 		today_code,
@@ -56,7 +58,7 @@ pub fn routes() -> Vec<Route> {
 		widget,
 		license,
 		schedule_from_to,
-	];
+	](None, &settings);
 	#[cfg(debug_assertions)]
 	r.append(&mut routes![force_update]);
 	r
@@ -67,10 +69,10 @@ pub fn routes() -> Vec<Route> {
 #[cfg(feature = "pull")]
 #[cfg(debug_assertions)]
 #[cfg_attr(feature = "ws", get("/force-update"))]
-pub fn force_update(schedule: State<Arc<RwLock<Schedule>>>) {
-	let schedule = schedule.clone();
+pub fn force_update(schedule: &State<Arc<RwLock<Schedule>>>) {
+	let schedule = State::inner(schedule).clone();
 	schedule.write().unwrap().last_updated = Local::now().naive_local();
-	std::thread::spawn(|| Schedule::update_async(schedule));
+	Schedule::update_async(schedule);
 }
 
 #[derive(Serialize)]
@@ -89,12 +91,12 @@ struct WidgetContext {
 #[cfg(feature = "ws")]
 #[cfg_attr(feature = "ws", openapi(skip))]
 #[cfg_attr(feature = "ws", get("/widget"))]
-fn widget(schedule: State<Arc<RwLock<Schedule>>>) -> Template {
-	Schedule::update_if_needed_async(schedule.clone());
+fn widget(schedule: &State<Arc<RwLock<Schedule>>>) -> Template {
+	Schedule::update_if_needed_async(schedule.inner().clone());
 	let now = Local::now();
-	let now_date = now.date();
+	let now_date = now.date_naive();
 	let now_time = now.time();
-	let schedule = schedule.read().unwrap().on_date(now_date.naive_local());
+	let schedule = schedule.read().unwrap().on_date(now_date);
 	let mut schedule = schedule.0.at_time(now_time);
 	schedule.0 = schedule.0.map(|v| v.populate(now));
 	schedule
@@ -106,8 +108,7 @@ fn widget(schedule: State<Arc<RwLock<Schedule>>>) -> Template {
 		prev_name: schedule
 			.0
 			.clone()
-			.map(|v| v.friendly_name)
-			.unwrap_or_else(|| "None".to_string()),
+			.map_or_else(|| "None".to_string(), |v| v.friendly_name),
 		current_name: schedule
 			.1
 			.clone()
@@ -132,30 +133,28 @@ fn widget(schedule: State<Arc<RwLock<Schedule>>>) -> Template {
 		next_name: schedule
 			.2
 			.clone()
-			.map(|v| v.friendly_name)
-			.unwrap_or_else(|| "None".to_string()),
+			.map_or_else(|| "None".to_string(), |v| v.friendly_name),
 		next_start: schedule
 			.2
 			.clone()
-			.map(|v| v.start.to_string())
-			.unwrap_or_else(|| "".to_string()),
+			.map_or_else(String::new, |v| v.start.to_string()),
 		prev_end: schedule
 			.0
 			.clone()
-			.map(|v| v.end.to_string())
-			.unwrap_or_else(|| "".to_string()),
+			.map_or_else(String::new, |v| v.end.to_string()),
 	};
-	Template::render("widget", &ctx)
+	Template::render("widget", ctx)
 }
 
 /// Returns a tuple of the crate version, the CI commit hash, and the CI repository.
 #[cfg_attr(feature = "ws", openapi)]
 #[cfg_attr(feature = "ws", get("/check-version"))]
+#[must_use]
 pub fn check_version() -> Json<(String, Option<String>, Option<String>)> {
 	Json((
 		env!("CARGO_PKG_VERSION").to_string(),
-		option_env!("GITHUB_SHA").map(|f| f.to_string()),
-		option_env!("GITHUB_REPOSITORY").map(|f| f.to_string()),
+		option_env!("GITHUB_SHA").map(std::string::ToString::to_string),
+		option_env!("GITHUB_REPOSITORY").map(std::string::ToString::to_string),
 	))
 }
 
@@ -170,7 +169,7 @@ pub fn check_auth(_auth: Authenticated) -> &'static str {
 #[cfg_attr(feature = "ws", openapi)]
 #[cfg_attr(feature = "ws", get("/spec"))]
 pub fn get_spec(
-	schedule: State<Arc<RwLock<Schedule>>>,
+	schedule: &State<Arc<RwLock<Schedule>>>,
 ) -> Result<Json<ScheduleDefinition>, std::io::Error> {
 	Ok(Json(schedule.read().unwrap().definition.clone()))
 }
@@ -179,19 +178,22 @@ pub fn get_spec(
 #[cfg(feature = "ws")]
 #[cfg_attr(feature = "ws", openapi(skip))]
 #[cfg_attr(feature = "ws", post("/spec", data = "<body>"))]
-pub fn post_spec(
-	body: Data,
+pub async fn post_spec(
+	body: Data<'_>,
 	_auth: Authenticated,
-	schedule: State<Arc<RwLock<Schedule>>>,
+	schedule: &State<Arc<RwLock<Schedule>>>,
 ) -> Result<(), OurError> {
+	use rocket::data::ToByteUnit;
+	use rocket::tokio::io::AsyncWriteExt;
 	let mut file = OpenOptions::new()
 		.read(true)
 		.write(true)
 		.create(true)
 		.truncate(true)
-		.open("./def.json")?;
-	body.stream_to(&mut file)?;
-	file.flush()?;
+		.open("./def.json")
+		.await?;
+	body.open(1_i32.megabytes()).stream_to(&mut file).await?;
+	file.flush().await?;
 	schedule.write().unwrap().definition = get_schedule_from_config();
 
 	Ok(())
@@ -203,9 +205,9 @@ pub fn post_spec(
 #[cfg_attr(feature = "ws", post("/update"))]
 pub fn post_update(
 	_auth: Authenticated,
-	schedule: State<Arc<RwLock<Schedule>>>,
+	schedule: &State<Arc<RwLock<Schedule>>>,
 ) -> Result<(), OurError> {
-	Schedule::update_async(schedule.clone());
+	Schedule::update_async(schedule.inner().clone());
 	Ok(())
 }
 
@@ -216,7 +218,7 @@ pub fn what_time(timestamp: Option<i64>) -> String {
 	let now = match timestamp {
 		None => Local::now(),
 		Some(timestamp) => Local
-			.from_utc_datetime(&NaiveDateTime::from_timestamp(timestamp, 0))
+			.from_utc_datetime(&NaiveDateTime::from_timestamp_opt(timestamp, 0).unwrap_or_default())
 			.with_timezone(&Local),
 	};
 	now.to_rfc2822()
@@ -225,8 +227,8 @@ pub fn what_time(timestamp: Option<i64>) -> String {
 /// Returns the entire schedule struct.
 #[cfg_attr(feature = "ws", openapi)]
 #[cfg_attr(feature = "ws", get("/schedule"))]
-pub fn get_schedule(schedule: State<Arc<RwLock<Schedule>>>) -> Json<Schedule> {
-	Schedule::update_if_needed_async(schedule.clone());
+pub fn get_schedule(schedule: &State<Arc<RwLock<Schedule>>>) -> Json<Schedule> {
+	Schedule::update_if_needed_async(schedule.inner().clone());
 	let schedule = schedule.read().unwrap();
 	Json(schedule.clone())
 }
@@ -235,11 +237,11 @@ pub fn get_schedule(schedule: State<Arc<RwLock<Schedule>>>) -> Json<Schedule> {
 #[cfg_attr(feature = "ws", openapi)]
 #[cfg_attr(feature = "ws", get("/schedule/from/<start>/to/<end>"))]
 pub fn schedule_from_to(
-	schedule: State<Arc<RwLock<Schedule>>>,
+	schedule: &State<Arc<RwLock<Schedule>>>,
 	start: String,
 	end: String,
 ) -> Result<Json<Vec<String>>, OurError> {
-	Schedule::update_if_needed_async(schedule.clone());
+	Schedule::update_if_needed_async(schedule.inner().clone());
 	let start: NaiveDate = NaiveDate::from_str(&start)?;
 	let end: NaiveDate = NaiveDate::from_str(&end)?;
 	assert!(start < end);
@@ -260,18 +262,21 @@ pub fn schedule_from_to(
 /// Returns today's schedule type.
 #[cfg_attr(feature = "ws", openapi)]
 #[cfg_attr(feature = "ws", get("/today?<timestamp>"))]
-pub fn today(schedule: State<Arc<RwLock<Schedule>>>, timestamp: Option<i64>) -> Json<ScheduleType> {
-	Schedule::update_if_needed_async(schedule.clone());
+pub fn today(
+	schedule: &State<Arc<RwLock<Schedule>>>,
+	timestamp: Option<i64>,
+) -> Json<ScheduleType> {
+	Schedule::update_if_needed_async(schedule.inner().clone());
 	// Get the current date as a NaiveDate
 	let now = match timestamp {
 		None => Local::now(),
 		Some(timestamp) => Local
-			.from_utc_datetime(&NaiveDateTime::from_timestamp(timestamp, 0))
+			.from_utc_datetime(&NaiveDateTime::from_timestamp_opt(timestamp, 0).unwrap_or_default())
 			.with_timezone(&Local),
 	};
-	let now_date = now.date();
+	let now_date = now.date_naive();
 	let schedule = schedule.read().unwrap();
-	let mut schedule = schedule.on_date(now_date.naive_local());
+	let mut schedule = schedule.on_date(now_date);
 	schedule
 		.0
 		.periods
@@ -284,37 +289,40 @@ pub fn today(schedule: State<Arc<RwLock<Schedule>>>, timestamp: Option<i64>) -> 
 #[cfg_attr(feature = "ws", openapi)]
 #[cfg_attr(feature = "ws", get("/today/code?<timestamp>"))]
 pub fn today_code(
-	schedule: State<Arc<RwLock<Schedule>>>,
+	schedule: &State<Arc<RwLock<Schedule>>>,
 	timestamp: Option<i64>,
 ) -> Json<Option<String>> {
-	Schedule::update_if_needed_async(schedule.clone());
+	Schedule::update_if_needed_async(schedule.inner().clone());
 	// Get the current date as a NaiveDate
 	let now = match timestamp {
 		None => Local::now(),
 		Some(timestamp) => Local
-			.from_utc_datetime(&NaiveDateTime::from_timestamp(timestamp, 0))
+			.from_utc_datetime(&NaiveDateTime::from_timestamp_opt(timestamp, 0).unwrap_or_default())
 			.with_timezone(&Local),
 	};
-	let now_date = now.date();
+	let now_date = now.date_naive();
 	let schedule = schedule.read().unwrap();
-	let schedule = schedule.on_date(now_date.naive_local());
+	let schedule = schedule.on_date(now_date);
 	Json(schedule.1)
 }
 
 /// Returns the current period type.
 #[cfg_attr(feature = "ws", openapi)]
 #[cfg_attr(feature = "ws", get("/today/now?<timestamp>"))]
-pub fn today_now(schedule: State<Arc<RwLock<Schedule>>>, timestamp: Option<i64>) -> Json<Vec<Period>> {
-	Schedule::update_if_needed_async(schedule.clone());
+pub fn today_now(
+	schedule: &State<Arc<RwLock<Schedule>>>,
+	timestamp: Option<i64>,
+) -> Json<Vec<Period>> {
+	Schedule::update_if_needed_async(schedule.inner().clone());
 	let now = match timestamp {
 		None => Local::now(),
 		Some(timestamp) => Local
-			.from_utc_datetime(&NaiveDateTime::from_timestamp(timestamp, 0))
+			.from_utc_datetime(&NaiveDateTime::from_timestamp_opt(timestamp, 0).unwrap_or_default())
 			.with_timezone(&Local),
 	};
-	let now_date = now.date();
+	let now_date = now.date_naive();
 	let now_time = now.time();
-	let schedule = schedule.read().unwrap().on_date(now_date.naive_local());
+	let schedule = schedule.read().unwrap().on_date(now_date);
 	let mut period = schedule.0.at_time(now_time).1;
 	period.iter_mut().for_each(|v| *v = v.clone().populate(now));
 	Json(period)
@@ -324,19 +332,19 @@ pub fn today_now(schedule: State<Arc<RwLock<Schedule>>>, timestamp: Option<i64>)
 #[cfg_attr(feature = "ws", openapi)]
 #[cfg_attr(feature = "ws", get("/today/now/near?<timestamp>"))]
 pub fn today_around_now(
-	schedule: State<Arc<RwLock<Schedule>>>,
+	schedule: &State<Arc<RwLock<Schedule>>>,
 	timestamp: Option<i64>,
 ) -> Json<NearbyPeriods> {
-	Schedule::update_if_needed_async(schedule.clone());
+	Schedule::update_if_needed_async(schedule.inner().clone());
 	let now = match timestamp {
 		None => Local::now(),
 		Some(timestamp) => Local
-			.from_utc_datetime(&NaiveDateTime::from_timestamp(timestamp, 0))
+			.from_utc_datetime(&NaiveDateTime::from_timestamp_opt(timestamp, 0).unwrap_or_default())
 			.with_timezone(&Local),
 	};
-	let now_date = now.date();
+	let now_date = now.date_naive();
 	let now_time = now.time();
-	let schedule = schedule.read().unwrap().on_date(now_date.naive_local());
+	let schedule = schedule.read().unwrap().on_date(now_date);
 	let mut schedule = schedule.0.at_time(now_time);
 	schedule.0 = schedule.0.map(|v| v.populate(now));
 	schedule
@@ -351,20 +359,20 @@ pub fn today_around_now(
 #[cfg_attr(feature = "ws", openapi)]
 #[cfg_attr(feature = "ws", get("/today/at/<time_string>?<timestamp>"))]
 pub fn today_at(
-	schedule: State<Arc<RwLock<Schedule>>>,
+	schedule: &State<Arc<RwLock<Schedule>>>,
 	time_string: String,
 	timestamp: Option<i64>,
 ) -> Result<Option<Json<Vec<Period>>>, OurError> {
-	Schedule::update_if_needed_async(schedule.clone());
+	Schedule::update_if_needed_async(schedule.inner().clone());
 	let now = match timestamp {
 		None => Local::now(),
 		Some(timestamp) => Local
-			.from_utc_datetime(&NaiveDateTime::from_timestamp(timestamp, 0))
+			.from_utc_datetime(&NaiveDateTime::from_timestamp_opt(timestamp, 0).unwrap_or_default())
 			.with_timezone(&Local),
 	};
-	let now_date = now.date();
+	let now_date = now.date_naive();
 	let then_time = NaiveTime::from_str(&time_string)?;
-	let schedule = schedule.read().unwrap().on_date(now_date.naive_local());
+	let schedule = schedule.read().unwrap().on_date(now_date);
 	match schedule.0.at_time(then_time).1 {
 		mut period if !period.is_empty() => {
 			period.iter_mut().for_each(|v| *v = v.clone().populate(now));
@@ -378,10 +386,10 @@ pub fn today_at(
 #[cfg_attr(feature = "ws", openapi)]
 #[cfg_attr(feature = "ws", get("/on/<date_string>"))]
 pub fn date(
-	schedule: State<Arc<RwLock<Schedule>>>,
+	schedule: &State<Arc<RwLock<Schedule>>>,
 	date_string: String,
 ) -> Result<Json<ScheduleType>, OurError> {
-	Schedule::update_if_needed_async(schedule.clone());
+	Schedule::update_if_needed_async(schedule.inner().clone());
 	let then = NaiveDate::from_str(&date_string)?;
 	let then_ = Local::now()
 		.with_day(then.day())
@@ -403,10 +411,10 @@ pub fn date(
 #[cfg_attr(feature = "ws", openapi)]
 #[cfg_attr(feature = "ws", get("/on/<date_string>/code"))]
 pub fn date_code(
-	schedule: State<Arc<RwLock<Schedule>>>,
+	schedule: &State<Arc<RwLock<Schedule>>>,
 	date_string: String,
 ) -> Result<Json<Option<String>>, OurError> {
-	Schedule::update_if_needed_async(schedule.clone());
+	Schedule::update_if_needed_async(schedule.inner().clone());
 	let then = NaiveDate::from_str(&date_string)?;
 	let schedule = schedule.read().unwrap().on_date(then);
 	Ok(Json(schedule.1))
@@ -416,11 +424,11 @@ pub fn date_code(
 #[cfg_attr(feature = "ws", openapi)]
 #[cfg_attr(feature = "ws", get("/on/<date_string>/at/<time_string>"))]
 pub fn date_at(
-	schedule: State<Arc<RwLock<Schedule>>>,
+	schedule: &State<Arc<RwLock<Schedule>>>,
 	date_string: String,
 	time_string: String,
 ) -> Result<Option<Json<Vec<Period>>>, OurError> {
-	Schedule::update_if_needed_async(schedule.clone());
+	Schedule::update_if_needed_async(schedule.inner().clone());
 	let then_date = NaiveDate::from_str(&date_string)?;
 	let then_time = NaiveTime::from_str(&time_string)?;
 	let then_ = Local::now()
@@ -445,13 +453,13 @@ pub fn date_at(
 /// Returns an ICalendar file containing periods as events.
 #[cfg_attr(feature = "ws", openapi)]
 #[cfg_attr(feature = "ws", get("/ical?<backward>&<forward>"))]
-pub fn ical(backward: i64, forward: i64, schedule: State<Arc<RwLock<Schedule>>>) -> IcalResponder {
-	Schedule::update_if_needed_async(schedule.clone());
-	let now = Local::now().date().naive_local();
+pub fn ical(backward: i64, forward: i64, schedule: &State<Arc<RwLock<Schedule>>>) -> IcalResponder {
+	Schedule::update_if_needed_async(schedule.inner().clone());
+	let now = Local::now().date_naive();
 	let start = now - Duration::days(backward);
 	let end = now + Duration::days(forward);
 	IcalResponder {
-		inner: ical::IcalEvent::generate(&schedule.read().unwrap(), start, end),
+		inner: crate::ical::IcalEvent::generate(&schedule.read().unwrap(), start, end),
 	}
 }
 
@@ -459,7 +467,7 @@ pub fn ical(backward: i64, forward: i64, schedule: State<Arc<RwLock<Schedule>>>)
 #[cfg(feature = "ws")]
 #[openapi(skip)]
 #[cfg_attr(feature = "ws", get("/coffee"))]
-fn coffee(schedule: State<Arc<RwLock<Schedule>>>) -> Status {
+fn coffee(schedule: &State<Arc<RwLock<Schedule>>>) -> Status {
 	let _lock = schedule.write().unwrap();
 	Status::ImATeapot
 }

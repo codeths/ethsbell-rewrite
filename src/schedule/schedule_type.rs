@@ -72,7 +72,7 @@ impl ScheduleType {
 				(None, v, Some(next)) if v.is_empty() => {
 					current = vec![Period {
 						friendly_name: "Before School".to_string(),
-						start: NaiveTime::from_hms(0, 0, 0),
+						start: NaiveTime::from_hms_opt(0, 0, 0).unwrap_or_default(),
 						end: next.start,
 						start_timestamp: 0,
 						end_timestamp: 0,
@@ -83,7 +83,7 @@ impl ScheduleType {
 					current = vec![Period {
 						friendly_name: "After School".to_string(),
 						start: before.end,
-						end: NaiveTime::from_hms(23, 59, 59),
+						end: NaiveTime::from_hms_opt(23, 59, 59).unwrap_or_default(),
 						start_timestamp: 0,
 						end_timestamp: 0,
 						kind: PeriodType::AfterSchool,
@@ -105,7 +105,8 @@ impl ScheduleType {
 	/// Returns the first period of the schedule with the kind Class(_).
 	pub fn first_class(&self) -> Option<Period> {
 		self.periods
-			.iter().find(|v| matches!(v.kind, PeriodType::Class(_)))
+			.iter()
+			.find(|v| matches!(v.kind, PeriodType::Class(_)))
 			.cloned()
 	}
 }

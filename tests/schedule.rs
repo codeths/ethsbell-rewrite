@@ -40,19 +40,19 @@ fn on_date_typical() {
 		"type_b".to_string(),
 	];
 	assert_eq!(
-		schedule.on_date(NaiveDate::from_ymd(2021, 7, 21)),
+		schedule.on_date(NaiveDate::from_ymd_opt(2021, 7, 21).unwrap_or_default()),
 		(type_b, Some("type_b".to_string()))
 	);
 
 	assert_eq!(
-		schedule.on_date(NaiveDate::from_ymd(2021, 7, 18)),
+		schedule.on_date(NaiveDate::from_ymd_opt(2021, 7, 18).unwrap_or_default()),
 		(type_a, Some("type_a".to_string()))
 	);
 }
 
 #[test]
 fn on_date_override() {
-	let date = NaiveDate::from_ymd(2021, 7, 20);
+	let date = NaiveDate::from_ymd_opt(2021, 7, 20).unwrap_or_default();
 	let type_a = ScheduleType {
 		hide: false,
 		color: None,
@@ -94,7 +94,7 @@ fn on_date_override() {
 		},
 	};
 	assert_eq!(
-		schedule.on_date(NaiveDate::from_ymd(2021, 7, 20)),
+		schedule.on_date(NaiveDate::from_ymd_opt(2021, 7, 20).unwrap_or_default()),
 		(type_b, Some("type_b".to_string()))
 	);
 }
@@ -108,7 +108,7 @@ fn on_date_literal() {
 		periods: vec![],
 		regex: None,
 	};
-	let date = NaiveDate::from_ymd(2021, 7, 20);
+	let date = NaiveDate::from_ymd_opt(2021, 7, 20).unwrap_or_default();
 	let schedule = Schedule {
 		last_updated: Local::now().naive_local(),
 		calendar: {
@@ -134,9 +134,9 @@ fn on_date_literal() {
 fn at_time_typical() {
 	let mut test_period = Period {
 		friendly_name: "test_period".to_string(),
-		start: NaiveTime::from_hms(8, 0, 0),
+		start: NaiveTime::from_hms_opt(8, 0, 0).unwrap_or_default(),
 		start_timestamp: 0,
-		end: NaiveTime::from_hms(16, 0, 0),
+		end: NaiveTime::from_hms_opt(16, 0, 0).unwrap_or_default(),
 		end_timestamp: 0,
 		kind: PeriodType::Lunch,
 	};
@@ -148,21 +148,29 @@ fn at_time_typical() {
 		regex: None,
 	};
 	// timestamps won't be the same, that's fine
-	let new = schedule.at_time(NaiveTime::from_hms(12, 0, 0)).1;
+	let new = schedule
+		.at_time(NaiveTime::from_hms_opt(12, 0, 0).unwrap_or_default())
+		.1;
 	test_period.start_timestamp = new[0].start_timestamp;
 	test_period.end_timestamp = new[0].end_timestamp;
 	assert_eq!(
-		schedule.at_time(NaiveTime::from_hms(12, 0, 0)).1,
+		schedule
+			.at_time(NaiveTime::from_hms_opt(12, 0, 0).unwrap_or_default())
+			.1,
 		vec![test_period.clone()]
 	);
 
 	assert_eq!(
-		schedule.at_time(NaiveTime::from_hms(17, 0, 0)).0,
+		schedule
+			.at_time(NaiveTime::from_hms_opt(17, 0, 0).unwrap_or_default())
+			.0,
 		Some(test_period.clone())
 	);
 
 	assert_eq!(
-		schedule.at_time(NaiveTime::from_hms(6, 0, 0)).2,
+		schedule
+			.at_time(NaiveTime::from_hms_opt(6, 0, 0).unwrap_or_default())
+			.2,
 		Some(test_period)
 	);
 }
@@ -176,17 +184,17 @@ fn at_time_pseudo() {
 		periods: vec![
 			Period {
 				friendly_name: "test_period_a".to_string(),
-				start: NaiveTime::from_hms(8, 0, 0),
+				start: NaiveTime::from_hms_opt(8, 0, 0).unwrap_or_default(),
 				start_timestamp: 0,
-				end: NaiveTime::from_hms(12, 0, 0),
+				end: NaiveTime::from_hms_opt(12, 0, 0).unwrap_or_default(),
 				end_timestamp: 0,
 				kind: PeriodType::Lunch,
 			},
 			Period {
 				friendly_name: "test_period_b".to_string(),
-				start: NaiveTime::from_hms(14, 0, 0),
+				start: NaiveTime::from_hms_opt(14, 0, 0).unwrap_or_default(),
 				start_timestamp: 0,
-				end: NaiveTime::from_hms(16, 0, 0),
+				end: NaiveTime::from_hms_opt(16, 0, 0).unwrap_or_default(),
 				end_timestamp: 0,
 				kind: PeriodType::Lunch,
 			},
@@ -194,17 +202,26 @@ fn at_time_pseudo() {
 		regex: None,
 	};
 	assert_eq!(
-		schedule.at_time(NaiveTime::from_hms(13, 0, 0)).1[0].friendly_name,
+		schedule
+			.at_time(NaiveTime::from_hms_opt(13, 0, 0).unwrap_or_default())
+			.1[0]
+			.friendly_name,
 		"Passing Period"
 	);
 
 	assert_eq!(
-		schedule.at_time(NaiveTime::from_hms(17, 0, 0)).1[0].friendly_name,
+		schedule
+			.at_time(NaiveTime::from_hms_opt(17, 0, 0).unwrap_or_default())
+			.1[0]
+			.friendly_name,
 		"After School"
 	);
 
 	assert_eq!(
-		schedule.at_time(NaiveTime::from_hms(6, 0, 0)).1[0].friendly_name,
+		schedule
+			.at_time(NaiveTime::from_hms_opt(6, 0, 0).unwrap_or_default())
+			.1[0]
+			.friendly_name,
 		"Before School"
 	);
 }
@@ -218,17 +235,17 @@ fn at_time_overlap() {
 		periods: vec![
 			Period {
 				friendly_name: "test_period_a".to_string(),
-				start: NaiveTime::from_hms(8, 0, 0),
+				start: NaiveTime::from_hms_opt(8, 0, 0).unwrap_or_default(),
 				start_timestamp: 0,
-				end: NaiveTime::from_hms(14, 0, 0),
+				end: NaiveTime::from_hms_opt(14, 0, 0).unwrap_or_default(),
 				end_timestamp: 0,
 				kind: PeriodType::Lunch,
 			},
 			Period {
 				friendly_name: "test_period_b".to_string(),
-				start: NaiveTime::from_hms(10, 0, 0),
+				start: NaiveTime::from_hms_opt(10, 0, 0).unwrap_or_default(),
 				start_timestamp: 0,
-				end: NaiveTime::from_hms(16, 0, 0),
+				end: NaiveTime::from_hms_opt(16, 0, 0).unwrap_or_default(),
 				end_timestamp: 0,
 				kind: PeriodType::Lunch,
 			},
@@ -236,18 +253,24 @@ fn at_time_overlap() {
 		regex: None,
 	};
 	assert_eq!(
-		schedule.at_time(NaiveTime::from_hms(9, 0, 0)).1[0].friendly_name,
+		schedule
+			.at_time(NaiveTime::from_hms_opt(9, 0, 0).unwrap_or_default())
+			.1[0]
+			.friendly_name,
 		"test_period_a"
 	);
 
 	assert_eq!(
-		schedule.at_time(NaiveTime::from_hms(15, 0, 0)).1[0].friendly_name,
+		schedule
+			.at_time(NaiveTime::from_hms_opt(15, 0, 0).unwrap_or_default())
+			.1[0]
+			.friendly_name,
 		"test_period_b"
 	);
 
 	assert_eq!(
 		schedule
-			.at_time(NaiveTime::from_hms(12, 0, 0))
+			.at_time(NaiveTime::from_hms_opt(12, 0, 0).unwrap_or_default())
 			.1
 			.iter()
 			.map(|v| v.friendly_name.clone())
@@ -265,17 +288,17 @@ fn at_time_envelop() {
 		periods: vec![
 			Period {
 				friendly_name: "test_period_a".to_string(),
-				start: NaiveTime::from_hms(8, 0, 0),
+				start: NaiveTime::from_hms_opt(8, 0, 0).unwrap_or_default(),
 				start_timestamp: 0,
-				end: NaiveTime::from_hms(16, 0, 0),
+				end: NaiveTime::from_hms_opt(16, 0, 0).unwrap_or_default(),
 				end_timestamp: 0,
 				kind: PeriodType::Lunch,
 			},
 			Period {
 				friendly_name: "test_period_b".to_string(),
-				start: NaiveTime::from_hms(10, 0, 0),
+				start: NaiveTime::from_hms_opt(10, 0, 0).unwrap_or_default(),
 				start_timestamp: 0,
-				end: NaiveTime::from_hms(12, 0, 0),
+				end: NaiveTime::from_hms_opt(12, 0, 0).unwrap_or_default(),
 				end_timestamp: 0,
 				kind: PeriodType::Lunch,
 			},
@@ -283,18 +306,24 @@ fn at_time_envelop() {
 		regex: None,
 	};
 	assert_eq!(
-		schedule.at_time(NaiveTime::from_hms(9, 0, 0)).1[0].friendly_name,
+		schedule
+			.at_time(NaiveTime::from_hms_opt(9, 0, 0).unwrap_or_default())
+			.1[0]
+			.friendly_name,
 		"test_period_a"
 	);
 
 	assert_eq!(
-		schedule.at_time(NaiveTime::from_hms(17, 0, 0)).1[0].friendly_name,
+		schedule
+			.at_time(NaiveTime::from_hms_opt(17, 0, 0).unwrap_or_default())
+			.1[0]
+			.friendly_name,
 		"After School"
 	);
 
 	assert_eq!(
 		schedule
-			.at_time(NaiveTime::from_hms(11, 0, 0))
+			.at_time(NaiveTime::from_hms_opt(11, 0, 0).unwrap_or_default())
 			.1
 			.iter()
 			.map(|v| v.friendly_name.clone())
@@ -313,7 +342,7 @@ fn at_time_no_schedule() {
 		regex: None,
 	};
 	assert_eq!(
-		schedule.at_time(NaiveTime::from_hms(12, 0, 0)),
+		schedule.at_time(NaiveTime::from_hms_opt(12, 0, 0).unwrap_or_default()),
 		(None, vec![], None)
 	)
 }
@@ -374,8 +403,8 @@ fn schedule_ical() {
 	let _schedule = Schedule::from(definition);
 	let _ical = IcalEvent::generate(
 		&_schedule,
-		NaiveDate::from_ymd(2020, 1, 1),
-		NaiveDate::from_ymd(2022, 1, 1),
+		NaiveDate::from_ymd_opt(2020, 1, 1).unwrap_or_default(),
+		NaiveDate::from_ymd_opt(2022, 1, 1).unwrap_or_default(),
 	);
 }
 
@@ -398,17 +427,17 @@ fn schedule_generate() {
 				periods: vec![
 					Period {
 						friendly_name: "test_period_a".to_string(),
-						start: NaiveTime::from_hms(8, 0, 0),
+						start: NaiveTime::from_hms_opt(8, 0, 0).unwrap_or_default(),
 						start_timestamp: 0,
-						end: NaiveTime::from_hms(12, 0, 0),
+						end: NaiveTime::from_hms_opt(12, 0, 0).unwrap_or_default(),
 						end_timestamp: 0,
 						kind: PeriodType::Lunch,
 					},
 					Period {
 						friendly_name: "test_period_b".to_string(),
-						start: NaiveTime::from_hms(14, 0, 0),
+						start: NaiveTime::from_hms_opt(14, 0, 0).unwrap_or_default(),
 						start_timestamp: 0,
-						end: NaiveTime::from_hms(16, 0, 0),
+						end: NaiveTime::from_hms_opt(16, 0, 0).unwrap_or_default(),
 						end_timestamp: 0,
 						kind: PeriodType::Lunch,
 					},
@@ -425,17 +454,17 @@ fn schedule_generate() {
 				periods: vec![
 					Period {
 						friendly_name: "test_period_c".to_string(),
-						start: NaiveTime::from_hms(9, 0, 0),
+						start: NaiveTime::from_hms_opt(9, 0, 0).unwrap_or_default(),
 						start_timestamp: 0,
-						end: NaiveTime::from_hms(13, 0, 0),
+						end: NaiveTime::from_hms_opt(13, 0, 0).unwrap_or_default(),
 						end_timestamp: 0,
 						kind: PeriodType::Lunch,
 					},
 					Period {
 						friendly_name: "test_period_d".to_string(),
-						start: NaiveTime::from_hms(15, 0, 0),
+						start: NaiveTime::from_hms_opt(15, 0, 0).unwrap_or_default(),
 						start_timestamp: 0,
-						end: NaiveTime::from_hms(17, 0, 0),
+						end: NaiveTime::from_hms_opt(17, 0, 0).unwrap_or_default(),
 						end_timestamp: 0,
 						kind: PeriodType::Lunch,
 					},
@@ -466,7 +495,7 @@ fn schedule_generate() {
 	];
 	let _ical = IcalEvent::generate(
 		&schedule,
-		NaiveDate::from_ymd(2020, 1, 1),
-		NaiveDate::from_ymd(2022, 1, 1),
+		NaiveDate::from_ymd_opt(2020, 1, 1).unwrap_or_default(),
+		NaiveDate::from_ymd_opt(2022, 1, 1).unwrap_or_default(),
 	);
 }

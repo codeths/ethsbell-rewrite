@@ -5,11 +5,11 @@ use ethsbell_rewrite::{
 	rocket_builder::rocket,
 	schedule::{Period, PeriodType, Schedule, ScheduleType},
 };
-use rocket::{http::Status, local::Client};
+use rocket::{http::Status, local::blocking::Client};
 // This file is mostly just here to make sure the legacy endpoints don't panic; it's up to you to keep them working correctly.
 
 fn client(schedule: Schedule) -> Client {
-	Client::new(rocket(schedule)).unwrap()
+	Client::tracked(rocket(schedule)).unwrap()
 }
 
 #[test]
@@ -17,12 +17,12 @@ fn things() {
 	let mut schedule = Schedule::default();
 	// Add test A
 	let period = Period {
-		friendly_name: "".to_string(),
-		start: NaiveTime::from_hms(9, 0, 0),
+		friendly_name: String::new(),
+		start: NaiveTime::from_hms_opt(9, 0, 0).unwrap_or_default(),
 		start_timestamp: 0,
-		end: NaiveTime::from_hms(10, 0, 0),
+		end: NaiveTime::from_hms_opt(10, 0, 0).unwrap_or_default(),
 		end_timestamp: 0,
-		kind: PeriodType::Class("".to_string()),
+		kind: PeriodType::Class(String::new()),
 	};
 	let test_a = ScheduleType {
 		hide: false,

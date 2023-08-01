@@ -30,7 +30,7 @@ impl From<ScheduleDefinition> for Schedule {
 	/// Creates a new Schedule and performs the first update.
 	fn from(def: ScheduleDefinition) -> Self {
 		let mut new = Schedule {
-			last_updated: NaiveDateTime::from_timestamp(0, 0),
+			last_updated: NaiveDateTime::from_timestamp_opt(0, 0).unwrap_or_default(),
 			calendar: HashMap::new(),
 			definition: def,
 		};
@@ -42,7 +42,7 @@ impl Default for Schedule {
 	/// Returns an empty schedule with all default properties.
 	fn default() -> Self {
 		Schedule {
-			last_updated: NaiveDateTime::from_timestamp(0, 0),
+			last_updated: NaiveDateTime::from_timestamp_opt(0, 0).unwrap_or_default(),
 			calendar: HashMap::new(),
 			definition: ScheduleDefinition {
 				calendar_urls: vec![],
@@ -105,7 +105,7 @@ impl Schedule {
 				let last_updated = self.last_updated.timestamp() as u64;
 				latest_needed > last_updated
 			}
-			Err(_) => self.last_updated.date() != Local::now().date().naive_local(),
+			Err(_) => self.last_updated.date() != Local::now().date_naive(),
 		}
 	}
 	/// Returns a tuple of the schedule occurring on a target date and its key in the schedule table.

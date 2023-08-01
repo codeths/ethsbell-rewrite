@@ -1,6 +1,9 @@
-#![feature(decl_macro)]
 #![warn(missing_docs)]
 #![forbid(unsafe_code)]
+#![allow(clippy::cast_possible_truncation)]
+#![allow(clippy::no_effect_underscore_binding)]
+#![allow(clippy::cast_sign_loss)]
+#![allow(clippy::cast_possible_wrap)]
 
 //! ETHSBell is a web-based bell schedule tracker.
 pub use locks::SpecLock;
@@ -30,5 +33,8 @@ fn main() {
 		// Build the runtime schedule struct and run the first update.
 		Schedule::from(schedule_def)
 	};
-	rocket_builder::rocket(schedule).launch();
+	rocket::tokio::runtime::Runtime::new()
+		.expect("Failed to open Tokio runtime")
+		.block_on(rocket_builder::rocket(schedule).launch())
+		.expect("Rocket failed");
 }

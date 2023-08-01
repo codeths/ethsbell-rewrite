@@ -1,6 +1,9 @@
-#![feature(decl_macro)]
 #![warn(missing_docs)]
 #![forbid(unsafe_code)]
+#![allow(clippy::cast_possible_truncation)]
+#![allow(clippy::no_effect_underscore_binding)]
+#![allow(clippy::cast_sign_loss)]
+#![allow(clippy::cast_possible_wrap)]
 
 //! A library for running ETHSBell's logic client-side.
 #[cfg(feature = "ws")]

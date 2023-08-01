@@ -58,7 +58,8 @@ impl IcalEvent {
 								.collect::<String>()
 								.parse()
 								.unwrap();
-							result.start = Some(NaiveDate::from_ymd(year, month, day));
+							result.start =
+								Some(NaiveDate::from_ymd_opt(year, month, day).unwrap_or_default());
 						}
 						Some(kind) if kind.starts_with("DTEND") => {
 							let string = split.next().unwrap().chars();
@@ -78,14 +79,15 @@ impl IcalEvent {
 								.collect::<String>()
 								.parse()
 								.unwrap();
-							result.end = Some(NaiveDate::from_ymd(year, month, day));
+							result.end =
+								Some(NaiveDate::from_ymd_opt(year, month, day).unwrap_or_default());
 						}
 						Some("DURATION") => {
 							let days = split
 								.next()
 								.unwrap()
 								.chars()
-								.filter(|v| v.is_digit(10))
+								.filter(|v| v.is_ascii_digit())
 								.collect::<String>()
 								.parse()
 								.unwrap();
@@ -110,7 +112,7 @@ impl IcalEvent {
 				}
 				result
 			})
-			.filter(|v| (v.description != None || v.summary != None) && v.start != None)
+			.filter(|v| (v.description.is_some() || v.summary.is_some()) && v.start.is_some())
 			.collect()
 	}
 	/// Generate a semi-valid ICal file from a Schedule for the given date range.
