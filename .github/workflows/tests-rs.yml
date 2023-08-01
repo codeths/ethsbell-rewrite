@@ -19,6 +19,11 @@ jobs:
     steps:
       - uses: actions/checkout@v1
       - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          profile: minimal
+          components: clippy
+          override: true
       - name: Annotate commit with clippy warnings
         uses: actions-rs/clippy-check@v1
         with:
