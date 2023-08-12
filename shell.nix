@@ -9,5 +9,5 @@ with (import <nixpkgs> {
 }).pkgs;
 
 pkgs.mkShell {
-  nativeBuildInputs = [ rust-bin.nightly.latest.default openssl pkg-config ];
+  nativeBuildInputs = [ rust-bin.stable."1.71.0".default openssl pkg-config ];
 }
