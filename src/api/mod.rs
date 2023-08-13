@@ -1,5 +1,6 @@
 //! Defines backend behavior.
 
+#[cfg(feature = "ws")]
 use rocket::Build;
 #[cfg(feature = "ws")]
 use rocket::{
@@ -108,7 +109,7 @@ impl OpenApiResponderInner for OurError {
 
 /// Dummy state struct for library use
 #[cfg(not(feature = "ws"))]
-pub struct State<T>(T);
+pub struct State<T>(pub T);
 
 #[cfg(not(feature = "ws"))]
 impl<T> std::ops::Deref for State<T> {
@@ -119,9 +120,17 @@ impl<T> std::ops::Deref for State<T> {
 	}
 }
 
+#[cfg(not(feature = "ws"))]
+impl<T> State<T> {
+	/// Replicate `inner` from Rocket state
+	pub fn inner<'a>(&'a self) -> &'a T {
+		std::ops::Deref::deref(self)
+	}
+}
+
 /// Dummy json struct for library use
 #[cfg(not(feature = "ws"))]
-pub struct Json<T>(T);
+pub struct Json<T>(pub T);
 
 #[cfg(not(feature = "ws"))]
 impl<T> std::ops::Deref for Json<T> {

@@ -1,10 +1,12 @@
 //! This file defines our authentication behavior for the admin editor.
 
+#[cfg(feature = "ws")]
 use rocket::request::Outcome;
 #[cfg(feature = "ws")]
 use rocket::response::Response;
 #[cfg(feature = "ws")]
 use rocket::{http::Status, request::FromRequest, response::Responder};
+#[cfg(feature = "ws")]
 use rocket_okapi::request::OpenApiFromRequest;
 #[cfg(feature = "ws")]
 use std::env;
