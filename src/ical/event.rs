@@ -21,14 +21,16 @@ pub struct IcalEvent {
 impl IcalEvent {
 	/// Download a Vec<IcalEvent> from the provided URL.
 	#[cfg(feature = "pull")]
+	#[must_use]
 	pub fn get(url: &str) -> Vec<IcalEvent> {
 		let data = get(url).unwrap().text().unwrap();
 		IcalEvent::from_string(&data)
 	}
 	/// Parse a Vec<IcalEvent> from the provided string.
+	#[must_use]
 	pub fn from_string(data: &str) -> Vec<IcalEvent> {
 		data.split("BEGIN:VEVENT")
-			.map(|v| v.trim())
+			.map(str::trim)
 			.map(|vevent| {
 				let mut result = IcalEvent {
 					summary: None,
@@ -58,7 +60,8 @@ impl IcalEvent {
 								.collect::<String>()
 								.parse()
 								.unwrap();
-							result.start = Some(NaiveDate::from_ymd(year, month, day));
+							result.start =
+								Some(NaiveDate::from_ymd_opt(year, month, day).unwrap_or_default());
 						}
 						Some(kind) if kind.starts_with("DTEND") => {
 							let string = split.next().unwrap().chars();
@@ -78,14 +81,15 @@ impl IcalEvent {
 								.collect::<String>()
 								.parse()
 								.unwrap();
-							result.end = Some(NaiveDate::from_ymd(year, month, day));
+							result.end =
+								Some(NaiveDate::from_ymd_opt(year, month, day).unwrap_or_default());
 						}
 						Some("DURATION") => {
 							let days = split
 								.next()
 								.unwrap()
 								.chars()
-								.filter(|v| v.is_digit(10))
+								.filter(char::is_ascii_digit)
 								.collect::<String>()
 								.parse()
 								.unwrap();
@@ -97,23 +101,23 @@ impl IcalEvent {
 								.lines()
 								.skip(number + 1)
 								.take_while(|v| v.starts_with('\t') | v.starts_with(' '))
-								.map(|v| v.trim_start())
+								.map(str::trim_start)
 								.collect::<String>();
 							let text = (split.collect::<Vec<&str>>().join(":") + &other_lines)
 								.to_string()
 								.replace("\\,", ",");
-							result.description = Some(text)
+							result.description = Some(text);
 						}
-						Some(_) => {}
-						None => {}
+						Some(_) | None => {}
 					}
 				}
 				result
 			})
-			.filter(|v| (v.description != None || v.summary != None) && v.start != None)
+			.filter(|v| (v.description.is_some() || v.summary.is_some()) && v.start.is_some())
 			.collect()
 	}
-	/// Generate a semi-valid ICal file from a Schedule for the given date range.
+	/// Generate a semi-valid `ICal` file from a Schedule for the given date range.
+	#[must_use]
 	pub fn generate(schedule: &Schedule, start: NaiveDate, end: NaiveDate) -> String {
 		let mut rng = rand::thread_rng();
 		let mut result = String::new();
@@ -132,8 +136,8 @@ PRODID:ETHSBell Rewrite
 				let mut output = true;
 				for event in events {
 					match event {
-						crate::schedule::Event::ScheduleOverride(_) => output = false,
-						crate::schedule::Event::ScheduleLiteral(_) => output = false,
+						crate::schedule::Event::ScheduleOverride(_)
+						| crate::schedule::Event::ScheduleLiteral(_) => output = false,
 						crate::schedule::Event::SpecialEvent(_) => {}
 					}
 				}

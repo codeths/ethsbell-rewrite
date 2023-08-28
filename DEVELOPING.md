@@ -1,13 +1,13 @@
 # Developing
 
 - [Developing](#developing)
-  - [Conventions](#conventions)
-  - [Using Nix](#using-nix)
-  - [Not using Nix](#not-using-nix)
-  - [I Know What I'm Doing, Thank You Very Much](#i-know-what-im-doing-thank-you-very-much)
-  - [Extra spice](#extra-spice)
-    - [JSON IDE support](#json-ide-support)
-    - [Tests](#tests)
+	- [Conventions](#conventions)
+	- [Using Nix](#using-nix)
+	- [Not using Nix](#not-using-nix)
+	- [I Know What I'm Doing, Thank You Very Much](#i-know-what-im-doing-thank-you-very-much)
+	- [Extra spice](#extra-spice)
+		- [JSON IDE support](#json-ide-support)
+		- [Tests](#tests)
 
 These instructions have lots of information for new programmers. If you know what you're doing, read [this section](#i-know-what-im-doing-thank-you-very-much).
 
@@ -95,20 +95,19 @@ Nix is only available for Unix-like systems.
    * On 64-bit Windows, https://win.rustup.rs/x86_64
    * On 32-bit Windows, https://win.rustup.rs/i686
    * On Unix-like systems, `curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh`
-3. `rustup default nightly` - Switch to Rust Nightly
-4. Move your terminal to your projects directory, like "~/Code"
-5. Clone the repository
+3. Move your terminal to your projects directory, like "~/Code"
+4. Clone the repository
    * If you're using SSH...
      1. Upload your public key to GitHub
      2. `git clone git@github.com:chromezoneeths/ethsbell-rewrite.git`
    * Otherwise...
      1. `git clone https://github.com/chromezoneeths/ethsbell-rewrite.git`
-6. `cd ethsbell-rewrite` - Move your terminal to the newly cloned repository.
-7. If you're on a Unix-like system and installed jq, `./.vscode/extensions.sh`
-8. `code .` - Open VSCode in the repository.
-9. If VSCode asks you to trust our repository, please do.
-10. If step 7 didn't apply to you, press Ctrl+P and type "ext ins", press enter, type "@recommended:workspace" in the left sidebar, and install all of the extensions shown there, except those mentioning Nix, since you're not using that.
-11. If everything goes to plan, you should have everything you need to explore our repository.
+5. `cd ethsbell-rewrite` - Move your terminal to the newly cloned repository.
+6. If you're on a Unix-like system and installed jq, `./.vscode/extensions.sh`
+7. `code .` - Open VSCode in the repository.
+8. If VSCode asks you to trust our repository, please do.
+9. If step 6 didn't apply to you, press Ctrl+P and type "ext ins", press enter, type "@recommended:workspace" in the left sidebar, and install all of the extensions shown there, except those mentioning Nix, since you're not using that.
+10. If everything goes to plan, you should have everything you need to explore our repository.
 
 ## I Know What I'm Doing, Thank You Very Much
 
