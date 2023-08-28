@@ -1,8 +1,8 @@
 //! Functions for parsing iCalendar files.
 #[cfg(feature = "ws")]
-use okapi::openapi3::Responses;
-#[cfg(feature = "ws")]
 use rocket::Responder;
+#[cfg(feature = "ws")]
+use rocket_okapi::okapi::openapi3::Responses;
 #[cfg(feature = "ws")]
 use rocket_okapi::response::OpenApiResponder;
 #[cfg(feature = "ws")]
@@ -19,10 +19,11 @@ pub struct IcalResponder {
 	pub inner: String,
 }
 #[cfg(feature = "ws")]
-impl OpenApiResponder<'_> for IcalResponder {
-	fn responses(
-		gen: &mut rocket_okapi::gen::OpenApiGenerator,
-	) -> rocket_okapi::Result<okapi::openapi3::Responses> {
+impl<'r, 'o> OpenApiResponder<'o, 'r> for IcalResponder
+where
+	'r: 'o,
+{
+	fn responses(gen: &mut rocket_okapi::gen::OpenApiGenerator) -> rocket_okapi::Result<Responses> {
 		let mut responses = Responses::default();
 		let schema = gen.json_schema::<String>();
 		add_schema_response(&mut responses, 200, "text/calendar", schema)?;

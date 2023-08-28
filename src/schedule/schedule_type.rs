@@ -26,6 +26,7 @@ pub struct ScheduleType {
 }
 impl ScheduleType {
 	/// Returns a tuple of the previous Period, a Vec<Period> of the current periods, and the next Period.
+	#[must_use]
 	pub fn at_time(&self, time: NaiveTime) -> (Option<Period>, Vec<Period>, Option<Period>) {
 		if self.periods.is_empty() {
 			(None, vec![], None)
@@ -38,7 +39,7 @@ impl ScheduleType {
 					if period.kind != PeriodType::Passing {
 						match before.clone() {
 							Some(before_) if before_.end < period.end => {
-								before = Some(period.clone())
+								before = Some(period.clone());
 							}
 							None => before = Some(period.clone()),
 							_ => {}
@@ -48,7 +49,7 @@ impl ScheduleType {
 					if period.kind != PeriodType::Passing {
 						match next.clone() {
 							Some(next_) if next_.start > period.start => {
-								next = Some(period.clone())
+								next = Some(period.clone());
 							}
 							None => next = Some(period.clone()),
 							_ => {}
@@ -67,27 +68,27 @@ impl ScheduleType {
 						start_timestamp: 0,
 						end_timestamp: 0,
 						kind: PeriodType::Passing,
-					}]
+					}];
 				}
 				(None, v, Some(next)) if v.is_empty() => {
 					current = vec![Period {
 						friendly_name: "Before School".to_string(),
-						start: NaiveTime::from_hms(0, 0, 0),
+						start: NaiveTime::from_hms_opt(0, 0, 0).unwrap_or_default(),
 						end: next.start,
 						start_timestamp: 0,
 						end_timestamp: 0,
 						kind: PeriodType::BeforeSchool,
-					}]
+					}];
 				}
 				(Some(before), v, None) if v.is_empty() => {
 					current = vec![Period {
 						friendly_name: "After School".to_string(),
 						start: before.end,
-						end: NaiveTime::from_hms(23, 59, 59),
+						end: NaiveTime::from_hms_opt(23, 59, 59).unwrap_or_default(),
 						start_timestamp: 0,
 						end_timestamp: 0,
 						kind: PeriodType::AfterSchool,
-					}]
+					}];
 				}
 				_ => {}
 			}
@@ -103,9 +104,11 @@ impl ScheduleType {
 		}
 	}
 	/// Returns the first period of the schedule with the kind Class(_).
+	#[must_use]
 	pub fn first_class(&self) -> Option<Period> {
 		self.periods
-			.iter().find(|v| matches!(v.kind, PeriodType::Class(_)))
+			.iter()
+			.find(|v| matches!(v.kind, PeriodType::Class(_)))
 			.cloned()
 	}
 }

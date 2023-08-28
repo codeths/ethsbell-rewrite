@@ -1,4 +1,5 @@
 #![cfg(feature = "ws")]
+#![allow(clippy::too_many_lines)]
 
 use chrono::{Local, NaiveDateTime, NaiveTime};
 use ethsbell_rewrite::{
@@ -7,44 +8,49 @@ use ethsbell_rewrite::{
 };
 use regex::Regex;
 use rocket::{
+	async_test,
 	http::{ContentType, Status},
-	local::Client,
+	local::asynchronous::Client,
 };
 
-fn client(schedule: Schedule) -> Client {
-	Client::new(rocket(schedule)).unwrap()
+async fn client(schedule: Schedule) -> Client {
+	Client::tracked(rocket(schedule)).await.unwrap()
 }
 
-#[test]
-fn schedule() {
-	let mut schedule = Schedule::default();
-	schedule.last_updated = Local::now().naive_local();
-	let client = client(schedule.clone());
-	let mut response = client.get("/api/v1/schedule").dispatch();
+#[async_test]
+async fn schedule() {
+	let schedule = Schedule {
+		last_updated: Local::now().naive_local(),
+		..Schedule::default()
+	};
+	let client = client(schedule.clone()).await;
+	let response = client.get("/api/v1/schedule").dispatch().await;
 	assert_eq!(response.status(), Status::Ok);
 	assert_eq!(response.content_type(), Some(ContentType::JSON));
 	assert_eq!(
-		response.body_string(),
-		Some(serde_json::to_string(&schedule).unwrap())
+		response.into_string().await.unwrap(),
+		serde_json::to_string(&schedule).unwrap()
 	);
 }
 
-#[test]
-fn spec() {
-	let mut schedule = Schedule::default();
-	schedule.last_updated = Local::now().naive_local();
-	let client = client(schedule.clone());
-	let mut response = client.get("/api/v1/spec").dispatch();
+#[async_test]
+async fn spec() {
+	let schedule = Schedule {
+		last_updated: Local::now().naive_local(),
+		..Schedule::default()
+	};
+	let client = client(schedule.clone()).await;
+	let response = client.get("/api/v1/spec").dispatch().await;
 	assert_eq!(response.status(), Status::Ok);
 	assert_eq!(response.content_type(), Some(ContentType::JSON));
 	assert_eq!(
-		response.body_string(),
-		Some(serde_json::to_string(&schedule.definition).unwrap())
+		response.into_string().await.unwrap(),
+		serde_json::to_string(&schedule.definition).unwrap()
 	);
 }
 
-#[test]
-fn on() {
+#[async_test]
+async fn on() {
 	let mut schedule = Schedule::default();
 	// Add test A
 	let test_a = ScheduleType {
@@ -74,29 +80,29 @@ fn on() {
 	schedule.definition.typical_schedule =
 		vec!["test_a", "no", "test_a", "no", "test_a", "no", "test_a"]
 			.iter()
-			.map(|v| v.to_string())
+			.map(|v| (*v).to_string())
 			.collect();
-	let client = client(schedule.clone());
+	let client = client(schedule.clone()).await;
 	// Check test A
-	let mut response = client.get("/api/v1/on/2021-07-27").dispatch();
+	let response = client.get("/api/v1/on/2021-07-27").dispatch().await;
 	assert_eq!(response.status(), Status::Ok);
 	assert_eq!(response.content_type(), Some(ContentType::JSON));
 	assert_eq!(
-		response.body_string(),
-		Some(serde_json::to_string(&test_a).unwrap())
+		response.into_string().await.unwrap(),
+		serde_json::to_string(&test_a).unwrap()
 	);
 	// Check "no"
-	let mut response = client.get("/api/v1/on/2021-07-26").dispatch();
+	let response = client.get("/api/v1/on/2021-07-26").dispatch().await;
 	assert_eq!(response.status(), Status::Ok);
 	assert_eq!(response.content_type(), Some(ContentType::JSON));
 	assert_eq!(
-		response.body_string(),
-		Some(serde_json::to_string(&no).unwrap())
-	)
+		response.into_string().await.unwrap(),
+		serde_json::to_string(&no).unwrap()
+	);
 }
 
-#[test]
-fn on_code() {
+#[async_test]
+async fn on_code() {
 	let mut schedule = Schedule::default();
 	// Add test A
 	let test_a = ScheduleType {
@@ -126,38 +132,38 @@ fn on_code() {
 	schedule.definition.typical_schedule =
 		vec!["test_a", "no", "test_a", "no", "test_a", "no", "test_a"]
 			.iter()
-			.map(|v| v.to_string())
+			.map(std::string::ToString::to_string)
 			.collect();
-	let client = client(schedule.clone());
+	let client = client(schedule.clone()).await;
 	// Check test A
-	let mut response = client.get("/api/v1/on/2021-07-27/code").dispatch();
+	let response = client.get("/api/v1/on/2021-07-27/code").dispatch().await;
 	assert_eq!(response.status(), Status::Ok);
 	assert_eq!(response.content_type(), Some(ContentType::JSON));
 	assert_eq!(
-		response.body_string(),
-		Some(serde_json::to_string("test_a").unwrap())
+		response.into_string().await.unwrap(),
+		serde_json::to_string("test_a").unwrap()
 	);
 	// Check "no"
-	let mut response = client.get("/api/v1/on/2021-07-26/code").dispatch();
+	let response = client.get("/api/v1/on/2021-07-26/code").dispatch().await;
 	assert_eq!(response.status(), Status::Ok);
 	assert_eq!(response.content_type(), Some(ContentType::JSON));
 	assert_eq!(
-		response.body_string(),
-		Some(serde_json::to_string("no").unwrap())
-	)
+		response.into_string().await.unwrap(),
+		serde_json::to_string("no").unwrap()
+	);
 }
 
-#[test]
-fn on_at() {
+#[async_test]
+async fn on_at() {
 	let mut schedule = Schedule::default();
 	// Add test A
 	let period = Period {
-		friendly_name: "".to_string(),
-		start: NaiveTime::from_hms(9, 0, 0),
+		friendly_name: String::new(),
+		start: NaiveTime::from_hms_opt(9, 0, 0).unwrap_or_default(),
 		start_timestamp: 0,
-		end: NaiveTime::from_hms(10, 0, 0),
+		end: NaiveTime::from_hms_opt(10, 0, 0).unwrap_or_default(),
 		end_timestamp: 0,
-		kind: PeriodType::Class("".to_string()),
+		kind: PeriodType::Class(String::new()),
 	};
 	let test_a = ScheduleType {
 		hide: false,
@@ -172,34 +178,42 @@ fn on_at() {
 		.insert("test_a".to_string(), test_a);
 	// Build typical schedule
 	schedule.definition.typical_schedule = vec!["test_a".to_string(); 7];
-	let client = client(schedule.clone());
+	let client = client(schedule.clone()).await;
 	// Check test A
-	let mut response = client.get("/api/v1/on/2021-07-27/at/09:26:00").dispatch();
+	let response = client
+		.get("/api/v1/on/2021-07-27/at/09:26:00")
+		.dispatch()
+		.await;
 	assert_eq!(response.status(), Status::Ok);
 	assert_eq!(response.content_type(), Some(ContentType::JSON));
-	let mut response: Vec<Period> = serde_json::from_str(&response.body_string().unwrap()).unwrap();
+	let mut response: Vec<Period> =
+		serde_json::from_str(&response.into_string().await.unwrap()).unwrap();
 	response[0].start_timestamp = 0;
 	response[0].end_timestamp = 0;
 	assert_eq!(response, vec![period]);
 }
 
-#[test]
-fn now() {
+#[async_test]
+async fn now() {
 	let mut schedule = Schedule::default();
 	// Add test A
 	let period = Period {
-		friendly_name: "".to_string(),
+		friendly_name: String::new(),
 		start: {
 			let now = Local::now().naive_local().timestamp() - 10;
-			NaiveDateTime::from_timestamp(now, 0).time()
+			NaiveDateTime::from_timestamp_opt(now, 0)
+				.unwrap_or_default()
+				.time()
 		},
 		start_timestamp: 0,
 		end: {
 			let now = Local::now().naive_local().timestamp() + 10;
-			NaiveDateTime::from_timestamp(now, 0).time()
+			NaiveDateTime::from_timestamp_opt(now, 0)
+				.unwrap_or_default()
+				.time()
 		},
 		end_timestamp: 0,
-		kind: PeriodType::Class("".to_string()),
+		kind: PeriodType::Class(String::new()),
 	};
 	let test_a = ScheduleType {
 		hide: false,
@@ -214,62 +228,75 @@ fn now() {
 		.insert("test_a".to_string(), test_a);
 	// Build typical schedule
 	schedule.definition.typical_schedule = vec!["test_a".to_string(); 7];
-	let client = client(schedule.clone());
+	let client = client(schedule.clone()).await;
 	// Check test A
-	let mut response = client.get("/api/v1/today/now").dispatch();
+	let response = client.get("/api/v1/today/now").dispatch().await;
 	assert_eq!(response.status(), Status::Ok);
 	assert_eq!(response.content_type(), Some(ContentType::JSON));
-	let mut response: Vec<Period> = serde_json::from_str(&response.body_string().unwrap()).unwrap();
+	let mut response: Vec<Period> =
+		serde_json::from_str(&response.into_string().await.unwrap()).unwrap();
 	response[0].start_timestamp = 0;
 	response[0].end_timestamp = 0;
 	assert_eq!(response, vec![period]);
 }
 
-#[test]
-fn now_near() {
+#[async_test]
+async fn now_near() {
 	let mut schedule = Schedule::default();
 	// Add test A
 	let period_now = Period {
-		friendly_name: "".to_string(),
+		friendly_name: String::new(),
 		start: {
 			let now = Local::now().naive_local().timestamp() - 10;
-			NaiveDateTime::from_timestamp(now, 0).time()
+			NaiveDateTime::from_timestamp_opt(now, 0)
+				.unwrap_or_default()
+				.time()
 		},
 		start_timestamp: 0,
 		end: {
 			let now = Local::now().naive_local().timestamp() + 10;
-			NaiveDateTime::from_timestamp(now, 0).time()
+			NaiveDateTime::from_timestamp_opt(now, 0)
+				.unwrap_or_default()
+				.time()
 		},
 		end_timestamp: 0,
-		kind: PeriodType::Class("".to_string()),
+		kind: PeriodType::Class(String::new()),
 	};
 	let period_before = Period {
-		friendly_name: "".to_string(),
+		friendly_name: String::new(),
 		start: {
 			let now = Local::now().naive_local().timestamp() - 30;
-			NaiveDateTime::from_timestamp(now, 0).time()
+			NaiveDateTime::from_timestamp_opt(now, 0)
+				.unwrap_or_default()
+				.time()
 		},
 		start_timestamp: 0,
 		end: {
 			let now = Local::now().naive_local().timestamp() - 20;
-			NaiveDateTime::from_timestamp(now, 0).time()
+			NaiveDateTime::from_timestamp_opt(now, 0)
+				.unwrap_or_default()
+				.time()
 		},
 		end_timestamp: 0,
-		kind: PeriodType::Class("".to_string()),
+		kind: PeriodType::Class(String::new()),
 	};
 	let period_after = Period {
-		friendly_name: "".to_string(),
+		friendly_name: String::new(),
 		start: {
 			let now = Local::now().naive_local().timestamp() + 20;
-			NaiveDateTime::from_timestamp(now, 0).time()
+			NaiveDateTime::from_timestamp_opt(now, 0)
+				.unwrap_or_default()
+				.time()
 		},
 		start_timestamp: 0,
 		end: {
 			let now = Local::now().naive_local().timestamp() + 30;
-			NaiveDateTime::from_timestamp(now, 0).time()
+			NaiveDateTime::from_timestamp_opt(now, 0)
+				.unwrap_or_default()
+				.time()
 		},
 		end_timestamp: 0,
-		kind: PeriodType::Class("".to_string()),
+		kind: PeriodType::Class(String::new()),
 	};
 	let test_a = ScheduleType {
 		hide: false,
@@ -288,13 +315,13 @@ fn now_near() {
 		.insert("test_a".to_string(), test_a);
 	// Build typical schedule
 	schedule.definition.typical_schedule = vec!["test_a".to_string(); 7];
-	let client = client(schedule.clone());
+	let client = client(schedule.clone()).await;
 	// Check test A
-	let mut response = client.get("/api/v1/today/now/near").dispatch();
+	let response = client.get("/api/v1/today/now/near").dispatch().await;
 	assert_eq!(response.status(), Status::Ok);
 	assert_eq!(response.content_type(), Some(ContentType::JSON));
 	let mut response: (Option<Period>, Vec<Period>, Option<Period>) =
-		serde_json::from_str(&response.body_string().unwrap()).unwrap();
+		serde_json::from_str(&response.into_string().await.unwrap()).unwrap();
 	response.1[0].start_timestamp = 0;
 	response.1[0].end_timestamp = 0;
 	// this is
@@ -324,17 +351,17 @@ fn now_near() {
 	);
 }
 
-#[test]
-fn today_at() {
+#[async_test]
+async fn today_at() {
 	let mut schedule = Schedule::default();
 	// Add test A
 	let period = Period {
-		friendly_name: "".to_string(),
-		start: NaiveTime::from_hms(9, 0, 0),
+		friendly_name: String::new(),
+		start: NaiveTime::from_hms_opt(9, 0, 0).unwrap_or_default(),
 		start_timestamp: 0,
-		end: NaiveTime::from_hms(10, 0, 0),
+		end: NaiveTime::from_hms_opt(10, 0, 0).unwrap_or_default(),
 		end_timestamp: 0,
-		kind: PeriodType::Class("".to_string()),
+		kind: PeriodType::Class(String::new()),
 	};
 	let test_a = ScheduleType {
 		hide: false,
@@ -349,28 +376,29 @@ fn today_at() {
 		.insert("test_a".to_string(), test_a);
 	// Build typical schedule
 	schedule.definition.typical_schedule = vec!["test_a".to_string(); 7];
-	let client = client(schedule.clone());
+	let client = client(schedule.clone()).await;
 	// Check test A
-	let mut response = client.get("/api/v1/today/at/09:30:00").dispatch();
+	let response = client.get("/api/v1/today/at/09:30:00").dispatch().await;
 	assert_eq!(response.status(), Status::Ok);
 	assert_eq!(response.content_type(), Some(ContentType::JSON));
-	let mut response: Vec<Period> = serde_json::from_str(&response.body_string().unwrap()).unwrap();
+	let mut response: Vec<Period> =
+		serde_json::from_str(&response.into_string().await.unwrap()).unwrap();
 	response[0].start_timestamp = 0;
 	response[0].end_timestamp = 0;
 	assert_eq!(response, vec![period]);
 }
 
-#[test]
-fn today() {
+#[async_test]
+async fn today() {
 	let mut schedule = Schedule::default();
 	// Add test A
 	let period = Period {
-		friendly_name: "".to_string(),
-		start: NaiveTime::from_hms(9, 0, 0),
+		friendly_name: String::new(),
+		start: NaiveTime::from_hms_opt(9, 0, 0).unwrap_or_default(),
 		start_timestamp: 0,
-		end: NaiveTime::from_hms(10, 0, 0),
+		end: NaiveTime::from_hms_opt(10, 0, 0).unwrap_or_default(),
 		end_timestamp: 0,
-		kind: PeriodType::Class("".to_string()),
+		kind: PeriodType::Class(String::new()),
 	};
 	let test_a = ScheduleType {
 		hide: false,
@@ -385,26 +413,27 @@ fn today() {
 		.insert("test_a".to_string(), test_a.clone());
 	// Build typical schedule
 	schedule.definition.typical_schedule = vec!["test_a".to_string(); 7];
-	let client = client(schedule.clone());
+	let client = client(schedule.clone()).await;
 	// Check test A
-	let mut response = client.get("/api/v1/today").dispatch();
+	let response = client.get("/api/v1/today").dispatch().await;
 	assert_eq!(response.status(), Status::Ok);
 	assert_eq!(response.content_type(), Some(ContentType::JSON));
-	let response: ScheduleType = serde_json::from_str(&response.body_string().unwrap()).unwrap();
+	let response: ScheduleType =
+		serde_json::from_str(&response.into_string().await.unwrap()).unwrap();
 	assert_eq!(response, test_a);
 }
 
-#[test]
-fn today_code() {
+#[async_test]
+async fn today_code() {
 	let mut schedule = Schedule::default();
 	// Add test A
 	let period = Period {
-		friendly_name: "".to_string(),
-		start: NaiveTime::from_hms(9, 0, 0),
+		friendly_name: String::new(),
+		start: NaiveTime::from_hms_opt(9, 0, 0).unwrap_or_default(),
 		start_timestamp: 0,
-		end: NaiveTime::from_hms(10, 0, 0),
+		end: NaiveTime::from_hms_opt(10, 0, 0).unwrap_or_default(),
 		end_timestamp: 0,
-		kind: PeriodType::Class("".to_string()),
+		kind: PeriodType::Class(String::new()),
 	};
 	let test_a = ScheduleType {
 		hide: false,
@@ -419,10 +448,10 @@ fn today_code() {
 		.insert("test_a".to_string(), test_a);
 	// Build typical schedule
 	schedule.definition.typical_schedule = vec!["test_a".to_string(); 7];
-	let client = client(schedule.clone());
+	let client = client(schedule.clone()).await;
 	// Check test A
-	let mut response = client.get("/api/v1/today/code").dispatch();
+	let response = client.get("/api/v1/today/code").dispatch().await;
 	assert_eq!(response.status(), Status::Ok);
 	assert_eq!(response.content_type(), Some(ContentType::JSON));
-	assert_eq!(response.body_string().unwrap(), "\"test_a\"");
+	assert_eq!(response.into_string().await.unwrap(), "\"test_a\"");
 }

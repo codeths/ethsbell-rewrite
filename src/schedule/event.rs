@@ -17,6 +17,8 @@ pub enum Event {
 }
 
 /// Write a Vec<IcalEvent> to our runtime schedule struct.
+#[allow(clippy::too_many_lines)]
+#[allow(clippy::missing_panics_doc)]
 pub fn ical_to_ours(schedule: &mut Schedule, data: &[IcalEvent]) {
 	// For every ical event...
 	data.iter().for_each(|event| {
@@ -25,28 +27,28 @@ pub fn ical_to_ours(schedule: &mut Schedule, data: &[IcalEvent]) {
 		let mut end = event.end.unwrap_or(start + Duration::days(1));
 		// If the defined end is on the same day, we'll pretend it's the next day.
 		if end == start {
-			end += Duration::days(1)
+			end += Duration::days(1);
 		}
 		// Start on the starting date, of course...
 		let mut day = start;
 		while day < end {
 			// Get the calendar's response for the day, whether or not it exists.
-			let date = schedule.calendar.get(&day);
+			let entry = schedule.calendar.get(&day);
 			// Create it if it doesn't exist.
-			match &date {
+			match &entry {
 				Some(_) => {}
 				None => {
 					schedule.calendar.insert(day, vec![]);
 				}
 			}
 			// Unwrap the calendar's entry, now that we know it exists.
-			let date = schedule.calendar.get_mut(&day).unwrap();
+			let entry = schedule.calendar.get_mut(&day).unwrap();
 			// Check if the summary is a literal schedule
 			let literal_header = "LITERAL SCHEDULE ";
 			if event
 				.description
 				.as_ref()
-				.unwrap_or(&"".to_string())
+				.unwrap_or(&String::new())
 				.starts_with(literal_header)
 			{
 				let json = event
@@ -61,13 +63,12 @@ pub fn ical_to_ours(schedule: &mut Schedule, data: &[IcalEvent]) {
 				let result = serde_json::from_str::<ScheduleType>(&json);
 				if result.is_ok() {
 					let ev = Event::ScheduleLiteral(json.clone());
-					if !date.contains(&Event::ScheduleLiteral(json.clone())) {
-						date.push(ev);
+					if !entry.contains(&Event::ScheduleLiteral(json)) {
+						entry.push(ev);
 					}
 					return;
-				} else {
-					println!("Error parsing schedule literal: {:?}", result.unwrap_err())
 				}
+				println!("Error parsing schedule literal: {:?}", result.unwrap_err());
 			}
 			// Check against every schedule
 			let mut is_schedule_event = false;
@@ -82,11 +83,11 @@ pub fn ical_to_ours(schedule: &mut Schedule, data: &[IcalEvent]) {
 				{
 					let mut found = false;
 					// Check to see if a special schedule already exists for today...
-					for o in date.iter_mut() {
+					for o in entry.iter_mut() {
 						if let Event::ScheduleOverride(schedule) = o {
 							*schedule = i.0.clone();
 							found = true;
-							is_schedule_event = true
+							is_schedule_event = true;
 						}
 					}
 					if !found {
@@ -97,7 +98,7 @@ pub fn ical_to_ours(schedule: &mut Schedule, data: &[IcalEvent]) {
 						if event
 							.description
 							.as_ref()
-							.unwrap_or(&"".to_string())
+							.unwrap_or(&String::new())
 							.starts_with(literal_header)
 						{
 							// Get original schedule
@@ -126,18 +127,14 @@ pub fn ical_to_ours(schedule: &mut Schedule, data: &[IcalEvent]) {
 								// Merge partial schedule into original
 								merge(&mut json, &r);
 								let json = serde_json::to_string(&json).unwrap();
-								if !date.contains(&Event::ScheduleLiteral(json.clone())) {
-									date.push(Event::ScheduleLiteral(json));
+								if !entry.contains(&Event::ScheduleLiteral(json.clone())) {
+									entry.push(Event::ScheduleLiteral(json));
 								}
 								return;
-							} else {
-								println!(
-									"Error parsing schedule literal: {:?}",
-									result.unwrap_err()
-								)
 							}
+							println!("Error parsing schedule literal: {:?}", result.unwrap_err());
 						} else {
-							date.push(Event::ScheduleOverride(i.0.clone()));
+							entry.push(Event::ScheduleOverride(i.0.clone()));
 							is_schedule_event = true;
 						}
 					}
@@ -146,19 +143,19 @@ pub fn ical_to_ours(schedule: &mut Schedule, data: &[IcalEvent]) {
 			if !is_schedule_event {
 				// If this event didn't match any special schedules, add it as a non-schedule Special Event.
 				let new_event = Event::SpecialEvent(event.summary.as_ref().unwrap().clone());
-				if !date.contains(&new_event) {
-					date.push(new_event)
+				if !entry.contains(&new_event) {
+					entry.push(new_event);
 				}
 			}
 			// Move to the next day in the event.
-			day += Duration::days(1)
+			day += Duration::days(1);
 		}
-	})
+	});
 }
 
 fn merge(a: &mut serde_json::Value, b: &serde_json::Value) {
 	match (a, b) {
-		(&mut serde_json::Value::Object(ref mut a), &serde_json::Value::Object(ref b)) => {
+		(&mut serde_json::Value::Object(ref mut a), serde_json::Value::Object(b)) => {
 			for (k, v) in b {
 				merge(a.entry(k.clone()).or_insert(serde_json::Value::Null), v);
 			}

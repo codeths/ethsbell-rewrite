@@ -29,11 +29,11 @@ fn main() {
 	let response: NearbyPeriods = {
 		let response_text =
 			reqwest::blocking::get(format!("{}/api/v1/today/now/near", args.server))
-				.and_then(|v| v.text())
+				.and_then(reqwest::blocking::Response::text)
 				.expect("Failed to get data from ETHSBell");
 
 		if args.quietness >= 4 {
-			println!("{}", response_text);
+			println!("{response_text}");
 			return;
 		}
 
@@ -57,38 +57,38 @@ fn main() {
 		};
 		let now = Local::now().time();
 
-		println!("=== {} Period ===", period_type);
+		println!("=== {period_type} Period ===");
 		println!("Name: {}", p.friendly_name);
 		let start_delta = p.start - now;
 		if start_delta < Duration::zero() {
-			println_l!(q, 2, "Started {} ago", ftime(start_delta))
+			println_l!(q, 2, "Started {} ago", ftime(start_delta));
 		} else {
-			println_l!(q, 2, "Starts {} from now", ftime(start_delta))
+			println_l!(q, 2, "Starts {} from now", ftime(start_delta));
 		}
 		println_l!(q, 1, "{} long in total", ftime(p.end - p.start));
 		println_l!(q, 1, "Period is {:?}", p.kind);
 
 		let end_delta = p.end - now;
 		if end_delta < Duration::zero() {
-			println_l!(q, 2, "Ended {} ago", ftime(end_delta))
+			println_l!(q, 2, "Ended {} ago", ftime(end_delta));
 		} else {
-			println_l!(q, 2, "Ends {} from now", ftime(end_delta))
+			println_l!(q, 2, "Ends {} from now", ftime(end_delta));
 		}
-		println!()
+		println!();
 	};
 	let q = args.quietness;
 	if let Some(period) = &response.0 {
 		show_period(q, 0, period);
 	}
 
-	for i in response.1.iter() {
+	for i in &response.1 {
 		show_period(q, 1, i);
 	}
 
 	if let Some(period) = &response.2 {
 		show_period(q, 2, period);
 	} else {
-		println_l!(q, 2, "=== No Next Period ===")
+		println_l!(q, 2, "=== No Next Period ===");
 	}
 }
 

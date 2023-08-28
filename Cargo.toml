@@ -1,19 +1,24 @@
 [package]
 name = "ethsbell-rewrite"
 version = "2.1.0"
-authors = ["Willow Carlson-Huber <willow.ch@protonmail.com>", "Albert Portnoy <albert@albertp.dev"]
+authors = [
+	"Willow Carlson-Huber <willow.ch@protonmail.com>",
+	"Albert Portnoy <albert@albertp.dev",
+]
 edition = "2018"
 default-run = "ethsbell-rewrite"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-rocket = {version = "0.4.10", optional = true}
-rocket_contrib = {version = "0.4.10", features = ["json", "tera_templates"], optional = true}
-serde = {version = "1.0.125", features = ["derive"]}
+rocket = { version = "=0.5.0-rc.3", optional = true, features = ["json"] }
+rocket_dyn_templates = { version = "=0.1.0-rc.3", optional = true, features = [
+	"tera",
+] }
+serde = { version = "1.0.125", features = ["derive"] }
 serde_json = "1.0.64"
-chrono = {version = "0.4.19", features = ["serde"]}
-reqwest = {version = "0.11.3", features = ["blocking"], optional = true}
+chrono = { version = "0.4.19", features = ["serde"] }
+reqwest = { version = "0.11.3", features = ["blocking"], optional = true }
 serde_regex = "1.1.0"
 regex = "1.4.6"
 urlencoding = "2.0.0"
@@ -21,13 +26,17 @@ thiserror = "1.0.24"
 base64 = "0.13.0"
 rand = "0.8.3"
 
-rocket_prometheus = {git = "https://github.com/chromezoneeths/rocket_prometheus", optional = true}
-rocket_okapi = {version = "0.6.0-alpha-1", optional = true}
-schemars = {version = "0.8.3", features = ["chrono"], optional = true}
-okapi = { version = "0.5.0-alpha-1", features = ["derive_json_schema"], optional = true }
+rocket_prometheus = { version = "=0.10.0-rc.3", optional = true }
+rocket_okapi = { version = "=0.8.0-rc.3", optional = true, features = [
+	"swagger",
+] }
+schemars = { version = "0.8.3", features = ["chrono"], optional = true }
+okapi = { version = "0.5.0-alpha-1", features = [
+	"derive_json_schema",
+], optional = true }
 structopt = { version = "0.3.26", optional = true }
 # Required to allow ical generation to compile for WASM
-getrandom = {version = "0.2.8", optional = true}
+getrandom = { version = "0.2.8", optional = true }
 
 [build-dependencies]
 subprocess = "*"
@@ -51,8 +60,16 @@ required-features = ["cli"]
 path = "src/bin/bell_cli.rs"
 
 [features]
+ws = [
+	"rocket",
+	"pull",
+	"rocket_okapi",
+	"rocket_dyn_templates",
+	"schemars",
+	"okapi",
+	"rocket_prometheus",
+]
 default = ["ws"]
-ws = ["rocket", "rocket_contrib", "pull", "rocket_okapi", "schemars", "okapi", "rocket_prometheus"]
 wasm = ["getrandom/js"]
 pull = ["reqwest"]
 cli = ["structopt", "reqwest"]

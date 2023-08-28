@@ -1,23 +1,28 @@
 //! This file defines our authentication behavior for the admin editor.
 
 #[cfg(feature = "ws")]
+use rocket::request::Outcome;
+#[cfg(feature = "ws")]
 use rocket::response::Response;
 #[cfg(feature = "ws")]
-use rocket::{http::Status, request::FromRequest, response::Responder, Outcome};
+use rocket::{http::Status, request::FromRequest, response::Responder};
+#[cfg(feature = "ws")]
+use rocket_okapi::request::OpenApiFromRequest;
 #[cfg(feature = "ws")]
 use std::env;
 #[cfg(feature = "ws")]
 use std::io::Cursor;
 /// This struct is used as a request guard to require authentication.
+#[cfg_attr(feature = "ws", derive(OpenApiFromRequest))]
+#[derive(Clone, Copy)]
 pub struct Authenticated;
 
 #[cfg(feature = "ws")]
-impl<'a, 'r> FromRequest<'a, 'r> for Authenticated {
+#[async_trait]
+impl<'r> FromRequest<'r> for Authenticated {
 	type Error = WantsBasicAuth;
 
-	fn from_request(
-		request: &'a rocket::Request<'r>,
-	) -> rocket::request::Outcome<Self, Self::Error> {
+	async fn from_request(request: &'r rocket::Request<'_>) -> Outcome<Self, Self::Error> {
 		let auth = request.headers().get_one("Authorization");
 		match auth {
 			Some(auth) if auth.starts_with("Basic") => {
@@ -41,15 +46,19 @@ impl<'a, 'r> FromRequest<'a, 'r> for Authenticated {
 		}
 	}
 }
+
 /// This struct defines an error type which returns the corresponding HTTP error code.
 #[derive(Debug)]
 pub struct WantsBasicAuth;
 
 #[cfg(feature = "ws")]
-impl<'r> Responder<'r> for WantsBasicAuth {
+impl<'o, 'r> Responder<'o, 'r> for WantsBasicAuth
+where
+	'r: 'o,
+{
 	fn respond_to(self, _request: &rocket::Request) -> rocket::response::Result<'r> {
 		Response::build()
-			.sized_body(Cursor::new("Needs authorization"))
+			.streamed_body(Cursor::new("Needs authorization"))
 			.ok()
 	}
 }

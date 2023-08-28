@@ -2,29 +2,32 @@
 use crate::impls::MaxElement;
 use crate::schedule::{Period, PeriodType, Schedule, ScheduleType};
 use chrono::{Datelike, Local, NaiveDate, NaiveTime, Timelike, Weekday};
-use rocket::response::content::Html;
+use rocket::response::content::RawHtml as Html;
+use rocket::serde::json::Json;
 use rocket::{Route, State};
-use rocket_contrib::json::Json;
-use rocket_contrib::templates::Template;
-use rocket_okapi::{openapi, routes_with_openapi};
+use rocket_dyn_templates::Template;
+use rocket_okapi::{openapi, openapi_routes, openapi_spec};
 use serde::Serialize;
 use serde_json::json;
 use std::sync::{Arc, RwLock};
 
 /// Returns a list of all our routes for Rocket.
+#[must_use]
 pub fn routes() -> Vec<Route> {
-	routes_with_openapi![display, data, oliver]
+	let settings = rocket_okapi::settings::OpenApiSettings::new();
+	let spec = openapi_spec![display, data, oliver](&settings);
+	openapi_routes![display, data, oliver](Some(spec), &settings)
 }
 
 /// This returns a templated HTML response for use with the original frontend and the browser extension.
 #[openapi(skip)]
 #[get("/display")]
-fn display(schedule: State<Arc<RwLock<Schedule>>>) -> Template {
+fn display(schedule: &State<Arc<RwLock<Schedule>>>) -> Template {
 	if schedule.read().unwrap().is_update_needed() {
 		schedule.write().unwrap().update();
 	};
 	let now = Local::now();
-	let schedule = schedule.read().unwrap().on_date(now.date().naive_local());
+	let schedule = schedule.read().unwrap().on_date(now.date_naive());
 	let period = schedule.0.at_time(now.time());
 	let friendly_name = period
 		.1
@@ -39,8 +42,7 @@ fn display(schedule: State<Arc<RwLock<Schedule>>>) -> Template {
 	let next_friendly_name = period
 		.2
 		.clone()
-		.map(|v| v.friendly_name)
-		.unwrap_or_else(|| "No Period".to_string());
+		.map_or_else(|| "No Period".to_string(), |v| v.friendly_name);
 	let start = period
 		.2
 		.iter()
@@ -71,12 +73,12 @@ fn display(schedule: State<Arc<RwLock<Schedule>>>) -> Template {
 /// The closest we can get to the original's API with the differences in design between us
 #[openapi]
 #[get("/data")]
-fn data(schedule: State<Arc<RwLock<Schedule>>>) -> Json<LegacySchedule> {
+fn data(schedule: &State<Arc<RwLock<Schedule>>>) -> Json<LegacySchedule> {
 	Json(
 		schedule
 			.read()
 			.unwrap()
-			.on_date(Local::now().date().naive_local())
+			.on_date(Local::now().date_naive())
 			.0
 			.into(),
 	)
@@ -150,7 +152,6 @@ impl From<ScheduleType> for LegacySchedule {
 		let context = [
 			context.0,
 			match context.1.len() {
-				0 => None,
 				1 => Some(context.1[0].clone()),
 				_ => None,
 			},
@@ -188,8 +189,8 @@ impl From<ScheduleType> for LegacySchedule {
 				}),
 			},
 			periodEndTime: context[1].clone().map(|v| v.end.to_legacy()),
-			endOfPreviousPeriod: context[0].clone().map(|v| v.end_timestamp).unwrap_or(0) as usize,
-			formattedDate: Local::now().date().naive_local().to_legacy(),
+			endOfPreviousPeriod: context[0].clone().map_or(0, |v| v.end_timestamp) as usize,
+			formattedDate: Local::now().date_naive().to_legacy(),
 			dayOfWeek: Local::now().weekday().to_legacy(),
 			formattedTime: Local::now().time().to_legacy(),
 			scheduleCode: None,     // Unclear what this is for
@@ -221,8 +222,8 @@ impl From<ScheduleType> for LegacySchedule {
 			},
 			timeSinceLastPeriod: context[0]
 				.clone()
-				.map(|v| (Local::now().time() - v.end).num_minutes())
-				.unwrap_or_else(|| 0) as isize,
+				.map_or_else(|| 0, |v| (Local::now().time() - v.end).num_minutes())
+				as isize,
 		}
 	}
 }
