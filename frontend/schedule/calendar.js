@@ -28,7 +28,7 @@ function place_boxes(data_unprocessed, date = current_date(), force = false, tod
 			return;
 		}
 
-		const data = replace_period(data_unprocessed.periods.filter(p => p.kind !== 'Passing')).filter(v => v);
+		const data = replace_period(data_unprocessed.periods.filter(p => p.kind !== 'Passing')).filter(Boolean);
 		startDate = date_from_api(data[0].start, date);
 		startTime = startDate.getTime() / 1000;
 		endDate = date_from_api(data[data.length - 1].end, date);

@@ -377,7 +377,7 @@ function broadcastConfigToExtension() {
 	updateConfig();
 	if (
 		typeof chrome !== 'undefined'
-		&& typeof chrome.runtime !== 'undefined'
+		&& typeof chrome.runtime !== 'undefined'// eslint-disable-line unicorn/no-typeof-undefined
 	) {
 		chrome.runtime.sendMessage('gbkjjbecehodfeijbdmoieepgmfdlgle', {
 			message: 'schedule',
