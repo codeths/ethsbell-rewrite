@@ -14,7 +14,7 @@
     "parcel": "^2.0.1",
     "parcel-transformer-ejs": "^1.0.1",
     "posthtml-include": "^1.7.2",
-    "xo": "^0.46.4"
+    "xo": "^0.56.0"
   },
   "xo": {
     "envs": [
