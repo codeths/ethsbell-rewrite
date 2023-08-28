@@ -51,7 +51,7 @@ ENV GITHUB_REPOSITORY=$GITHUB_REPOSITORY
 COPY --from=builder /app/target/release/ethsbell-rewrite .
 # COPY def.json* def.example.json ./
 COPY --from=builder /app/def.json ./
-
+COPY --from=builder /app/templates templates
 # Frontend
 COPY --from=frontend /app/frontend-dist frontend-dist
 
