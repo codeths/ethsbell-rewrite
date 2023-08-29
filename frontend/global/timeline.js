@@ -72,7 +72,7 @@ function place_boxes(data_unprocessed) {
 
 	// Resolve rows so everything is mutually non-intersecting.
 	const boxes = [];
-	data = data.flat().filter(v => v);
+	data = data.flat().filter(Boolean);
 	data.sort((a, b) => a.start - b.start);
 	for (const period of data) {
 		// Set up variables
@@ -153,29 +153,44 @@ function place_boxes(data_unprocessed) {
 			emoji = '🏫/🥪';
 		} else {
 			switch (box.kind) {
-				case 'Lunch':
+				case 'Lunch': {
 					emoji = '🥪';
 					break;
-				case 'Break':
+				}
+
+				case 'Break': {
 					emoji = '🛌';
 					break;
-				case 'AMSupport':
+				}
+
+				case 'AMSupport': {
 					emoji = '🐔';
 					break;
-				case 'Passing':
+				}
+
+				case 'Passing': {
 					emoji = '🏃';
 					break;
-				case 'BeforeSchool':
+				}
+
+				case 'BeforeSchool': {
 					emoji = '🌄';
 					break;
-				case 'AfterSchool':
+				}
+
+				case 'AfterSchool': {
 					emoji = '🌇';
 					break;
-				case 'Announcements':
+				}
+
+				case 'Announcements': {
 					emoji = '📣';
 					break;
-				default:
+				}
+
+				default: {
 					emoji = emoji || '😕';
+				}
 			}
 		}
 

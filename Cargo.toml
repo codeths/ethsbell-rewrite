@@ -25,6 +25,7 @@ urlencoding = "2.0.0"
 thiserror = "1.0.24"
 base64 = "0.13.0"
 rand = "0.8.3"
+cargo-chef = "0.1.36"
 
 rocket_prometheus = { version = "=0.10.0-rc.3", optional = true }
 rocket_okapi = { version = "=0.8.0-rc.3", optional = true, features = [

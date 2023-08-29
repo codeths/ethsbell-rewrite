@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>
+		<%= process.env.INSTANCE_NAME %> | Schedule
+	</title>
+	<link rel="stylesheet" href="../schedule/index.css" />
+	<%- include('../include/prelude'); %>
+		<script defer src="../schedule/index.js" type="module"></script>
+		<meta http-equiv="Content-Security-Policy" content="default-src 'self';" />
+</head>
+
+<body>
+	<%- include('../include/navbar'); %>
+		<%- include('../include/schedule'); %>
+			<%- include('../include/advisory'); %>
+</body>
+
+</html>

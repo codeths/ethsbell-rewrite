@@ -5,16 +5,20 @@
 	<meta charset="UTF-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Schedule Editor</title>
+	<title>
+		<%= process.env.INSTANCE_NAME %> | Schedule Editor
+	</title>
 	<link rel="stylesheet" href="../editor/index.css">
-	<include src="include/prelude.html"></include>
-	<script src="../editor/helpers.js" type="module"></script>
-	<script src="../editor/controls-section.js" type="module" defer></script>
-	<script src="../editor/auth-section.js" type="module" defer></script>
+	<%- include('../include/prelude'); %>
+		<script src="../editor/helpers.js" type="module"></script>
+		<script src="../editor/controls-section.js" type="module" defer></script>
+		<script src="../editor/auth-section.js" type="module" defer></script>
 </head>
 
 <body>
-	<h1>ETHSBell Schedule Editor</h1>
+	<h1>
+		<%= process.env.INSTANCE_NAME %> Schedule Editor
+	</h1>
 	<hr>
 	<div id="authenticate">
 		<h2>Log In</h2>

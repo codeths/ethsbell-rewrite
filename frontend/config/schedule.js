@@ -82,7 +82,7 @@ populate();
 getel('save-schedule').addEventListener('click', () => {
 	const schedule = {};
 	for (const x of document.querySelectorAll('input[data-for=name]')) {
-		const period = x.getAttribute('data-period');
+		const period = x.dataset.period;
 		if (!schedule[period]) {
 			schedule[period] = {};
 		}
@@ -91,7 +91,7 @@ getel('save-schedule').addEventListener('click', () => {
 	}
 
 	for (const x of document.querySelectorAll('input[data-for=url]')) {
-		const period = x.getAttribute('data-period');
+		const period = x.dataset.period;
 		if (!schedule[period]) {
 			schedule[period] = {};
 		}

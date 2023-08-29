@@ -12,7 +12,8 @@ async function pull() {
 		return;
 	}
 
-	data = await (await fetch('../api/v1/spec')).json();
+	const res = await fetch('../api/v1/spec');
+	data = await res.json();
 	update_view();
 }
 
@@ -270,7 +271,7 @@ $('schedule_regex').addEventListener('change', event => {
 });
 
 $('calendars').addEventListener('change', event => {
-	const items = event.target.value.split('\n').map(x => x.trim()).filter(x => x).reverse();
+	const items = event.target.value.split('\n').map(x => x.trim()).filter(Boolean).reverse();
 
 	if (items.some(x => {
 		try {
