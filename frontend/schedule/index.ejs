@@ -9,15 +9,15 @@
 		<%= process.env.INSTANCE_NAME %> | Schedule
 	</title>
 	<link rel="stylesheet" href="../schedule/index.css" />
-	<include src="include/prelude.ejs"></include>
-	<script defer src="../schedule/index.js" type="module"></script>
-	<meta http-equiv="Content-Security-Policy" content="default-src 'self';" />
+	<%- include('../include/prelude'); %>
+		<script defer src="../schedule/index.js" type="module"></script>
+		<meta http-equiv="Content-Security-Policy" content="default-src 'self';" />
 </head>
 
 <body>
-	<include src="include/navbar.ejs"></include>
-	<include src="include/schedule.ejs"></include>
-	<include src="include/advisory.ejs"></include>
+	<%- include('../include/navbar'); %>
+		<%- include('../include/schedule'); %>
+			<%- include('../include/advisory'); %>
 </body>
 
 </html>
