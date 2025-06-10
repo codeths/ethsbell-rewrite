@@ -37,10 +37,10 @@ COPY frontend frontend
 RUN npm run build -- --no-cache
 COPY frontend/favicon.ico frontend-dist
 
-FROM docker.io/ubuntu:focal
+FROM docker.io/ubuntu:jammy
 WORKDIR /app
 
-RUN apt-get update && apt-get install -y libssl-dev ca-certificates curl && rm -rf /var/lib/apt/lists
+RUN apt-get update && apt-get install -y libssl-dev libssl3 ca-certificates curl && rm -rf /var/lib/apt/lists
 RUN update-ca-certificates
 ARG GITHUB_SHA
 ENV GITHUB_SHA=$GITHUB_SHA
