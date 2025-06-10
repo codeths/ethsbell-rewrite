@@ -36,6 +36,28 @@ use std::{
 pub fn routes() -> Vec<Route> {
 	use rocket_okapi::settings::OpenApiSettings;
 	let settings = OpenApiSettings::new();
+	let spec = rocket_okapi::openapi_spec![
+		get_schedule,
+		today,
+		today_code,
+		date,
+		date_code,
+		today_now,
+		today_at,
+		date_at,
+		today_around_now,
+		what_time,
+		get_spec,
+		post_spec,
+		post_update,
+		check_auth,
+		check_version,
+		ical,
+		coffee,
+		widget,
+		license,
+		schedule_from_to,
+	](&settings);
 	#[allow(unused_mut)]
 	let mut r = rocket_okapi::openapi_routes![
 		get_schedule,
@@ -58,7 +80,7 @@ pub fn routes() -> Vec<Route> {
 		widget,
 		license,
 		schedule_from_to,
-	](None, &settings);
+	](Some(spec), &settings);
 	#[cfg(debug_assertions)]
 	r.append(&mut routes![force_update]);
 	r
