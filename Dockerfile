@@ -1,5 +1,5 @@
 # Setup chef
-FROM docker.io/rust:1.71 AS chef
+FROM docker.io/rust:1.82 AS chef
 # COPY rust-toolchain.toml ./
 RUN cargo install cargo-chef
 
