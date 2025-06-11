@@ -32,7 +32,7 @@ RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash -
 RUN apt-get install -y nodejs
 WORKDIR /app
 COPY package*.json .posthtmlrc .browserslistrc ./
-RUN npm i
+RUN npm ci
 COPY frontend frontend
 RUN npm run build -- --no-cache
 COPY frontend/favicon.ico frontend-dist
