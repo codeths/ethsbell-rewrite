@@ -75,5 +75,6 @@
 		"ignores": [
 			"/tests/"
 		]
-	}
+	},
+	"version": "0.0.1"
 }
