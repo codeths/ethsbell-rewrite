@@ -111,27 +111,27 @@ impl ScheduleType {
 		if self.periods.is_empty() {
 			(None, vec![], None)
 		} else {
-			let mut before: Option<Period> = None;
+			let mut previous: Option<Period> = None;
 			let mut current: Vec<Period> = vec![];
-			let mut next: Option<Period> = None;
+			let mut future: Option<Period> = None;
 			self.periods.iter().for_each(|period| {
 				if period.end <= time {
 					if period.kind != PeriodType::Passing {
-						match before.clone() {
+						match previous.clone() {
 							Some(before_) if before_.end < period.end => {
-								before = Some(period.clone());
+								previous = Some(period.clone());
 							}
-							None => before = Some(period.clone()),
+							None => previous = Some(period.clone()),
 							_ => {}
 						}
 					}
 				} else if period.start > time {
 					if period.kind != PeriodType::Passing {
-						match next.clone() {
+						match future.clone() {
 							Some(next_) if next_.start > period.start => {
-								next = Some(period.clone());
+								future = Some(period.clone());
 							}
-							None => next = Some(period.clone()),
+							None => future = Some(period.clone()),
 							_ => {}
 						}
 					}
@@ -139,7 +139,7 @@ impl ScheduleType {
 					current.push(period.clone());
 				}
 			});
-			match (&before, &current, &next) {
+			match (&previous, &current, &future) {
 				(Some(before), v, Some(next)) if v.is_empty() => {
 					current = vec![Period {
 						friendly_name: "Passing Period".to_string(),
@@ -174,12 +174,12 @@ impl ScheduleType {
 			}
 			let now = Local::now();
 			(
-				before.map(|v| v.populate(now)),
+				previous.map(|v| v.populate(now)),
 				current
 					.iter()
 					.map(|v| v.clone().populate(now))
 					.collect::<Vec<Period>>(),
-				next.map(|v| v.populate(now)),
+				future.map(|v| v.populate(now)),
 			)
 		}
 	}
