@@ -4,7 +4,7 @@
 
 #[cfg(not(feature = "ws"))]
 use crate::api::{Json, State};
-use crate::{aliases::v1::NearbyPeriods, schedule::{Schedule}};
+use crate::{aliases::v2::NearbyPeriods, schedule::{Schedule}};
 use chrono::{Local, NaiveDateTime, TimeZone};
 #[cfg(feature = "ws")]
 use rocket::serde::json::Json;
@@ -45,7 +45,10 @@ pub fn today_around_now(
 	let now_time = now.time();
 	let schedule = schedule.read().unwrap().on_date(now_date);
 	let mut schedule = schedule.0.at_time_v2(now_time);
-	schedule.0 = schedule.0.map(|v| v.populate(now));
+	schedule
+        .0
+        .iter_mut()
+		.for_each(|v| *v = v.clone().populate(now));
 	schedule
 		.1
 		.iter_mut()

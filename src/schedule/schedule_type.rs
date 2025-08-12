@@ -107,22 +107,27 @@ impl ScheduleType {
 	/// Returns a tuple of a Vec<Period> of the previous Periods, a Vec<Period> of the current periods,
 	/// and a Vec<Period> of the next periods.
 	#[must_use]
-	pub fn at_time_v2(&self, time: NaiveTime) -> (Option<Period>, Vec<Period>, Option<Period>) {
+	pub fn at_time_v2(&self, time: NaiveTime) -> (Vec<Period>, Vec<Period>, Option<Period>) {
 		if self.periods.is_empty() {
-			(None, vec![], None)
+			(vec![], vec![], None)
 		} else {
-			let mut previous: Option<Period> = None;
+			let mut previous: Vec<Period> = vec![];
 			let mut current: Vec<Period> = vec![];
 			let mut future: Option<Period> = None;
 			self.periods.iter().for_each(|period| {
 				if period.end <= time {
 					if period.kind != PeriodType::Passing {
-						match previous.clone() {
-							Some(before_) if before_.end < period.end => {
-								previous = Some(period.clone());
+						match previous.get(0).clone() {
+							Some(before) => {
+    							if period.end > before.end {
+                                    // if we find a more recent period, replace everything
+    								previous = vec![period.clone()];
+    							} else if period.end == before.end {
+                                    // if we find a matching end time, add it
+                                    previous.push(period.clone());
+                                }
 							}
-							None => previous = Some(period.clone()),
-							_ => {}
+							None => previous.push(period.clone())
 						}
 					}
 				} else if period.start > time {
@@ -140,17 +145,17 @@ impl ScheduleType {
 				}
 			});
 			match (&previous, &current, &future) {
-				(Some(before), v, Some(next)) if v.is_empty() => {
+				(before, v, Some(next)) if v.is_empty() && !before.is_empty() => {
 					current = vec![Period {
 						friendly_name: "Passing Period".to_string(),
-						start: before.end,
+						start: before[0].end,
 						end: next.start,
 						start_timestamp: 0,
 						end_timestamp: 0,
 						kind: PeriodType::Passing,
 					}];
 				}
-				(None, v, Some(next)) if v.is_empty() => {
+				(before, v, Some(next)) if v.is_empty() && before.is_empty() => {
 					current = vec![Period {
 						friendly_name: "Before School".to_string(),
 						start: NaiveTime::from_hms_opt(0, 0, 0).unwrap_or_default(),
@@ -160,10 +165,10 @@ impl ScheduleType {
 						kind: PeriodType::BeforeSchool,
 					}];
 				}
-				(Some(before), v, None) if v.is_empty() => {
+				(before, v, None) if v.is_empty() && !before.is_empty() => {
 					current = vec![Period {
 						friendly_name: "After School".to_string(),
-						start: before.end,
+						start: before[0].end,
 						end: NaiveTime::from_hms_opt(23, 59, 59).unwrap_or_default(),
 						start_timestamp: 0,
 						end_timestamp: 0,
@@ -174,7 +179,10 @@ impl ScheduleType {
 			}
 			let now = Local::now();
 			(
-				previous.map(|v| v.populate(now)),
+				previous
+				    .iter()
+    				.map(|v| v.clone().populate(now))
+    				.collect::<Vec<Period>>(),
 				current
 					.iter()
 					.map(|v| v.clone().populate(now))
