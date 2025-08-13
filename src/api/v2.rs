@@ -53,6 +53,9 @@ pub fn today_around_now(
 		.1
 		.iter_mut()
 		.for_each(|v| *v = v.clone().populate(now));
-	schedule.2 = schedule.2.map(|v| v.populate(now));
+	schedule
+        .2
+    	.iter_mut()
+    	.for_each(|v| *v = v.clone().populate(now));
 	Json(schedule)
 }

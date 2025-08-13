@@ -9,5 +9,5 @@ pub mod v1 {
 pub mod v2 {
 	use crate::schedule::Period;
 	/// This is the type of the data returned by /api/v2/today/now/near.
-	pub type NearbyPeriods = (Vec<Period>, Vec<Period>, Option<Period>);
+	pub type NearbyPeriods = (Vec<Period>, Vec<Period>, Vec<Period>);
 }

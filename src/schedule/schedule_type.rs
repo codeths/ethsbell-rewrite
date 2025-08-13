@@ -107,13 +107,15 @@ impl ScheduleType {
 	/// Returns a tuple of a Vec<Period> of the previous Periods, a Vec<Period> of the current periods,
 	/// and a Vec<Period> of the next periods.
 	#[must_use]
-	pub fn at_time_v2(&self, time: NaiveTime) -> (Vec<Period>, Vec<Period>, Option<Period>) {
+	pub fn at_time_v2(&self, time: NaiveTime) -> (Vec<Period>, Vec<Period>, Vec<Period>) {
 		if self.periods.is_empty() {
-			(vec![], vec![], None)
+			(vec![], vec![], vec![])
 		} else {
 			let mut previous: Vec<Period> = vec![];
 			let mut current: Vec<Period> = vec![];
-			let mut future: Option<Period> = None;
+			let mut future: Vec<Period> = vec![];
+
+			// sort periods into previous, current, and future
 			self.periods.iter().for_each(|period| {
 				if period.end <= time {
 					if period.kind != PeriodType::Passing {
@@ -132,51 +134,60 @@ impl ScheduleType {
 					}
 				} else if period.start > time {
 					if period.kind != PeriodType::Passing {
-						match future.clone() {
-							Some(next_) if next_.start > period.start => {
-								future = Some(period.clone());
+						match future.get(0).clone() {
+							Some(after) => {
+    							if period.start < after.start {
+    								future = vec![period.clone()];
+    							} else if period.start == after.start {
+                                    future.push(period.clone());
+                                }
 							}
-							None => future = Some(period.clone()),
-							_ => {}
+							None => future.push(period.clone())
 						}
 					}
 				} else {
 					current.push(period.clone());
 				}
 			});
-			match (&previous, &current, &future) {
-				(before, v, Some(next)) if v.is_empty() && !before.is_empty() => {
-					current = vec![Period {
-						friendly_name: "Passing Period".to_string(),
-						start: before[0].end,
-						end: next.start,
-						start_timestamp: 0,
-						end_timestamp: 0,
-						kind: PeriodType::Passing,
-					}];
-				}
-				(before, v, Some(next)) if v.is_empty() && before.is_empty() => {
-					current = vec![Period {
-						friendly_name: "Before School".to_string(),
-						start: NaiveTime::from_hms_opt(0, 0, 0).unwrap_or_default(),
-						end: next.start,
-						start_timestamp: 0,
-						end_timestamp: 0,
-						kind: PeriodType::BeforeSchool,
-					}];
-				}
-				(before, v, None) if v.is_empty() && !before.is_empty() => {
-					current = vec![Period {
-						friendly_name: "After School".to_string(),
-						start: before[0].end,
-						end: NaiveTime::from_hms_opt(23, 59, 59).unwrap_or_default(),
-						start_timestamp: 0,
-						end_timestamp: 0,
-						kind: PeriodType::AfterSchool,
-					}];
-				}
-				_ => {}
+
+			// add implicit periods
+			if current.is_empty() {
+    			match (previous.is_empty(), future.is_empty()) {
+    				(false, false) => {
+    					current = vec![Period {
+    						friendly_name: "Passing Period".to_string(),
+    						start: previous[0].end,
+    						end: future[0].start,
+    						start_timestamp: 0,
+    						end_timestamp: 0,
+    						kind: PeriodType::Passing,
+    					}];
+    				}
+    				(true, false) => {
+    					current = vec![Period {
+    						friendly_name: "Before School".to_string(),
+    						start: NaiveTime::from_hms_opt(0, 0, 0).unwrap_or_default(),
+    						end: future[0].start,
+    						start_timestamp: 0,
+    						end_timestamp: 0,
+    						kind: PeriodType::BeforeSchool,
+    					}];
+    				}
+    				(false, true) => {
+    					current = vec![Period {
+    						friendly_name: "After School".to_string(),
+    						start: previous[0].end,
+    						end: NaiveTime::from_hms_opt(23, 59, 59).unwrap_or_default(),
+    						start_timestamp: 0,
+    						end_timestamp: 0,
+    						kind: PeriodType::AfterSchool,
+    					}];
+    				}
+    				_ => {}
+    			}
 			}
+
+			// populate timestamps
 			let now = Local::now();
 			(
 				previous
@@ -187,7 +198,10 @@ impl ScheduleType {
 					.iter()
 					.map(|v| v.clone().populate(now))
 					.collect::<Vec<Period>>(),
-				future.map(|v| v.populate(now)),
+				future
+                    .iter()
+    				.map(|v| v.clone().populate(now))
+    				.collect::<Vec<Period>>(),
 			)
 		}
 	}
