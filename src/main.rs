@@ -8,6 +8,7 @@
 #![allow(clippy::needless_pass_by_value)]
 #![allow(clippy::missing_panics_doc)]
 #![allow(clippy::too_many_lines)]
+#![allow(unused_imports)]
 
 //! `ETHSBell` is a web-based bell schedule tracker.
 pub use locks::SpecLock;

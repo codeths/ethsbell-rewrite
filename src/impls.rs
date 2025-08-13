@@ -20,7 +20,7 @@ where
 		let mut max_val = None;
 
 		while let Some(val) = self.next() {
-			if max_val.as_ref().map_or(true, |m| &val > m) {
+			if max_val.as_ref().is_none_or(|m| &val > m) {
 				max_iter = self.clone();
 				max_val = Some(val);
 			}

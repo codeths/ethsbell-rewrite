@@ -119,7 +119,7 @@ impl ScheduleType {
 			self.periods.iter().for_each(|period| {
 				if period.end <= time {
 					if period.kind != PeriodType::Passing {
-						match previous.get(0).clone() {
+						match previous.first() {
 							Some(before) => {
 								if period.end > before.end {
 									// if we find a more recent period, replace everything
@@ -134,7 +134,7 @@ impl ScheduleType {
 					}
 				} else if period.start > time {
 					if period.kind != PeriodType::Passing {
-						match future.get(0).clone() {
+						match future.first() {
 							Some(after) => {
 								if period.start < after.start {
 									future = vec![period.clone()];
