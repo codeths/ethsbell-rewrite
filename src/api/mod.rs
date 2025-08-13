@@ -42,7 +42,7 @@ impl Fairing for ApiFairing {
 		rocket: rocket::Rocket<Build>,
 	) -> Result<rocket::Rocket<Build>, rocket::Rocket<Build>> {
 		Ok(rocket
-		    .mount("/api/v2", v2::routes())
+			.mount("/api/v2", v2::routes())
 			.mount("/api/v1", v1::routes())
 			.mount("/api/legacy", legacy::routes())
 			.mount(

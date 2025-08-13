@@ -4,7 +4,7 @@
 
 #[cfg(not(feature = "ws"))]
 use crate::api::{Json, State};
-use crate::{aliases::v2::NearbyPeriods, schedule::{Schedule}};
+use crate::{aliases::v2::NearbyPeriods, schedule::Schedule};
 use chrono::{Local, NaiveDateTime, TimeZone};
 #[cfg(feature = "ws")]
 use rocket::serde::json::Json;
@@ -12,7 +12,7 @@ use rocket::serde::json::Json;
 use rocket::{Route, State};
 #[cfg(feature = "ws")]
 use rocket_okapi::openapi;
-use std::{sync::{Arc, RwLock}};
+use std::sync::{Arc, RwLock};
 
 #[cfg(feature = "ws")]
 #[must_use]
@@ -46,16 +46,16 @@ pub fn today_around_now(
 	let schedule = schedule.read().unwrap().on_date(now_date);
 	let mut schedule = schedule.0.at_time_v2(now_time);
 	schedule
-        .0
-        .iter_mut()
+		.0
+		.iter_mut()
 		.for_each(|v| *v = v.clone().populate(now));
 	schedule
 		.1
 		.iter_mut()
 		.for_each(|v| *v = v.clone().populate(now));
 	schedule
-        .2
-    	.iter_mut()
-    	.for_each(|v| *v = v.clone().populate(now));
+		.2
+		.iter_mut()
+		.for_each(|v| *v = v.clone().populate(now));
 	Json(schedule)
 }
