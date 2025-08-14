@@ -9,13 +9,15 @@ pub mod v1 {
 pub mod v2 {
 	use crate::schedule::Period;
 	use serde::Serialize;
+	#[cfg(feature = "ws")]
 	use schemars::JsonSchema;
 
 	/// This is the type of the data returned by /api/v2/today/now/near.
 	/// The periods returned by `previous` and `future` will have either the
 	/// same end time (for `previous`) or the same start time (for `future`)
 	/// if there are multiple periods.
-	#[derive(Serialize, JsonSchema)]
+	#[cfg_attr(feature = "ws", derive(JsonSchema))]
+	#[derive(Serialize)]
 	pub struct NearbyPeriods {
 		/// The `Period`(s) that occurred before this one
 		pub previous: Vec<Period>,
