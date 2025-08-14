@@ -20,6 +20,7 @@ use crate::login::WantsBasicAuth;
 #[cfg(feature = "ws")]
 pub mod legacy;
 pub mod v1;
+pub mod v2;
 
 /// This struct is used as a Rocket Fairing and adds our API endpoints.
 #[cfg(feature = "ws")]
@@ -41,8 +42,16 @@ impl Fairing for ApiFairing {
 		rocket: rocket::Rocket<Build>,
 	) -> Result<rocket::Rocket<Build>, rocket::Rocket<Build>> {
 		Ok(rocket
+			.mount("/api/v2", v2::routes())
 			.mount("/api/v1", v1::routes())
 			.mount("/api/legacy", legacy::routes())
+			.mount(
+				"/docs/v2",
+				make_swagger_ui(&SwaggerUIConfig {
+					url: "../../api/v2/openapi.json".to_owned(),
+					..Default::default()
+				}),
+			)
 			.mount(
 				"/docs/v1",
 				make_swagger_ui(&SwaggerUIConfig {

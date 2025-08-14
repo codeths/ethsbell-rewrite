@@ -103,6 +103,109 @@ impl ScheduleType {
 			)
 		}
 	}
+
+	/// Returns a tuple of a Vec<Period> of the previous Periods, a Vec<Period> of the current periods,
+	/// and a Vec<Period> of the next periods.
+	#[must_use]
+	pub fn at_time_v2(&self, time: NaiveTime) -> (Vec<Period>, Vec<Period>, Vec<Period>) {
+		if self.periods.is_empty() {
+			(vec![], vec![], vec![])
+		} else {
+			let mut previous: Vec<Period> = vec![];
+			let mut current: Vec<Period> = vec![];
+			let mut future: Vec<Period> = vec![];
+
+			// sort periods into previous, current, and future
+			self.periods.iter().for_each(|period| {
+				if period.end <= time {
+					if period.kind != PeriodType::Passing {
+						match previous.first() {
+							Some(before) => {
+								if period.end > before.end {
+									// if we find a more recent period, replace everything
+									previous = vec![period.clone()];
+								} else if period.end == before.end {
+									// if we find a matching end time, add it
+									previous.push(period.clone());
+								}
+							}
+							None => previous.push(period.clone()),
+						}
+					}
+				} else if period.start > time {
+					if period.kind != PeriodType::Passing {
+						match future.first() {
+							Some(after) => {
+								if period.start < after.start {
+									future = vec![period.clone()];
+								} else if period.start == after.start {
+									future.push(period.clone());
+								}
+							}
+							None => future.push(period.clone()),
+						}
+					}
+				} else {
+					current.push(period.clone());
+				}
+			});
+
+			// add implicit periods
+			if current.is_empty() {
+				match (previous.is_empty(), future.is_empty()) {
+					(false, false) => {
+						current = vec![Period {
+							friendly_name: "Passing Period".to_string(),
+							start: previous[0].end,
+							end: future[0].start,
+							start_timestamp: 0,
+							end_timestamp: 0,
+							kind: PeriodType::Passing,
+						}];
+					}
+					(true, false) => {
+						current = vec![Period {
+							friendly_name: "Before School".to_string(),
+							start: NaiveTime::from_hms_opt(0, 0, 0).unwrap_or_default(),
+							end: future[0].start,
+							start_timestamp: 0,
+							end_timestamp: 0,
+							kind: PeriodType::BeforeSchool,
+						}];
+					}
+					(false, true) => {
+						current = vec![Period {
+							friendly_name: "After School".to_string(),
+							start: previous[0].end,
+							end: NaiveTime::from_hms_opt(23, 59, 59).unwrap_or_default(),
+							start_timestamp: 0,
+							end_timestamp: 0,
+							kind: PeriodType::AfterSchool,
+						}];
+					}
+					_ => {}
+				}
+			}
+
+			// populate timestamps
+			let now = Local::now();
+			(
+				previous
+					.iter()
+					.map(|v| v.clone().populate(now))
+					.collect::<Vec<Period>>(),
+				current
+					.iter()
+					.map(|v| v.clone().populate(now))
+					.collect::<Vec<Period>>(),
+				future
+					.iter()
+					.map(|v| v.clone().populate(now))
+					.collect::<Vec<Period>>(),
+			)
+		}
+	}
+
 	/// Returns the first period of the schedule with the kind Class(_).
 	#[must_use]
 	pub fn first_class(&self) -> Option<Period> {
