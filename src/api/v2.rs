@@ -57,5 +57,10 @@ pub fn today_around_now(
 		.2
 		.iter_mut()
 		.for_each(|v| *v = v.clone().populate(now));
-	Json(schedule)
+
+	Json(NearbyPeriods {
+		previous: schedule.0,
+		current: schedule.1,
+		future: schedule.2,
+	})
 }
