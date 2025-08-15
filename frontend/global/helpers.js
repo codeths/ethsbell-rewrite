@@ -376,7 +376,7 @@ function setTheme() {
 function broadcastConfigToExtension() {
 	updateConfig();
 	if (
-		chrome !== undefined
+		'chrome' in window
 		&& chrome.runtime !== undefined
 	) {
 		chrome.runtime.sendMessage('gbkjjbecehodfeijbdmoieepgmfdlgle', {

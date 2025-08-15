@@ -75,7 +75,8 @@
 			"unicorn/prefer-at": 0,
 			"unicorn/prefer-string-replace-all": 0,
 			"unicorn/prefer-dom-node-dataset": 0,
-			"unicorn/switch-case-braces": 0
+			"unicorn/switch-case-braces": 0,
+			"unicorn/no-typeof-undefined": 0
 		},
 		"ignores": [
 			"/tests/"
