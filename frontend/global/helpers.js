@@ -376,8 +376,8 @@ function setTheme() {
 function broadcastConfigToExtension() {
 	updateConfig();
 	if (
-		typeof chrome !== 'undefined'
-		&& typeof chrome.runtime !== 'undefined'
+		chrome !== undefined
+		&& chrome.runtime !== undefined
 	) {
 		chrome.runtime.sendMessage('gbkjjbecehodfeijbdmoieepgmfdlgle', {
 			message: 'schedule',

@@ -72,7 +72,7 @@ function place_boxes(data_unprocessed) {
 
 	// Resolve rows so everything is mutually non-intersecting.
 	const boxes = [];
-	data = data.flat().filter(v => v);
+	data = data.flat().filter(Boolean);
 	data.sort((a, b) => a.start - b.start);
 	for (const period of data) {
 		// Set up variables

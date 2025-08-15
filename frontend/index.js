@@ -34,9 +34,9 @@ function display(data) {
 		if (lastData) {
 			const oldPeriods = lastData
 				.flat()
-				.filter(x => x)
+				.filter(Boolean)
 				.map(x => x.friendly_name);
-			const nowPeriods = new Set(data[1].filter(x => x).map(x => x.friendly_name));
+			const nowPeriods = new Set(data[1].filter(Boolean).map(x => x.friendly_name));
 
 			if (oldPeriods.every(x => !nowPeriods.has(x))) {
 				schedule();
