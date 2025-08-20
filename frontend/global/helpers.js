@@ -176,10 +176,21 @@ function human_time(time) {
 
 // Gets a human readable duration from an epoch timestamp
 function human_time_left(endTime, startTime = null, short = false) {
+	/**
+	* Convert time string to ms
+	* (date is created in local time)
+	* @param {string} day - HH:MM:SS string
+	*/
+	const hmsToMs = day => {
+		const [h, m, s] = day.split(':');
+		const now = new Date();
+		return new Date(now.getFullYear(), now.getMonth(), now.getDate(), h, m, s).getTime();
+	};
+
 	const startDate = startTime
-		? date_from_api(startTime).getTime()
+		? hmsToMs(startTime)
 		: current_date().getTime();
-	const endDate = date_from_api(endTime).getTime();
+	const endDate = hmsToMs(endTime);
 	const timeLeft = Math.floor((endDate - startDate) / 1000);
 	const h = Math.floor(timeLeft / 60 / 60);
 	const m = Math.ceil((timeLeft / 60) % 60);
